@@ -859,6 +859,13 @@ footer {
   display: block;
 }
 
+/* ── MOBILE: restore normal cursor & touch ── */
+@media (hover: none), (pointer: coarse) {
+  *, *::before, *::after { cursor: auto !important; }
+  body { cursor: auto !important; }
+  .cursor-dot, .cursor-ring { display: none !important; }
+}
+
 @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
 @keyframes lineUp { from{opacity:0;transform:translateY(110%)} to{opacity:1;transform:none} }
 
@@ -1856,15 +1863,20 @@ html[dir="rtl"] .po-next-btn { flex-direction: row-reverse; }
   }
 
   function move(e) {
-    pos.x = e.touches ? e.touches[0].clientX : e.clientX;
-    pos.y = e.touches ? e.touches[0].clientY : e.clientY;
-    if (e.cancelable) e.preventDefault();
+    // On touch, only track position — never block scroll
+    if (e.touches) {
+      pos.x = e.touches[0].clientX;
+      pos.y = e.touches[0].clientY;
+    } else {
+      pos.x = e.clientX;
+      pos.y = e.clientY;
+    }
   }
 
   document.addEventListener('mousemove', start);
   document.addEventListener('mousemove', move);
   document.addEventListener('touchstart', start, { passive: true });
-  document.addEventListener('touchmove', move, { passive: false });
+  document.addEventListener('touchmove', move, { passive: true }); // passive:true = never block scroll
   window.addEventListener('blur', () => running = false);
   window.addEventListener('focus', () => { running = true; render(); });
 })();
