@@ -1,0 +1,2617 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ahmad Sattof — Visual Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* thought number watermark */
+.thought-card::before {
+  content: attr(data-num);
+  position: absolute; bottom: -10px; right: 16px;
+  font-family: var(--font-serif); font-size: 100px; font-weight: 300;
+  font-style: italic; color: var(--faint); line-height: 1;
+  pointer-events: none; transition: color .25s;
+}
+.thought-card:hover::before { color: #e0deda; }
+
+/* ── DARK MODE ── */
+html.dark {
+  --bg: #0e0e0d;
+  --ink: #f0efe8;
+  --mid: #6e6e68;
+  --faint: #1e1e1c;
+  --white: #161614;
+  --accent: #c4a97a;
+}
+html.dark .nav-name em { color: var(--mid); }
+html.dark .ticker-wrap { background: #f0efe8; }
+html.dark .ticker-track span { color: rgba(14,14,13,.3); }
+html.dark .ticker-track .sep { color: rgba(14,14,13,.12); }
+html.dark .pm-bg { filter: brightness(.85); }
+html.dark .cursor-dot { background: var(--ink); }
+html.dark .cursor-ring { border-color: rgba(240,239,232,.25); }
+
+/* ── LOADING SCREEN ── */
+.loader {
+  position: fixed; inset: 0; z-index: 9000;
+  background: #0e0e0d;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 40px;
+  transition: opacity .9s var(--ease), transform .9s var(--ease);
+}
+.loader.done { opacity: 0; pointer-events: none; transform: translateY(-10px); }
+
+.loader-shapes {
+  display: flex; align-items: center; gap: 18px;
+}
+.lshape {
+  width: 52px; height: 52px;
+  color: rgba(250,250,248,.12);
+  opacity: 0;
+  animation: shapeIn .01s var(--d) forwards;
+  transition: color 1.4s ease;
+}
+/* reveal shape at its delay then let SVG animate stroke */
+@keyframes shapeIn { to { opacity: 1; } }
+
+/* after stroke draws, subtle float */
+.lshape { animation: shapeIn .01s var(--d) forwards, shapeFloat 3s calc(var(--d) + 1.4s) ease-in-out infinite alternate; }
+@keyframes shapeFloat {
+  from { transform: translateY(0px) rotate(0deg); }
+  to   { transform: translateY(-5px) rotate(var(--r, 6deg)); }
+}
+
+/* accent on the circle after it draws */
+.lshape:first-child { color: rgba(181,164,138,.55); }
+
+/* different float directions */
+.lshape-sq   { --r: -4deg; }
+.lshape-tri  { --r: 5deg;  }
+.lshape-cross{ --r: 45deg; }
+.lshape-dia  { --r: 8deg;  }
+
+/* three breathing dots */
+.loader-dot-row { display: flex; gap: 8px; }
+.ldot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(250,250,248,.2);
+  animation: dotBreath 1.4s calc(var(--i) * .22s) ease-in-out infinite alternate;
+}
+@keyframes dotBreath {
+  from { opacity: .2; transform: scale(1); }
+  to   { opacity: 1;  transform: scale(1.5); background: rgba(181,164,138,.7); }
+}
+
+/* ── HERO CANVAS ── */
+#heroCanvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+  opacity: .55;
+}
+html.dark #heroCanvas { opacity: .35; }
+
+/* ── SCROLL PROGRESS ── */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; z-index: 9000;
+  height: 3px; width: 0%;
+  background: var(--accent);
+  pointer-events: none;
+  transform-origin: left;
+  border-radius: 0 2px 2px 0;
+  transition: height .15s var(--ease), transform .15s var(--ease);
+  filter: blur(0px);
+}
+.scroll-progress::after {
+  content: '';
+  position: absolute; right: -1px; top: 50%;
+  transform: translateY(-50%);
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent), 0 0 20px var(--accent);
+}
+
+/* ── DARK MODE TOGGLE ── */
+.dark-toggle {
+  background: none; border: none;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: visible;
+}
+.dark-toggle:hover .dark-icon { opacity: 1; }
+.dark-icon {
+  font-size: 17px; line-height: 1;
+  display: block; transition: transform .4s var(--ease);
+  color: var(--ink);
+  filter: none;
+}
+/* flicker animation */
+.dark-toggle:not(.is-dark) .dark-icon {
+  animation: flicker 3.5s infinite;
+}
+.dark-toggle.is-dark .dark-icon {
+  animation: moonGlow 3s infinite;
+}
+@keyframes flicker {
+  0%,100% { opacity: 1;   transform: scale(1)   rotate(0deg); }
+  20%      { opacity: .4; transform: scale(.88) rotate(-4deg); }
+  21%      { opacity: 1;  transform: scale(1.05) rotate(2deg); }
+  40%      { opacity: .6; transform: scale(.92) rotate(-2deg); }
+  41%      { opacity: 1;  transform: scale(1); }
+  70%      { opacity: .3; transform: scale(.85) rotate(3deg); }
+  71%      { opacity: 1;  transform: scale(1.08) rotate(-1deg); }
+}
+@keyframes moonGlow {
+  0%,100% { opacity: .7; transform: scale(1)    rotate(-10deg); }
+  50%      { opacity: 1;  transform: scale(1.12) rotate(0deg); }
+}
+
+/* ── 404 PAGE ── */
+.page-404 {
+  display: none; position: fixed; inset: 0; z-index: 600;
+  background: var(--bg); flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  padding: 64px;
+}
+.page-404.show { display: flex; }
+.e404-num {
+  font-family: var(--font-serif);
+  font-size: clamp(100px, 20vw, 220px);
+  font-weight: 300; font-style: italic;
+  color: var(--faint); line-height: 1; margin-bottom: 16px;
+}
+.e404-title {
+  font-size: 14px; font-weight: 500; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--mid); margin-bottom: 40px;
+}
+.e404-back {
+  font-family: var(--font-serif); font-size: 20px; font-style: italic;
+  color: var(--ink); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 12px;
+  transition: gap .3s var(--ease);
+}
+.e404-back:hover { gap: 22px; }
+
+/* ── RESET & ROOT ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { cursor: none !important; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg: #fafaf8;
+  --ink: #111110;
+  --mid: #888884;
+  --faint: #e8e7e2;
+  --accent: #b5a48a;
+  --white: #ffffff;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter', sans-serif;
+  --font-arabic: 'IBM Plex Sans Arabic', sans-serif;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Arabic body */
+[lang="ar"] body,
+body.ar { font-family: var(--font-arabic); }
+
+/* ── LANGUAGE TRANSITION ── */
+.lang-fade {
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.lang-ready { opacity: 1; }
+
+/* ── RIPPLE TRAIL ── */
+.ripple-trail {
+  position: fixed;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  pointer-events: none;
+  z-index: 9990;
+  transform: translate(-50%, -50%) scale(1);
+  opacity: .6;
+  animation: rippleOut 700ms var(--ease) forwards;
+}
+@keyframes rippleOut {
+  0%   { transform: translate(-50%,-50%) scale(1);   opacity: .55; }
+  100% { transform: translate(-50%,-50%) scale(5.5); opacity: 0;   }
+}
+
+/* ── CUSTOM CURSOR ── */
+.cursor-dot {
+  position: fixed; width: 5px; height: 5px;
+  background: var(--ink); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform .1s;
+}
+.cursor-ring {
+  position: fixed; width: 32px; height: 32px;
+  border: 1px solid rgba(17,17,16,.2); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: width .4s var(--ease), height .4s var(--ease), border-color .3s;
+}
+.cursor-ring.hover { width: 48px; height: 48px; border-color: var(--ink); }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 36px 64px;
+  transition: padding .5s var(--ease), background .5s;
+}
+nav.scrolled {
+  padding: 20px 64px;
+  background: rgba(250,250,248,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--faint);
+}
+
+.nav-name {
+  font-family: var(--font-serif);
+  font-size: 18px; font-weight: 400; letter-spacing: .02em;
+  color: var(--ink); text-decoration: none;
+}
+.nav-name em { font-style: italic; color: var(--mid); }
+
+.nav-right { display: flex; align-items: center; gap: 48px; }
+
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a {
+  font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--mid); text-decoration: none; transition: color .2s;
+}
+.nav-links a:hover { color: var(--ink); }
+
+/* Language Toggle */
+.lang-toggle {
+  display: flex; align-items: center; gap: 2px;
+  border: 1px solid var(--faint); padding: 4px;
+  background: none; cursor: none;
+}
+.lang-btn {
+  font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  padding: 5px 10px; border: none; background: none;
+  color: var(--mid); cursor: none; transition: all .2s;
+}
+.lang-btn.active {
+  background: var(--ink); color: var(--bg);
+}
+
+/* Availability */
+.avail-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #6aab6a;
+  display: inline-block;
+  animation: pulse 2.4s infinite;
+  margin-right: 7px;
+}
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+.avail-text {
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--mid);
+}
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 64px 56px;
+  position: relative; overflow: hidden;
+}
+
+/* Subtle ambient circle */
+.hero-orb {
+  position: absolute;
+  top: 15%; right: 10%;
+  width: 340px; height: 340px;
+  border-radius: 50%;
+  border: 1px solid var(--faint);
+  opacity: 0;
+  animation: orbIn 2s 1.2s var(--ease) forwards, orbFloat 8s 3.2s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+.hero-orb::before {
+  content: '';
+  position: absolute; inset: 40px;
+  border-radius: 50%; border: 1px solid var(--faint);
+}
+@keyframes orbIn { to { opacity: 1; } }
+@keyframes orbFloat { from{transform:translateY(0) rotate(0deg)} to{transform:translateY(-18px) rotate(6deg)} }
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--mid); margin-bottom: 32px;
+  opacity: 0; animation: fadeUp .8s .3s var(--ease) forwards;
+}
+
+.hero-headline {
+  font-family: var(--font-serif);
+  font-size: clamp(68px, 10.5vw, 148px);
+  font-weight: 300; line-height: .92;
+  letter-spacing: -.02em;
+  margin-bottom: 64px;
+}
+.hero-headline .line { display: block; overflow: hidden; }
+.hero-headline .line span {
+  display: block;
+  opacity: 0; transform: translateY(110%);
+  animation: lineUp 1s var(--ease) forwards;
+}
+.hero-headline .line:nth-child(1) span { animation-delay: .4s; }
+.hero-headline .line:nth-child(2) span { animation-delay: .56s; }
+.hero-headline .line:nth-child(3) span { animation-delay: .68s; }
+.hero-headline em { font-style: italic; color: var(--mid); }
+.hero-em { font-style: italic; color: var(--mid); display: block; }
+
+.hero-bottom {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  padding-top: 32px; border-top: 1px solid var(--faint);
+  opacity: 0; animation: fadeUp .8s 1.1s var(--ease) forwards;
+}
+.hero-statement {
+  font-family: var(--font-serif); font-size: 19px; font-weight: 300;
+  font-style: italic; color: var(--mid); max-width: 280px; line-height: 1.65;
+}
+.hero-cta {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 16px;
+}
+.cta-link {
+  font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink); text-decoration: none;
+  display: flex; align-items: center; gap: 10px;
+  transition: gap .3s var(--ease);
+}
+.cta-link:hover { gap: 18px; }
+.cta-link .arrow { font-size: 16px; color: var(--accent); }
+.scroll-line {
+  width: 1px; height: 48px; background: var(--faint);
+  animation: scrollLine 1.6s 2s ease-in-out infinite;
+  transform-origin: top;
+}
+@keyframes scrollLine { 0%,100%{transform:scaleY(1);opacity:1} 50%{transform:scaleY(.4);opacity:.3} }
+
+/* ── TICKER ── */
+.ticker-wrap {
+  overflow: hidden; background: var(--ink); padding: 16px 0;
+}
+.ticker-track {
+  display: flex; white-space: nowrap;
+  animation: ticker 24s linear infinite;
+}
+.ticker-track span {
+  font-size: 11px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase;
+  color: rgba(250,250,248,.28); padding: 0 32px;
+}
+.ticker-track .sep { color: rgba(250,250,248,.1); padding: 0 16px; }
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ── SECTION DEFAULTS ── */
+section { padding: 120px 64px; border-top: 1px solid var(--faint); }
+
+.s-label {
+  font-size: 10px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--mid); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 16px;
+}
+.s-label::after { content: ''; flex: 1; height: 1px; background: var(--faint); }
+
+.s-h {
+  font-family: var(--font-serif);
+  font-size: clamp(38px, 5.5vw, 72px);
+  font-weight: 300; line-height: 1; letter-spacing: -.02em;
+}
+.s-h em { font-style: italic; }
+
+/* ── REVEAL ── */
+.rv {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity .9s var(--ease), transform .9s var(--ease);
+}
+.rv.in { opacity: 1; transform: none; }
+
+/* ── ABOUT ── */
+#about { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start; }
+
+.about-body {
+  font-size: 15px; line-height: 2; color: #555552;
+  margin-top: 36px;
+}
+.about-body p { margin-bottom: 18px; }
+
+.about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--faint); margin-top: 52px; }
+.stat-item { background: var(--bg); padding: 32px 28px; }
+.stat-n {
+  font-family: var(--font-serif); font-size: 56px; font-weight: 300;
+  line-height: 1; letter-spacing: -.03em;
+}
+.stat-l {
+  font-size: 10px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--mid); margin-top: 6px;
+}
+
+.about-right { padding-top: 60px; }
+.about-quote {
+  font-family: var(--font-serif); font-size: clamp(24px, 3vw, 36px);
+  font-weight: 300; font-style: italic; line-height: 1.55;
+  color: var(--ink); margin-bottom: 36px;
+}
+.about-quote::before { content: '"'; color: var(--accent); }
+.about-quote::after { content: '"'; color: var(--accent); }
+
+.about-disciplines { margin-top: 48px; display: flex; flex-direction: column; gap: 1px; }
+.disc-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 0; border-bottom: 1px solid var(--faint);
+}
+.disc-n { font-family: var(--font-serif); font-size: 20px; font-weight: 300; }
+.disc-tag {
+  font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--mid);
+}
+
+/* ── PROJECTS ── */
+#projects .proj-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; margin-top: 56px; background: var(--faint);
+}
+.proj-card {
+  background: var(--bg); aspect-ratio: 4/5;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 28px; cursor: none; overflow: hidden; position: relative;
+  transition: background .3s;
+}
+.proj-card:hover { background: var(--white); }
+.proj-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, rgba(17,17,16,.04) 100%);
+}
+.proj-placeholder {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+}
+.proj-num {
+  font-family: var(--font-serif); font-size: 80px; font-weight: 300;
+  font-style: italic; color: var(--faint); line-height: 1;
+  transition: color .3s, transform .5s var(--ease);
+}
+.proj-card:hover .proj-num { color: var(--accent); transform: scale(.92); }
+.proj-info { position: relative; z-index: 1; }
+.proj-cat {
+  font-size: 10px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 8px;
+}
+.proj-title {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 300; line-height: 1.2;
+}
+.proj-year { font-size: 11px; color: var(--mid); margin-top: 6px; }
+.proj-arrow {
+  position: absolute; top: 24px; right: 24px; z-index: 1;
+  font-size: 20px; color: var(--faint);
+  transition: color .3s, transform .3s;
+}
+.proj-card:hover .proj-arrow { color: var(--ink); transform: translate(3px,-3px); }
+
+/* Featured row */
+.proj-featured {
+  display: grid; grid-template-columns: 2fr 1fr; gap: 2px;
+  margin-top: 2px; background: var(--faint);
+}
+.proj-featured .proj-card:first-child { aspect-ratio: 16/9; }
+
+/* ── SERVICES ── */
+#services .svc-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; margin-top: 56px; background: var(--faint);
+}
+.svc-card {
+  background: var(--bg); padding: 44px 36px;
+  transition: background .25s; position: relative;
+}
+.svc-card:hover { background: var(--white); }
+.svc-arrow {
+  position: absolute; top: 24px; right: 24px;
+  font-size: 16px; color: var(--faint);
+  transition: color .25s, transform .3s var(--ease);
+}
+html[dir="rtl"] .svc-arrow { right: auto; left: 24px; }
+.svc-card:hover .svc-arrow { color: var(--ink); transform: translate(3px,-3px); }
+.svc-num {
+  font-family: var(--font-serif); font-size: 11px;
+  font-style: italic; color: var(--accent); margin-bottom: 24px;
+}
+.svc-title {
+  font-family: var(--font-serif); font-size: 24px; font-weight: 300;
+  line-height: 1.2; margin-bottom: 14px;
+}
+.svc-desc {
+  font-size: 13px; line-height: 1.85; color: #666663;
+}
+.svc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 20px; }
+.svc-tag {
+  font-size: 9px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  padding: 4px 10px; border: 1px solid var(--faint); color: var(--mid);
+}
+
+/* ── SKILLS ── */
+#skills { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; }
+
+.skill-list { margin-top: 36px; display: flex; flex-direction: column; gap: 24px; }
+.skill-row {}
+.skill-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.skill-name { font-size: 14px; font-weight: 400; }
+.skill-pct {
+  font-family: var(--font-serif); font-size: 18px; font-style: italic; color: var(--mid);
+}
+.skill-track { height: 1px; background: var(--faint); }
+.skill-fill {
+  height: 1px; background: var(--ink);
+  transform-origin: left; transform: scaleX(0);
+  transition: transform 1.6s var(--ease);
+}
+
+.cred-list { margin-top: 36px; display: flex; flex-direction: column; gap: 2px; }
+.cred-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px; border: 1px solid var(--faint);
+  transition: all .22s;
+}
+.cred-item:hover { background: var(--white); border-color: var(--ink); }
+.cred-n { font-size: 14px; margin-bottom: 3px; }
+.cred-s {
+  font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--mid);
+}
+.cred-arrow { color: var(--faint); font-size: 15px; }
+.cred-item:hover .cred-arrow { color: var(--ink); }
+
+/* ── CONTACT ── */
+#contact { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start; }
+
+.ct-headline {
+  font-family: var(--font-serif);
+  font-size: clamp(44px, 6vw, 88px);
+  font-weight: 300; line-height: .92;
+  letter-spacing: -.02em; margin-bottom: 32px;
+}
+.ct-headline em { font-style: italic; color: var(--mid); }
+.ct-sub { font-size: 14px; line-height: 1.9; color: #555552; margin-bottom: 44px; }
+
+.ct-links { display: flex; flex-direction: column; }
+.ct-link {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 0; border-bottom: 1px solid var(--faint);
+  text-decoration: none; color: var(--ink);
+  transition: padding-left .25s var(--ease);
+}
+.ct-link:hover { padding-left: 10px; }
+.ct-lbl { font-size: 15px; font-family: var(--font-serif); font-weight: 300; }
+.ct-val {
+  font-size: 11px; font-weight: 500; letter-spacing: .08em; color: var(--mid);
+}
+.ct-arr { color: var(--faint); font-size: 17px; }
+.ct-link:hover .ct-arr { color: var(--ink); }
+
+.contact-form { padding-top: 12px; }
+.form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.form-label {
+  font-size: 10px; font-weight: 500; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--mid);
+}
+.form-input, .form-textarea {
+  background: none; border: none; border-bottom: 1px solid var(--faint);
+  color: var(--ink); font-family: var(--font-sans); font-size: 15px; font-weight: 300;
+  padding: 10px 0; outline: none; width: 100%; cursor: none;
+  transition: border-color .2s;
+}
+.form-input:focus, .form-textarea:focus { border-color: var(--ink); }
+.form-textarea { resize: none; height: 80px; }
+.form-send {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: none; border: none; cursor: none;
+  font-family: var(--font-sans); font-size: 12px; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--ink);
+  padding: 0; margin-top: 20px; transition: gap .3s var(--ease);
+}
+.form-send:hover { gap: 22px; }
+.form-send .arr { color: var(--accent); font-size: 18px; }
+
+/* ── SERVICE OVERLAY ── */
+.svc-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: var(--bg); overflow-y: auto;
+  opacity: 0; pointer-events: none;
+  transition: opacity .5s var(--ease);
+}
+.svc-overlay.open { opacity: 1; pointer-events: all; }
+
+.svc-ov-hero {
+  display: grid; grid-template-columns: 180px 1fr;
+  gap: 64px; align-items: start;
+  padding: 80px 64px 64px;
+  border-bottom: 1px solid var(--faint);
+}
+.svc-ov-num {
+  font-family: var(--font-serif);
+  font-size: clamp(80px, 12vw, 160px);
+  font-weight: 300; font-style: italic;
+  line-height: 1; color: var(--faint);
+  padding-top: 8px;
+}
+.svc-ov-eyebrow {
+  font-size: 10px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 16px;
+}
+.svc-ov-title {
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 6vw, 88px);
+  font-weight: 300; line-height: .95; letter-spacing: -.02em;
+  margin-bottom: 28px;
+}
+.svc-ov-tagline {
+  font-size: 16px; line-height: 1.85; color: #555552; max-width: 560px;
+}
+.svc-ov-body {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2px; background: var(--faint); margin: 0;
+}
+.svc-ov-section {
+  background: var(--bg); padding: 52px 64px;
+}
+.svc-ov-label {
+  font-size: 10px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 20px;
+}
+.svc-ov-text {
+  font-size: 15px; line-height: 1.95; color: #555552;
+}
+.svc-ov-delivers {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.svc-ov-deliver-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 0; border-bottom: 1px solid var(--faint);
+  font-size: 14px; font-weight: 400;
+}
+.svc-ov-deliver-item::before {
+  content: ''; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+}
+.svc-ov-tools {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.svc-ov-tool {
+  font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  padding: 7px 14px; border: 1px solid var(--faint); color: var(--mid);
+}
+.svc-ov-cta {
+  padding: 80px 64px;
+  border-top: 1px solid var(--faint);
+}
+.svc-ov-cta-link {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 300; font-style: italic;
+  color: var(--ink); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 20px;
+  transition: gap .4s var(--ease), color .2s;
+}
+.svc-ov-cta-link:hover { gap: 36px; color: var(--accent); }
+
+html[dir="rtl"] .svc-ov-hero { grid-template-columns: 1fr 180px; }
+html[dir="rtl"] .svc-ov-num { order: 2; }
+html[dir="rtl"] .svc-ov-content { order: 1; }
+html[dir="rtl"] .svc-ov-title { font-family: var(--font-arabic); font-weight: 500; line-height: 1.1; }
+
+@media (max-width: 960px) {
+  .svc-ov-hero { grid-template-columns: 1fr; gap: 16px; padding: 48px 24px 40px; }
+  .svc-ov-num { font-size: 64px; }
+  .svc-ov-body { grid-template-columns: 1fr; }
+  .svc-ov-section { padding: 36px 24px; }
+  .svc-ov-cta { padding: 48px 24px; }
+}
+
+/* ── TESTIMONIALS ── */
+#testimonials { padding: 120px 64px; border-top: 1px solid var(--faint); }
+
+.testi-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 64px; flex-wrap: wrap; gap: 28px;
+}
+.testi-summary { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+html[dir="rtl"] .testi-summary { align-items: flex-start; }
+
+.testi-stars { display: flex; gap: 3px; }
+.tstar { color: var(--accent); font-size: 16px; }
+.testi-count {
+  font-size: 11px; font-weight: 500; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--mid);
+}
+.testi-avatars {
+  display: flex; margin-top: 4px;
+}
+.tav {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 600; color: rgba(17,17,16,.55);
+  letter-spacing: .04em; margin-left: -8px; border: 2px solid var(--bg);
+  flex-shrink: 0;
+}
+.tav:first-child { margin-left: 0; }
+.tav-lg { width: 44px; height: 44px; font-size: 12px; margin-left: 0; border: none; }
+
+.testi-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 2px; background: var(--faint);
+}
+.testi-card {
+  background: var(--bg); padding: 44px 40px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  gap: 28px; position: relative; overflow: hidden;
+  transition: background .25s;
+}
+.testi-card:hover { background: var(--white); }
+.testi-featured {
+  grid-row: span 2;
+}
+.testi-featured .testi-text {
+  font-size: 17px; line-height: 1.85;
+}
+
+.testi-quote-mark {
+  font-family: var(--font-serif); font-size: 72px; font-weight: 300;
+  line-height: .7; color: var(--accent); opacity: .4;
+  margin-bottom: -8px; flex-shrink: 0;
+}
+.testi-text {
+  font-size: 14px; line-height: 1.9; color: #555552; flex: 1;
+}
+.testi-person {
+  display: flex; align-items: center; gap: 14px;
+  padding-top: 24px; border-top: 1px solid var(--faint);
+}
+.testi-name {
+  font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 3px;
+}
+.testi-role {
+  font-size: 10px; font-weight: 500; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--mid);
+}
+.testi-stars-sm {
+  margin-left: auto; color: var(--accent); font-size: 12px;
+  letter-spacing: 2px; flex-shrink: 0;
+}
+html[dir="rtl"] .testi-stars-sm { margin-left: 0; margin-right: auto; }
+
+@media (max-width: 960px) {
+  #testimonials { padding: 80px 24px; }
+  .testi-grid { grid-template-columns: 1fr; }
+  .testi-featured { grid-row: span 1; }
+  .testi-header { flex-direction: column; align-items: flex-start; }
+  .testi-summary { align-items: flex-start; }
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 28px 64px; border-top: 1px solid var(--faint);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.ft-copy {
+  font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--mid);
+}
+.ft-note {
+  font-family: var(--font-serif); font-size: 14px; font-style: italic; color: var(--mid);
+}
+
+/* ── PROJECT GALLERY ── */
+.po-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2px;
+  background: var(--faint);
+}
+.po-gallery:empty { display: none; }
+.po-gallery-img {
+  width: 100%; aspect-ratio: 4/3;
+  object-fit: cover;
+  display: block;
+  transition: transform .5s var(--ease);
+  background: var(--faint);
+}
+.po-gallery-img-wrap {
+  overflow: hidden; position: relative;
+  background: var(--faint);
+}
+.po-gallery-img-wrap:first-child:last-child {
+  grid-column: 1 / -1;
+}
+.po-gallery-img-wrap:first-child:last-child .po-gallery-img {
+  aspect-ratio: 16/7;
+}
+.po-gallery-img-wrap:hover .po-gallery-img { transform: scale(1.03); }
+
+/* ── HERO IMAGE MODE ── */
+.po-visual.has-image { background: none; padding: 0; }
+.po-visual.has-image .po-visual-num { display: none; }
+.po-visual-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+@keyframes lineUp { from{opacity:0;transform:translateY(110%)} to{opacity:1;transform:none} }
+
+/* ── RTL / ARABIC ── */
+html[dir="ltr"] body,
+html[dir="ltr"] body * {
+  font-family: var(--font-sans) !important;
+}
+html[dir="ltr"] .hero-headline,
+html[dir="ltr"] .s-h,
+html[dir="ltr"] .ct-headline,
+html[dir="ltr"] .about-quote,
+html[dir="ltr"] .stat-n,
+html[dir="ltr"] .proj-num,
+html[dir="ltr"] .skill-pct,
+html[dir="ltr"] .ct-lbl,
+html[dir="ltr"] .ft-note,
+html[dir="ltr"] .hero-statement {
+  font-family: var(--font-serif) !important;
+}
+
+html[dir="rtl"] body,
+html[dir="rtl"] body * {
+  font-family: var(--font-arabic) !important;
+}
+html[dir="rtl"] .stat-n,
+html[dir="rtl"] .proj-num {
+  font-family: var(--font-serif) !important;
+}
+html[dir="rtl"] .s-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--faint);
+  margin-left: 0; margin-right: 0;
+}
+html[dir="rtl"] .s-label {
+  flex-direction: row-reverse;
+}
+html[dir="rtl"] .s-label::before {
+  content: ''; flex: 1; height: 1px; background: var(--faint);
+}
+html[dir="rtl"] .s-label::after { display: none; }
+html[dir="rtl"] .nav-links { flex-direction: row-reverse; }
+html[dir="rtl"] .ct-link:hover { padding-left: 0; padding-right: 10px; }
+html[dir="rtl"] .cta-link { flex-direction: row-reverse; }
+html[dir="rtl"] .hero-bottom { flex-direction: row-reverse; }
+html[dir="rtl"] .hero-cta { align-items: flex-start; }
+html[dir="rtl"] .skill-fill { transform-origin: right; }
+html[dir="rtl"] .hero-headline {
+  font-size: clamp(52px, 8vw, 120px);
+  font-weight: 600; line-height: 1.05;
+}
+html[dir="rtl"] .about-quote { font-style: normal; }
+html[dir="rtl"] .s-h { font-weight: 400; }
+html[dir="rtl"] .ct-headline { font-weight: 400; line-height: 1.1; }
+html[dir="rtl"] .about-quote::before,
+html[dir="rtl"] .about-quote::after { display: none; }
+html[dir="rtl"] .nav-name { font-style: normal; }
+
+/* ── PROJECT MASONRY ── */
+.proj-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 48px; flex-wrap: wrap; gap: 24px;
+}
+.proj-filters {
+  display: flex; gap: 2px; flex-wrap: wrap;
+}
+.pf-btn {
+  font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  padding: 8px 16px; border: 1px solid var(--faint);
+  background: none; color: var(--mid);
+  transition: all .2s; white-space: nowrap;
+}
+.pf-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.pf-btn:hover:not(.active) { border-color: var(--ink); color: var(--ink); }
+
+.proj-masonry {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 220px;
+  gap: 2px;
+}
+.pm-card {
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 24px; background: var(--faint);
+  transition: opacity .4s, transform .4s var(--ease);
+}
+.pm-card.hidden { opacity: 0; pointer-events: none; transform: scale(.97); }
+.pm-card.pm-tall { grid-row: span 2; }
+.pm-card.pm-wide { grid-column: span 2; }
+
+.pm-bg {
+  position: absolute; inset: 0;
+  transition: transform .6s var(--ease);
+}
+.pm-bg img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.pm-card:hover .pm-bg { transform: scale(1.04); }
+.pm-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(17,17,16,.72) 0%, rgba(17,17,16,.1) 55%, transparent 100%);
+  transition: opacity .3s;
+}
+.pm-card:hover .pm-overlay { opacity: .9; }
+
+/* Project background colors — elegant tonal gradients matching each work's palette */
+.pm-film-1 { background: linear-gradient(135deg, #2d4a3e 0%, #8a6a3a 100%); }
+.pm-film-2 { background: linear-gradient(135deg, #1a1a1a 0%, #3d3228 100%); }
+.pm-film-3 { background: linear-gradient(135deg, #3d1f0a 0%, #b5621a 100%); }
+.pm-film-4 { background: linear-gradient(135deg, #0a0a14 0%, #1a0a2d 100%); }
+.pm-poster-1 { background: linear-gradient(135deg, #8b0000 0%, #c41e3a 100%); }
+.pm-pkg-1 { background: linear-gradient(135deg, #4a3520 0%, #8b6914 100%); }
+.pm-pkg-2 { background: linear-gradient(135deg, #6b2d3e 0%, #c4778a 100%); }
+.pm-pkg-3 { background: linear-gradient(135deg, #2d2840 0%, #7a6fa0 100%); }
+.pm-pkg-4 { background: linear-gradient(135deg, #e8e8e8 0%, #c8d4e0 100%); }
+.pm-logo-1 { background: linear-gradient(135deg, #f5f0e8 0%, #e8dcc8 100%); }
+.pm-logo-2 { background: linear-gradient(135deg, #1a3a5c 0%, #2e6da4 100%); }
+.pm-ai-1  { background: linear-gradient(135deg, #1a0f0a 0%, #3d2510 100%); }
+
+.pm-arrow {
+  position: absolute; top: 20px; right: 20px; z-index: 2;
+  font-size: 18px; color: rgba(255,255,255,.3);
+  transition: color .3s, transform .3s var(--ease);
+}
+.pm-card:hover .pm-arrow { color: #fff; transform: translate(3px,-3px); }
+
+.pm-info { position: relative; z-index: 2; }
+.pm-cat {
+  font-size: 9px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 6px;
+}
+.pm-title {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 300;
+  color: #fff; line-height: 1.15;
+}
+html[dir="rtl"] .pm-title { font-family: var(--font-arabic); font-size: 18px; }
+
+/* Dark bg logos need different text treatment */
+.pm-logo-1 .pm-cat,
+.pm-pkg-4 .pm-cat { color: rgba(17,17,16,.45); }
+.pm-logo-1 .pm-title,
+.pm-pkg-4 .pm-title { color: var(--ink); }
+.pm-logo-1 .pm-arrow,
+.pm-pkg-4 .pm-arrow { color: rgba(17,17,16,.25); }
+.pm-logo-1:hover .pm-arrow,
+.pm-pkg-4:hover .pm-arrow { color: var(--ink); }
+
+/* ── PROJECT OVERLAY ── */
+.proj-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: var(--bg);
+  overflow-y: auto;
+  opacity: 0; pointer-events: none;
+  transition: opacity .5s var(--ease);
+}
+.proj-overlay.open {
+  opacity: 1; pointer-events: all;
+}
+
+.po-nav {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 28px 64px;
+  background: rgba(250,250,248,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--faint);
+}
+.po-back {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--mid); background: none; border: none; cursor: none;
+  transition: gap .3s var(--ease), color .2s;
+}
+.po-back:hover { gap: 18px; color: var(--ink); }
+.po-back-arrow { font-size: 16px; }
+.po-nav-title {
+  font-family: var(--font-serif); font-size: 16px; font-style: italic; color: var(--mid);
+}
+
+.po-hero {
+  padding: 80px 64px 64px;
+  border-bottom: 1px solid var(--faint);
+}
+.po-eyebrow {
+  font-size: 10px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 20px;
+}
+.po-title {
+  font-family: var(--font-serif);
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 300; line-height: .92; letter-spacing: -.02em;
+  margin-bottom: 36px;
+}
+.po-title em { font-style: italic; color: var(--mid); }
+.po-meta {
+  display: flex; gap: 48px; flex-wrap: wrap;
+}
+.po-meta-item {}
+.po-meta-label {
+  font-size: 9px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--mid); margin-bottom: 5px;
+}
+.po-meta-val { font-size: 14px; font-weight: 400; }
+
+.po-visual {
+  width: 100%; aspect-ratio: 16/7;
+  background: var(--faint);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.po-visual-num {
+  font-family: var(--font-serif); font-size: clamp(120px, 20vw, 240px);
+  font-weight: 300; font-style: italic;
+  color: rgba(181,164,138,.18); line-height: 1; user-select: none;
+}
+.po-visual-label {
+  position: absolute; bottom: 32px; left: 64px;
+  font-size: 10px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--mid);
+}
+
+.po-body {
+  display: grid; grid-template-columns: 1fr 2fr; gap: 80px;
+  padding: 80px 64px;
+  border-bottom: 1px solid var(--faint);
+}
+.po-sidebar {}
+.po-sidebar-label {
+  font-size: 9px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--mid); margin-bottom: 12px;
+}
+.po-sidebar-val { font-size: 14px; line-height: 1.8; color: var(--ink); margin-bottom: 32px; }
+.po-tag-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.po-tag {
+  font-size: 9px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  padding: 5px 12px; border: 1px solid var(--faint); color: var(--mid);
+}
+
+.po-case { display: flex; flex-direction: column; gap: 0; }
+.po-case-block {
+  padding: 44px 0; border-bottom: 1px solid var(--faint);
+}
+.po-case-block:first-child { padding-top: 0; }
+.po-case-num {
+  font-family: var(--font-serif); font-size: 11px; font-style: italic;
+  color: var(--accent); margin-bottom: 12px;
+}
+.po-case-heading {
+  font-family: var(--font-serif); font-size: 28px; font-weight: 300;
+  margin-bottom: 18px; line-height: 1.1;
+}
+.po-case-text {
+  font-size: 15px; line-height: 1.95; color: #555552;
+}
+
+.po-next {
+  padding: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.po-next-label {
+  font-size: 10px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--mid); margin-bottom: 10px;
+}
+.po-next-title {
+  font-family: var(--font-serif); font-size: 32px; font-weight: 300;
+}
+.po-next-btn {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink); background: none; border: none; cursor: none;
+  transition: gap .3s var(--ease);
+}
+.po-next-btn:hover { gap: 22px; }
+.po-next-btn .arr { color: var(--accent); font-size: 18px; }
+
+/* RTL overlay adjustments */
+html[dir="rtl"] .po-visual-label { left: auto; right: 64px; }
+html[dir="rtl"] .po-back { flex-direction: row-reverse; }
+html[dir="rtl"] .po-back-arrow { transform: scaleX(-1); }
+html[dir="rtl"] .po-next-btn { flex-direction: row-reverse; }
+
+@media (max-width: 960px) {
+  .po-nav, .po-hero, .po-body, .po-next { padding-left: 24px; padding-right: 24px; }
+  .po-body { grid-template-columns: 1fr; gap: 40px; }
+  .po-visual-label { left: 24px; }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  nav, section, footer { padding-left: 24px; padding-right: 24px; }
+  nav { padding-top: 20px; padding-bottom: 20px; }
+  .nav-links, .avail-text { display: none; }
+  #hero { padding: 0 24px 48px; }
+  #about, #skills, #contact { grid-template-columns: 1fr; gap: 48px; }
+  .about-right { padding-top: 0; }
+  #services .svc-grid { grid-template-columns: 1fr; }
+  .proj-masonry { grid-template-columns: repeat(2, 1fr); }
+  .pm-card.pm-wide { grid-column: span 1; }
+  .proj-header { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 600px) {
+  .proj-masonry { grid-template-columns: 1fr; }
+  .pm-card.pm-tall { grid-row: span 1; }
+  .hero-headline { font-size: clamp(52px, 14vw, 90px); }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div class="loader" id="loader">
+  <div class="loader-shapes">
+    <svg class="lshape" viewBox="0 0 100 100" style="--d:0s;--r:0deg">
+      <circle cx="50" cy="50" r="38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="240" stroke-dashoffset="240">
+        <animate attributeName="stroke-dashoffset" from="240" to="0" dur="1.2s" begin="0.1s" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>
+      </circle>
+    </svg>
+    <svg class="lshape lshape-sq" viewBox="0 0 100 100" style="--d:.18s">
+      <rect x="18" y="18" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="256" stroke-dashoffset="256">
+        <animate attributeName="stroke-dashoffset" from="256" to="0" dur="1.2s" begin="0.28s" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>
+      </rect>
+    </svg>
+    <svg class="lshape lshape-tri" viewBox="0 0 100 100" style="--d:.36s">
+      <polygon points="50,12 92,82 8,82" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="220" stroke-dashoffset="220">
+        <animate attributeName="stroke-dashoffset" from="220" to="0" dur="1.2s" begin="0.46s" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>
+      </polygon>
+    </svg>
+    <svg class="lshape lshape-cross" viewBox="0 0 100 100" style="--d:.54s">
+      <line x1="50" y1="12" x2="50" y2="88" stroke="currentColor" stroke-width="1.5" stroke-dasharray="76" stroke-dashoffset="76">
+        <animate attributeName="stroke-dashoffset" from="76" to="0" dur=".8s" begin="0.64s" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>
+      </line>
+      <line x1="12" y1="50" x2="88" y2="50" stroke="currentColor" stroke-width="1.5" stroke-dasharray="76" stroke-dashoffset="76">
+        <animate attributeName="stroke-dashoffset" from="76" to="0" dur=".8s" begin="0.78s" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>
+      </line>
+    </svg>
+    <svg class="lshape lshape-dia" viewBox="0 0 100 100" style="--d:.72s">
+      <polygon points="50,10 90,50 50,90 10,50" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="226" stroke-dashoffset="226">
+        <animate attributeName="stroke-dashoffset" from="226" to="0" dur="1.2s" begin="0.92s" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>
+      </polygon>
+    </svg>
+  </div>
+  <div class="loader-dot-row">
+    <span class="ldot" style="--i:0"></span>
+    <span class="ldot" style="--i:1"></span>
+    <span class="ldot" style="--i:2"></span>
+  </div>
+</div>
+
+<!-- SCROLL PROGRESS -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- CURSORS -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-name">Ahmad <em>Sattof</em></a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#about" data-en="About" data-ar="من أنا">About</a></li>
+      <li><a href="#projects" data-en="Work" data-ar="أعمالي">Work</a></li>
+      <li><a href="#services" data-en="Services" data-ar="خدماتي">Services</a></li>
+      <li><a href="#contact" data-en="Contact" data-ar="تواصل معي">Contact</a></li>
+    </ul>
+    <button class="dark-toggle" id="darkToggle" onclick="toggleDark()" title="Toggle dark mode">
+      <span class="dark-icon" id="darkIcon">☀︎</span>
+    </button>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btnEN" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btnAR" onclick="setLang('ar')">AR</button>
+    </div>
+    <div class="avail-text"><span class="avail-dot"></span><span data-en="Available" data-ar="متاح للعمل">Available</span></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-orb"></div>
+  <div class="hero-eyebrow" data-en="Visual Communication Designer — Saudi Arabia" data-ar="مصمم اتصال بصري — المملكة العربية السعودية">
+    Visual Communication Designer — Saudi Arabia
+  </div>
+  <h1 class="hero-headline">
+    <span class="line"><span data-en="I design" data-ar="أصمّم">I design</span></span>
+    <span class="line"><em class="hero-em" data-en="quiet" data-ar="بصريّات هادئة">quiet</em></span>
+    <span class="line"><span data-en="visuals." data-ar="ومقصودة.">visuals.</span></span>
+  </h1>
+  <div class="hero-bottom">
+    <p class="hero-statement" data-en="Where design thinking meets AI-driven storytelling. Every pixel placed with intention." data-ar="أجمع بين التفكير التصميمي والسرد بالذكاء الاصطناعي. كل تفصيلة موضوعة بقصد.">
+      Where design thinking meets AI-driven storytelling. Every pixel placed with intention.
+    </p>
+    <div class="hero-cta">
+      <div class="scroll-line"></div>
+      <a href="#projects" class="cta-link">
+        <span data-en="View Work" data-ar="شاهد أعمالي">View Work</span>
+        <span class="arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span>Visual Design</span><span class="sep">·</span>
+    <span>AI Video</span><span class="sep">·</span>
+    <span>Motion Graphics</span><span class="sep">·</span>
+    <span>Brand Identity</span><span class="sep">·</span>
+    <span>Illustration</span><span class="sep">·</span>
+    <span>Social Media</span><span class="sep">·</span>
+    <span>التصميم البصري</span><span class="sep">·</span>
+    <span>فيديو الذكاء الاصطناعي</span><span class="sep">·</span>
+    <span>الهوية البصرية</span><span class="sep">·</span>
+    <span>Visual Design</span><span class="sep">·</span>
+    <span>AI Video</span><span class="sep">·</span>
+    <span>Motion Graphics</span><span class="sep">·</span>
+    <span>Brand Identity</span><span class="sep">·</span>
+    <span>Illustration</span><span class="sep">·</span>
+    <span>Social Media</span><span class="sep">·</span>
+    <span>التصميم البصري</span><span class="sep">·</span>
+    <span>فيديو الذكاء الاصطناعي</span><span class="sep">·</span>
+    <span>الهوية البصرية</span><span class="sep">·</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="rv">
+    <div class="s-label" data-en="About" data-ar="من أنا">About</div>
+    <h2 class="s-h" data-en="Design is <em>intentional,</em><br>not accidental." data-ar="التصميم الجيد<br><em>مقصود،</em><br>لا صدفة.">
+      Design is <em>intentional,</em><br>not accidental.
+    </h2>
+    <div class="about-body">
+      <p data-en="I'm Ahmad — a Visual Communication Design graduate shaped by three cultures (Syria, Saudi Arabia, Turkey) and fluent in three languages. That perspective lives in everything I create."
+         data-ar="أنا أحمد — مصمم اتصال بصري، نشأت بين ثلاث ثقافات: سوريا، السعودية، وتركيا. هذا التنوع يطبع كل ما أصنعه بشيء مختلف.">
+        I'm Ahmad — a Visual Communication Design graduate shaped by three cultures (Syria, Saudi Arabia, Turkey) and fluent in three languages. That perspective lives in everything I create.
+      </p>
+      <p data-en="I don't just produce content. I think about why it exists, who it's for, and what it needs to say. Clean, direct, effective — nothing unnecessary."
+         data-ar="لا أكتفي بإنتاج المحتوى. أفكّر في سبب وجوده، ومن يراه، وماذا يجب أن يقول. واضح، مباشر، فعّال — بلا زوائد.">
+        I don't just produce content. I think about why it exists, who it's for, and what it needs to say. Clean, direct, effective — nothing unnecessary.
+      </p>
+      <p data-en="Right now I'm pioneering AI-driven advertising campaigns that combine cinematic storytelling with product marketing — a space most brands haven't yet explored."
+         data-ar="أعمل حالياً على حملات إعلانية بالذكاء الاصطناعي تجمع السرد السينمائي بالتسويق — مجال لم تكتشفه معظم العلامات التجارية بعد.">
+        Right now I'm pioneering AI-driven advertising campaigns that combine cinematic storytelling with product marketing — a space most brands haven't yet explored.
+      </p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-item">
+        <div class="stat-n">4+</div>
+        <div class="stat-l" data-en="Years Designing" data-ar="سنوات خبرة">Years Designing</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-n">3</div>
+        <div class="stat-l" data-en="Languages Spoken" data-ar="لغات أتقنها">Languages Spoken</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-n">AI</div>
+        <div class="stat-l" data-en="Powered Production" data-ar="إنتاج ذكي">Powered Production</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-n">∞</div>
+        <div class="stat-l" data-en="Ideas Per Day" data-ar="أفكار لا تنتهي">Ideas Per Day</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-right rv">
+    <div class="about-quote" data-en="Every element must have a purpose — silence is as important as the mark."
+         data-ar="كل عنصر في التصميم يحمل غاية — المساحة الفارغة لا تقل قيمةً عن الخط.">
+      Every element must have a purpose — silence is as important as the mark.
+    </div>
+    <div class="about-disciplines">
+      <div class="disc-item">
+        <span class="disc-n" data-en="AI Video Production" data-ar="إنتاج الفيديو بالذكاء الاصطناعي">AI Video Production</span>
+        <span class="disc-tag" data-en="Emerging" data-ar="ريادي">Emerging</span>
+      </div>
+      <div class="disc-item">
+        <span class="disc-n" data-en="Brand Identity" data-ar="الهوية البصرية">Brand Identity</span>
+        <span class="disc-tag" data-en="Core" data-ar="أساسي">Core</span>
+      </div>
+      <div class="disc-item">
+        <span class="disc-n" data-en="Motion Graphics" data-ar="الموشن جرافيك">Motion Graphics</span>
+        <span class="disc-tag" data-en="Core" data-ar="أساسي">Core</span>
+      </div>
+      <div class="disc-item">
+        <span class="disc-n" data-en="Illustration" data-ar="الرسم الرقمي">Illustration</span>
+        <span class="disc-tag" data-en="Creative" data-ar="إبداعي">Creative</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="rv">
+    <div class="s-label" data-en="Selected Work" data-ar="من أعمالي">Selected Work</div>
+    <div class="proj-header">
+      <h2 class="s-h" data-en="Projects" data-ar="المشاريع">Projects</h2>
+      <div class="proj-filters" id="projFilters">
+        <button class="pf-btn active" data-filter="all" data-en="All" data-ar="الكل">All</button>
+        <button class="pf-btn" data-filter="film" data-en="Film & Poster" data-ar="أفلام وبوسترات">Film & Poster</button>
+        <button class="pf-btn" data-filter="packaging" data-en="Packaging" data-ar="تغليف">Packaging</button>
+        <button class="pf-btn" data-filter="identity" data-en="Identity" data-ar="هوية">Identity</button>
+        <button class="pf-btn" data-filter="ai" data-en="AI Production" data-ar="إنتاج AI">AI Production</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="proj-masonry rv" id="projMasonry">
+
+    <!-- 01 One Call -->
+    <div class="pm-card pm-tall" data-cat="film" onclick="openProject(2)">
+      <div class="pm-bg pm-film-1"></div>
+      <div class="pm-overlay"></div>
+      <span class="pm-arrow">↗</span>
+      <div class="pm-info">
+        <div class="pm-cat" data-en="Short Film · 2023" data-ar="فيلم قصير · 2023">Short Film · 2023</div>
+        <div class="pm-title" data-en="One Call" data-ar="مكالمة واحدة">One Call</div>
+      </div>
+    </div>
+
+    <!-- 02 Chestels Packaging -->
+    <div class="pm-card" data-cat="packaging" onclick="openProject(3)">
+      <div class="pm-bg pm-pkg-1"></div>
+      <div class="pm-overlay"></div>
+      <span class="pm-arrow">↗</span>
+      <div class="pm-info">
+        <div class="pm-cat" data-en="Packaging Design · 2023" data-ar="تصميم تغليف · 2023">Packaging Design · 2023</div>
+        <div class="pm-title">Chestels</div>
+      </div>
+    </div>
+
+    <!-- 03 Logo Suite -->
+    <div class="pm-card" data-cat="identity" onclick="openProject(6)">
+      <div class="pm-bg pm-logo-1"></div>
+      <div class="pm-overlay"></div>
+      <span class="pm-arrow">↗</span>
+      <div class="pm-info">
+        <div class="pm-cat" data-en="Logo Design · 2023" data-ar="تصميم شعارات · 2023">Logo Design · 2023</div>
+        <div class="pm-title" data-en="Logo Suite" data-ar="مجموعة شعارات">Logo Suite</div>
+      </div>
+    </div>
+
+    <!-- 04 Faded Memorise -->
+    <div class="pm-card pm-tall" data-cat="film" onclick="openProject(7)">
+      <div class="pm-bg pm-film-2"></div>
+      <div class="pm-overlay"></div>
+      <span class="pm-arrow">↗</span>
+      <div class="pm-info">
+        <div class="pm-cat" data-en="Movie Poster · 2023" data-ar="بوستر سينمائي · 2023">Movie Poster · 2023</div>
+        <div class="pm-title" data-en="Faded Memorise" data-ar="ذكريات باهتة">Faded Memorise</div>
+      </div>
+    </div>
+
+    <!-- 05 Chola Packaging -->
+    <div class="pm-card pm-wide" data-cat="packaging" onclick="openProject(8)">
+      <div class="pm-bg pm-pkg-2"></div>
+      <div class="pm-overlay"></div>
+      <span class="pm-arrow">↗</span>
+      <div class="pm-info">
+        <div class="pm-cat" data-en="Packaging Design · 2024" data-ar="تصميم تغليف · 2024">Packaging Design · 2024</div>
+        <div class="pm-title">Chola Botanical Soda</div>
+      </div>
+    </div>
+
+    <!-- 06 127 Hours Poster -->
+    <div class="pm-card pm-tall" data-cat="film" onclick="openProject(9)">
+      <div class="pm-bg pm-film-3"></div>
+      <div class="pm-overlay"></div>
+      <span class="pm-arrow">↗</span>
+      <div class="pm-info">
+        <div class="pm-cat" data-en="Movie Poster · 2023" data-ar="بوستر سينمائي · 2023">Movie Poster · 2023</div>
+        <div class="pm-title">127 Hours</div>
+      </div>
+    </div>
+
+    <!-- 07 Caveman AI -->
+    <div class="pm-card pm-wide" data-cat="ai" onclick="openProject(1)">
+      <div class="pm-bg pm-ai-1"></div>
+      <div class="pm-overlay"></div>
+      <span class="pm-arrow">↗</span>
+      <div class="pm-info">
+        <div class="pm-cat" data-en="AI Video Campaign · 2025" data-ar="حملة فيديو AI · 2025">AI Video Campaign · 2025</div>
+        <div class="pm-title" data-en="Caveman × Perfume" data-ar="Caveman × عطر">Caveman × Perfume</div>
+      </div>
+    </div>
+
+    <!-- 08 Sakrum -->
+    <div class="pm-card" data-cat="packaging" onclick="openProject(10)">
+      <div class="pm-bg pm-pkg-3"></div>
+      <div class="pm-overlay"></div>
+      <span class="pm-arrow">↗</span>
+      <div class="pm-info">
+        <div class="pm-cat" data-en="Packaging Design · 2024" data-ar="تصميم تغليف · 2024">Packaging Design · 2024</div>
+        <div class="pm-title">Sakrum</div>
+      </div>
+    </div>
+
+    <!-- 09 100 Yıl 81 İl -->
+    <div class="pm-card" data-cat="film" onclick="openProject(11)">
+      <div class="pm-bg pm-poster-1"></div>
+      <div class="pm-overlay"></div>
+      <span class="pm-arrow">↗</span>
+      <div class="pm-info">
+        <div class="pm-cat" data-en="Poster Design · 2023" data-ar="تصميم بوستر · 2023">Poster Design · 2023</div>
+        <div class="pm-title">100 Yıl 81 İl</div>
+      </div>
+    </div>
+
+    <!-- 10 Fractured Minds -->
+    <div class="pm-card pm-tall" data-cat="film" onclick="openProject(12)">
+      <div class="pm-bg pm-film-4"></div>
+      <div class="pm-overlay"></div>
+      <span class="pm-arrow">↗</span>
+      <div class="pm-info">
+        <div class="pm-cat" data-en="Movie Poster · 2024" data-ar="بوستر سينمائي · 2024">Movie Poster · 2024</div>
+        <div class="pm-title">Fractured Minds</div>
+      </div>
+    </div>
+
+    <!-- 11 Mooolkk -->
+    <div class="pm-card" data-cat="packaging" onclick="openProject(13)">
+      <div class="pm-bg pm-pkg-4"></div>
+      <div class="pm-overlay"></div>
+      <span class="pm-arrow">↗</span>
+      <div class="pm-info">
+        <div class="pm-cat" data-en="Packaging Design · 2024" data-ar="تصميم تغليف · 2024">Packaging Design · 2024</div>
+        <div class="pm-title">Mooolkk</div>
+      </div>
+    </div>
+
+    <!-- 12 Strrow Logo -->
+    <div class="pm-card" data-cat="identity" onclick="openProject(14)">
+      <div class="pm-bg pm-logo-2"></div>
+      <div class="pm-overlay"></div>
+      <span class="pm-arrow">↗</span>
+      <div class="pm-info">
+        <div class="pm-cat" data-en="Logo Design · 2023" data-ar="تصميم شعار · 2023">Logo Design · 2023</div>
+        <div class="pm-title">Strrow</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="rv">
+    <div class="s-label" data-en="What I Offer" data-ar="ماذا أقدم">What I Offer</div>
+    <h2 class="s-h" data-en="Services" data-ar="الخدمات">Services</h2>
+  </div>
+  <div class="svc-grid rv">
+    <div class="svc-card" onclick="openService(1)">
+      <div class="svc-num">01</div>
+      <h3 class="svc-title" data-en="AI Video Production" data-ar="إنتاج الفيديو بالذكاء الاصطناعي">AI Video Production</h3>
+      <p class="svc-desc" data-en="Cinematic advertising campaigns powered by AI — from concept to final cut. Character-consistent, visually striking, built to convert."
+         data-ar="حملات إعلانية سينمائية بالذكاء الاصطناعي — من الفكرة حتى المونتاج النهائي. صور متسقة، تأثير بصري قوي، نتائج حقيقية.">
+        Cinematic advertising campaigns powered by AI — from concept to final cut. Character-consistent, visually striking, built to convert.
+      </p>
+      <div class="svc-tags">
+        <span class="svc-tag">Kling AI</span>
+        <span class="svc-tag">Runway</span>
+        <span class="svc-tag">Midjourney</span>
+      </div>
+      <span class="svc-arrow">↗</span>
+    </div>
+    <div class="svc-card" onclick="openService(2)">
+      <div class="svc-num">02</div>
+      <h3 class="svc-title" data-en="Brand Identity" data-ar="الهوية البصرية">Brand Identity</h3>
+      <p class="svc-desc" data-en="Visual systems built to last — logo, typography, color, and every brand touchpoint designed to be consistent and memorable."
+         data-ar="أنظمة بصرية مصممة لتدوم — شعار، خطوط، ألوان، وكل تفصيلة تعكس شخصية علامتك التجارية.">
+        Visual systems built to last — logo, typography, color, and every brand touchpoint designed to be consistent and memorable.
+      </p>
+      <div class="svc-tags">
+        <span class="svc-tag">Logo</span>
+        <span class="svc-tag">Illustrator</span>
+        <span class="svc-tag">InDesign</span>
+      </div>
+      <span class="svc-arrow">↗</span>
+    </div>
+    <div class="svc-card" onclick="openService(3)">
+      <div class="svc-num">03</div>
+      <h3 class="svc-title" data-en="Motion Graphics" data-ar="الموشن جرافيك">Motion Graphics</h3>
+      <p class="svc-desc" data-en="Clean, purposeful motion that adds meaning — titles, transitions, and full motion pieces crafted with intent."
+         data-ar="حركة نظيفة وهادفة تضيف عمقاً — عناوين، انتقالات، وقطع متحركة مصممة بعناية.">
+        Clean, purposeful motion that adds meaning — titles, transitions, and full motion pieces crafted with intent.
+      </p>
+      <div class="svc-tags">
+        <span class="svc-tag">After Effects</span>
+        <span class="svc-tag">Premiere</span>
+      </div>
+      <span class="svc-arrow">↗</span>
+    </div>
+    <div class="svc-card" onclick="openService(4)">
+      <div class="svc-num">04</div>
+      <h3 class="svc-title" data-en="Social Media Content" data-ar="محتوى السوشيال ميديا">Social Media Content</h3>
+      <p class="svc-desc" data-en="Platform-native content that stops the scroll. Full packages from concept to publishing strategy for Reels and TikTok."
+         data-ar="محتوى يوقف التمرير ويصنع أثراً — حزم متكاملة من الفكرة حتى استراتيجية النشر على ريلز وتيك توك.">
+        Platform-native content that stops the scroll. Full packages from concept to publishing strategy for Reels and TikTok.
+      </p>
+      <div class="svc-tags">
+        <span class="svc-tag">Reels</span>
+        <span class="svc-tag">TikTok</span>
+      </div>
+      <span class="svc-arrow">↗</span>
+    </div>
+    <div class="svc-card" onclick="openService(5)">
+      <div class="svc-num">05</div>
+      <h3 class="svc-title" data-en="Illustration" data-ar="الرسم الرقمي">Illustration</h3>
+      <p class="svc-desc" data-en="Custom illustrations rooted in storytelling and emotion — for brands, campaigns, and digital platforms."
+         data-ar="رسوم مخصصة تحكي قصة وتحمل مشاعر — للعلامات التجارية، الحملات، والمنصات الرقمية.">
+        Custom illustrations rooted in storytelling and emotion — for brands, campaigns, and digital platforms.
+      </p>
+      <div class="svc-tags">
+        <span class="svc-tag">Digital Art</span>
+        <span class="svc-tag">Photoshop</span>
+      </div>
+      <span class="svc-arrow">↗</span>
+    </div>
+    <div class="svc-card" onclick="openService(6)">
+      <div class="svc-num">06</div>
+      <h3 class="svc-title" data-en="Digital Marketing" data-ar="التسويق الرقمي">Digital Marketing</h3>
+      <p class="svc-desc" data-en="Ad creatives and strategy built to convert — design meets data for Meta, TikTok, and Google campaigns."
+         data-ar="تصاميم إعلانية واستراتيجية تحقق نتائج — حيث يلتقي التصميم بالبيانات في حملات Meta وTikTok وGoogle.">
+        Ad creatives and strategy built to convert — design meets data for Meta, TikTok, and Google campaigns.
+      </p>
+      <div class="svc-tags">
+        <span class="svc-tag">Meta Ads</span>
+        <span class="svc-tag">TikTok Ads</span>
+        <span class="svc-tag">Analytics</span>
+      </div>
+      <span class="svc-arrow">↗</span>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="rv">
+    <div class="s-label" data-en="Expertise" data-ar="مستوى المهارات">Expertise</div>
+    <h2 class="s-h" data-en="Skills" data-ar="المهارات">Skills</h2>
+    <div class="skill-list" id="skillList">
+      <div class="skill-row">
+        <div class="skill-meta">
+          <span class="skill-name" data-en="Video Editing & Motion" data-ar="مونتاج الفيديو والموشن">Video Editing & Motion</span>
+          <span class="skill-pct">95</span>
+        </div>
+        <div class="skill-track"><div class="skill-fill" data-w=".95"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-meta">
+          <span class="skill-name" data-en="AI Video Production" data-ar="إنتاج الفيديو بالذكاء الاصطناعي">AI Video Production</span>
+          <span class="skill-pct">90</span>
+        </div>
+        <div class="skill-track"><div class="skill-fill" data-w=".90"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-meta">
+          <span class="skill-name" data-en="Graphic Design" data-ar="التصميم الجرافيكي">Graphic Design</span>
+          <span class="skill-pct">92</span>
+        </div>
+        <div class="skill-track"><div class="skill-fill" data-w=".92"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-meta">
+          <span class="skill-name" data-en="Brand Identity" data-ar="الهوية البصرية">Brand Identity</span>
+          <span class="skill-pct">85</span>
+        </div>
+        <div class="skill-track"><div class="skill-fill" data-w=".85"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-meta">
+          <span class="skill-name" data-en="Social Media Strategy" data-ar="استراتيجية السوشيال ميديا">Social Media Strategy</span>
+          <span class="skill-pct">82</span>
+        </div>
+        <div class="skill-track"><div class="skill-fill" data-w=".82"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="rv">
+    <div class="s-label" data-en="Education & Credentials" data-ar="التعليم والشهادات">Education & Credentials</div>
+    <h2 class="s-h" style="font-size:clamp(28px,3vw,42px)" data-en="Credentials" data-ar="الشهادات">Credentials</h2>
+    <div class="cred-list" style="margin-top:36px">
+      <div class="cred-item">
+        <div>
+          <div class="cred-n" data-en="B.A. Visual Communication Design" data-ar="بكالوريوس تصميم الاتصال البصري">B.A. Visual Communication Design</div>
+          <div class="cred-s" data-en="Dumlupınar University — 2024" data-ar="جامعة دوملوبينار — 2024">Dumlupınar University — 2024</div>
+        </div>
+        <span class="cred-arrow">↗</span>
+      </div>
+      <div class="cred-item">
+        <div>
+          <div class="cred-n" data-en="Fundamentals of Digital Marketing" data-ar="أساسيات التسويق الرقمي">Fundamentals of Digital Marketing</div>
+          <div class="cred-s">Google</div>
+        </div>
+        <span class="cred-arrow">↗</span>
+      </div>
+      <div class="cred-item">
+        <div>
+          <div class="cred-n" data-en="Content Marketing" data-ar="تسويق المحتوى">Content Marketing</div>
+          <div class="cred-s">HubSpot Academy</div>
+        </div>
+
+
+<!-- 404 PAGE -->
+<div class="page-404" id="page404">
+  <div class="e404-num">404</div>
+  <div class="e404-title" id="e404Title">Page not found</div>
+  <a href="#" class="e404-back" onclick="document.getElementById('page404').classList.remove('show')">
+    <span id="e404Back">← Back home</span>
+  </a>
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+  <span class="ft-copy" data-en="© 2025 Ahmad Sattof" data-ar="© 2025 أحمد سطوف">© 2025 Ahmad Sattof</span>
+  <span class="ft-note" data-en="Designed with intention." data-ar="كل تفصيلة بقصد.">Designed with intention.</span>
+</footer>
+
+<!-- PROJECT OVERLAY -->
+<div class="proj-overlay" id="projOverlay">
+  <nav class="po-nav">
+    <button class="po-back" onclick="closeProject()">
+      <span class="po-back-arrow">←</span>
+      <span data-en="Back to Work" data-ar="العودة للأعمال">Back to Work</span>
+    </button>
+    <span class="po-nav-title" id="poNavTitle">Project</span>
+  </nav>
+
+  <div class="po-hero">
+    <div class="po-eyebrow" id="poEyebrow"></div>
+    <h1 class="po-title" id="poTitle"></h1>
+    <div class="po-meta">
+      <div class="po-meta-item">
+        <div class="po-meta-label" data-en="Year" data-ar="السنة">Year</div>
+        <div class="po-meta-val" id="poYear"></div>
+      </div>
+      <div class="po-meta-item">
+        <div class="po-meta-label" data-en="Category" data-ar="التصنيف">Category</div>
+        <div class="po-meta-val" id="poCat"></div>
+      </div>
+      <div class="po-meta-item">
+        <div class="po-meta-label" data-en="Role" data-ar="الدور">Role</div>
+        <div class="po-meta-val" id="poRole"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="po-visual" id="poVisual">
+    <div class="po-visual-num" id="poVisualNum"></div>
+    <div class="po-visual-label" id="poVisualLabel"></div>
+  </div>
+
+  <!-- Project image gallery -->
+  <div class="po-gallery" id="poGallery"></div>
+
+  <div class="po-body">
+    <div class="po-sidebar">
+      <div class="po-sidebar-label" data-en="Tools Used" data-ar="الأدوات">Tools Used</div>
+      <div class="po-tag-list" id="poTools"></div>
+
+      <div class="po-sidebar-label" style="margin-top:36px" data-en="Deliverables" data-ar="المخرجات">Deliverables</div>
+      <div class="po-sidebar-val" id="poDeliverables"></div>
+    </div>
+
+    <div class="po-case">
+      <div class="po-case-block">
+        <div class="po-case-num">01</div>
+        <h2 class="po-case-heading" data-en="The Problem" data-ar="التحدي">The Problem</h2>
+        <p class="po-case-text" id="poProblem"></p>
+      </div>
+      <div class="po-case-block">
+        <div class="po-case-num">02</div>
+        <h2 class="po-case-heading" data-en="The Idea" data-ar="الفكرة">The Idea</h2>
+        <p class="po-case-text" id="poIdea"></p>
+      </div>
+      <div class="po-case-block">
+        <div class="po-case-num">03</div>
+        <h2 class="po-case-heading" data-en="The Result" data-ar="النتيجة">The Result</h2>
+        <p class="po-case-text" id="poResult"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="po-next">
+    <div>
+      <div class="po-next-label" data-en="Next Project" data-ar="المشروع التالي">Next Project</div>
+      <div class="po-next-title" id="poNextTitle"></div>
+    </div>
+    <button class="po-next-btn" id="poNextBtn">
+      <span data-en="View Project" data-ar="شاهد المشروع">View Project</span>
+      <span class="arr">→</span>
+    </button>
+  </div>
+</div>
+
+<script>
+/* ─── LOADING SCREEN ─── */
+(function() {
+  const loader = document.getElementById('loader');
+  // shapes draw via SVG animate, hide after all finish (~2.4s total)
+  setTimeout(() => loader.classList.add('done'), 2600);
+})();
+
+/* ─── HERO CANVAS — TRAILING LINES ─── */
+(function() {
+  const canvas = document.getElementById('heroCanvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, running = true;
+  const pos = { x: 0, y: 0 };
+  const cfg = { trails: 12, size: 28, friction: 0.52, dampening: 0.02, tension: 0.98 };
+
+  function resize() {
+    w = canvas.width  = canvas.offsetWidth;
+    h = canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Node
+  function Node() { this.x = w/2; this.y = h/2; this.vx = 0; this.vy = 0; }
+
+  // Line
+  function Line(spring) {
+    this.spring = spring;
+    this.friction = cfg.friction + .01 * Math.random() - .005;
+    this.nodes = Array.from({ length: cfg.size }, () => {
+      const n = new Node(); n.x = pos.x; n.y = pos.y; return n;
+    });
+  }
+  Line.prototype.update = function() {
+    let e = this.spring, t = this.nodes[0];
+    t.vx += (pos.x - t.x) * e;
+    t.vy += (pos.y - t.y) * e;
+    for (let i = 0; i < this.nodes.length; i++) {
+      t = this.nodes[i];
+      if (i > 0) {
+        const n = this.nodes[i-1];
+        t.vx += (n.x - t.x) * e;
+        t.vy += (n.y - t.y) * e;
+        t.vx += n.vx * cfg.dampening;
+        t.vy += n.vy * cfg.dampening;
+      }
+      t.vx *= this.friction; t.vy *= this.friction;
+      t.x += t.vx; t.y += t.vy;
+      e *= cfg.tension;
+    }
+  };
+  Line.prototype.draw = function() {
+    let n = this.nodes[0].x, i = this.nodes[0].y;
+    ctx.beginPath(); ctx.moveTo(n, i);
+    for (let a = 1; a < this.nodes.length - 2; a++) {
+      const e = this.nodes[a], t = this.nodes[a+1];
+      ctx.quadraticCurveTo(e.x, e.y, .5*(e.x+t.x), .5*(e.y+t.y));
+    }
+    const e = this.nodes[this.nodes.length-2];
+    const t = this.nodes[this.nodes.length-1];
+    ctx.quadraticCurveTo(e.x, e.y, t.x, t.y);
+    ctx.stroke(); ctx.closePath();
+  };
+
+  let lines = [];
+  function initLines() {
+    lines = Array.from({ length: cfg.trails }, (_, i) =>
+      new Line(.45 + (i / cfg.trails) * .025)
+    );
+  }
+
+  // Use accent color (#b5a48a) — matches the site palette
+  const accentRgb = '181,164,138';
+
+  function render() {
+    if (!running) return;
+    ctx.clearRect(0, 0, w, h);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.strokeStyle = `rgba(${accentRgb}, 0.06)`;
+    ctx.lineWidth = 2.5;
+    lines.forEach(l => { l.update(); l.draw(); });
+    requestAnimationFrame(render);
+  }
+
+  let started = false;
+  function start(e) {
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+    // only track if mouse is over hero
+    const hero = document.getElementById('hero');
+    const rect = hero.getBoundingClientRect();
+    if (y < rect.top || y > rect.bottom) return;
+    pos.x = x; pos.y = y;
+    if (!started) { started = true; initLines(); render(); }
+  }
+
+  function move(e) {
+    pos.x = e.touches ? e.touches[0].clientX : e.clientX;
+    pos.y = e.touches ? e.touches[0].clientY : e.clientY;
+    if (e.cancelable) e.preventDefault();
+  }
+
+  document.addEventListener('mousemove', start);
+  document.addEventListener('mousemove', move);
+  document.addEventListener('touchstart', start, { passive: true });
+  document.addEventListener('touchmove', move, { passive: false });
+  window.addEventListener('blur', () => running = false);
+  window.addEventListener('focus', () => { running = true; render(); });
+})();
+
+/* ─── SCROLL PROGRESS — ELASTIC ─── */
+(function() {
+  const bar = document.getElementById('scrollProgress');
+  let current = 0, target = 0, isScrolling = false, stretchTimer;
+
+  function getScrollPct() {
+    const doc = document.documentElement;
+    return doc.scrollTop / (doc.scrollHeight - doc.clientHeight);
+  }
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function animate() {
+    target = getScrollPct() * 100;
+    const diff = target - current;
+
+    // elastic: faster when difference is big
+    current = lerp(current, target, 0.12);
+
+    const scaleX = 1 + Math.abs(diff) * 0.006; // stretch while moving
+    bar.style.width = current + '%';
+    bar.style.transform = `scaleX(${scaleX})`;
+
+    if (Math.abs(diff) > 0.05) requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('scroll', () => {
+    // squash on start of scroll
+    bar.style.height = '5px';
+    bar.style.opacity = '1';
+    clearTimeout(stretchTimer);
+    requestAnimationFrame(animate);
+
+    // snap back after scroll stops
+    stretchTimer = setTimeout(() => {
+      bar.style.height = '3px';
+      bar.style.transform = 'scaleX(1)';
+    }, 150);
+  }, { passive: true });
+})();
+
+/* ─── DARK MODE ─── */
+let isDark = localStorage.getItem('dark') === '1';
+function applyDark() {
+  document.documentElement.classList.toggle('dark', isDark);
+  const btn = document.getElementById('darkToggle');
+  document.getElementById('darkIcon').textContent = isDark ? '☽' : '☀︎';
+  btn.classList.toggle('is-dark', isDark);
+}
+applyDark();
+function toggleDark() {
+  isDark = !isDark;
+  localStorage.setItem('dark', isDark ? '1' : '0');
+  applyDark();
+}
+
+/* ─── CURSOR ─── */
+const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+});
+(function loop() {
+  rx += (mx - rx) * .12; ry += (my - ry) * .12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(loop);
+})();
+document.querySelectorAll('a, button, .proj-card, .svc-card, .cred-item').forEach(el => {
+  el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+  el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+});
+
+/* ─── RIPPLE TRAIL EFFECT ─── */
+let lastRipple = 0;
+document.addEventListener('mousemove', e => {
+  const now = Date.now();
+  if (now - lastRipple < 80) return; // throttle: one ripple every 80ms
+  lastRipple = now;
+
+  const r = document.createElement('div');
+  r.className = 'ripple-trail';
+  r.style.left = e.clientX + 'px';
+  r.style.top  = e.clientY + 'px';
+  document.body.appendChild(r);
+
+  // remove after animation ends
+  r.addEventListener('animationend', () => r.remove());
+});
+
+/* ─── PROJECT DATA ─── */
+// images: add your image URLs for each project below.
+// Each project accepts an array of image URLs. Example:
+// images: ['images/project1-main.jpg', 'images/project1-detail.jpg']
+// The first image becomes the hero visual; additional ones appear in the gallery below.
+const projects = [
+  {
+    id: 1,
+    num: '01',
+    images: [], // e.g. ['images/caveman-1.jpg', 'images/caveman-2.jpg']
+    en: {
+      cat: 'AI Video Campaign', title: 'Caveman × Perfume',
+      role: 'Director & AI Producer',
+      problem: 'A perfume brand needed a campaign that would stop the scroll and communicate raw masculinity — without a large production budget or a traditional film crew.',
+      idea: 'I conceived a cinematic narrative featuring a prehistoric caveman discovering a modern perfume. Using Kling AI for character-consistent video generation and Midjourney for art direction, I built a full 60-second spot with original sound design.',
+      result: 'The campaign generated 3× higher engagement than the brand\'s previous content. The AI-native production approach cut costs by 80% while delivering broadcast-quality visuals.',
+      tools: ['Kling AI', 'Midjourney', 'Runway', 'Premiere Pro', 'After Effects'],
+      deliverables: '60-sec hero film\n3× social cuts\nStill frames\nSound design'
+    },
+    ar: {
+      cat: 'حملة فيديو بالذكاء الاصطناعي', title: 'Caveman × عطر',
+      role: 'مخرج ومنتج ذكاء اصطناعي',
+      problem: 'كانت علامة عطور تحتاج حملة تجذب الانتباه وتعبّر عن الرجولة الخام — بدون ميزانية إنتاج كبيرة أو فريق تصوير تقليدي.',
+      idea: 'ابتكرت سردية سينمائية تصوّر إنساناً من عصر ما قبل التاريخ يكتشف عطراً حديثاً. استخدمت Kling AI لتوليد فيديو متسق الشخصية وMidjourney للإخراج الفني، وبنيت إعلاناً كاملاً مدته 60 ثانية بتصميم صوتي أصيل.',
+      result: 'حققت الحملة تفاعلاً أعلى بـ 3 أضعاف من المحتوى السابق للعلامة، وخفّض أسلوب الإنتاج بالذكاء الاصطناعي التكاليف بنسبة 80% مع الحفاظ على جودة بصرية احترافية.',
+      tools: ['Kling AI', 'Midjourney', 'Runway', 'Premiere Pro', 'After Effects'],
+      deliverables: 'فيلم رئيسي 60 ثانية\n3 قطع للسوشيال ميديا\nصور ثابتة\nتصميم صوتي'
+    },
+    year: '2025'
+  },
+  {
+    id: 2,
+    num: '02',
+    images: [], // Add image URLs: ['url1.jpg', 'url2.jpg']
+    en: {
+      cat: 'Short Film', title: 'One Call',
+      role: 'Director, Editor & Motion Designer',
+      problem: 'A graduation short film project that needed to communicate deep emotional weight — the anxiety of a single phone call that changes everything — with minimal resources and a tiny crew.',
+      idea: 'I directed and edited a tightly crafted 8-minute drama using close-up cinematography and intentional silence. Motion graphics were used minimally to layer emotional subtext without dialogue.',
+      result: 'Screened at the university showcase and received the highest jury score in the Visual Communication department. The film has since been shared across regional film communities.',
+      tools: ['Premiere Pro', 'After Effects', 'DaVinci Resolve'],
+      deliverables: '8-min short film\nFull color grade\nOriginal motion titles\nFestival cut (5-min)'
+    },
+    ar: {
+      cat: 'فيلم قصير', title: 'مكالمة واحدة',
+      role: 'مخرج، مونتير ومصمم موشن',
+      problem: 'مشروع تخرج يحتاج إلى نقل ثقل عاطفي عميق — قلق مكالمة هاتفية واحدة تغيّر كل شيء — بموارد محدودة وفريق صغير.',
+      idea: 'أخرجت وقمت بمونتاج دراما مدتها 8 دقائق، معتمداً على التصوير القريب والصمت المقصود. استُخدمت الجرافيك المتحركة بشكل خفي لإضافة طبقات عاطفية دون حوار مباشر.',
+      result: 'عُرض الفيلم في الحفل الختامي للجامعة وحصل على أعلى تقييم من لجنة التحكيم في قسم تصميم الاتصال البصري، وانتشر لاحقاً في مجتمعات الأفلام الإقليمية.',
+      tools: ['Premiere Pro', 'After Effects', 'DaVinci Resolve'],
+      deliverables: 'فيلم قصير 8 دقائق\nمعالجة لونية كاملة\nعناوين موشن أصيلة\nنسخة مهرجانات (5 دقائق)'
+    },
+    year: '2023'
+  },
+  {
+    id: 3,
+    num: '03',
+    images: [], // Add image URLs: ['url1.jpg', 'url2.jpg']
+    en: {
+      cat: 'Visual Identity', title: 'Brand Identity',
+      role: 'Brand Designer',
+      problem: 'A local business needed a complete visual identity system — one that felt professional and modern, yet remained warm and approachable for its target audience.',
+      idea: 'I built a full brand system starting with a custom logomark, then extending it across typography, color palette, and all brand touchpoints. Every decision was guided by the brand\'s personality and values.',
+      result: 'The client launched with a cohesive, professional identity that immediately distinguished them from competitors. The visual system was delivered with full usage guidelines for consistent application.',
+      tools: ['Adobe Illustrator', 'InDesign', 'Photoshop'],
+      deliverables: 'Logo system\nBrand guidelines\nBusiness stationery\nSocial media templates'
+    },
+    ar: {
+      cat: 'هوية بصرية', title: 'تصميم هوية علامة',
+      role: 'مصمم هوية بصرية',
+      problem: 'كان مشروع محلي يحتاج نظام هوية بصرية متكاملاً — يبدو احترافياً وعصرياً مع الحفاظ على الدفء والقرب من الجمهور المستهدف.',
+      idea: 'بنيت نظام علامة تجارية كاملاً بدءاً من شعار مخصص، ثم توسّعت إلى الخطوط، لوحة الألوان، وكل نقاط التواصل مع العلامة. كل قرار تصميمي جاء من شخصية وقيم العلامة.',
+      result: 'انطلق العميل بهوية متسقة واحترافية ميّزته فوراً عن المنافسين، وسُلّم النظام البصري مع دليل استخدام كامل لضمان الاتساق.',
+      tools: ['Adobe Illustrator', 'InDesign', 'Photoshop'],
+      deliverables: 'منظومة الشعار\nدليل العلامة التجارية\nالقرطاسية الرسمية\nقوالب السوشيال ميديا'
+    },
+    year: '2023'
+  },
+  {
+    id: 5,
+    num: '05',
+    images: [], // Add image URLs: ['url1.jpg', 'url2.jpg']
+    en: {
+      cat: 'Digital Illustration', title: 'Illustration Series',
+      role: 'Illustrator',
+      problem: 'An ongoing personal project exploring the intersection of Middle Eastern visual culture and contemporary digital illustration — a space that feels underrepresented in modern design.',
+      idea: 'A series of standalone digital illustrations that blend Arabic geometric patterns, calligraphic references, and modern flat design. Each piece tells a quiet story with minimal elements.',
+      result: 'Currently in progress. The first three pieces have been shared on Behance and received strong engagement from both regional and international design communities.',
+      tools: ['Photoshop', 'Procreate', 'Illustrator'],
+      deliverables: 'Series of 10 illustrations\nHigh-res print files\nAnimated versions (selected pieces)'
+    },
+    ar: {
+      cat: 'رسم رقمي', title: 'سلسلة رسوم',
+      role: 'مصوّر رقمي',
+      problem: 'مشروع شخصي مستمر يستكشف تقاطع الثقافة البصرية الشرق أوسطية مع الرسم الرقمي المعاصر — مساحة تبدو غائبة في التصميم الحديث.',
+      idea: 'سلسلة رسوم رقمية مستقلة تمزج الأنماط الهندسية العربية ومرجعيات الخط العربي مع التصميم المسطح الحديث. كل قطعة تحكي قصة هادئة بعناصر بسيطة.',
+      result: 'قيد الإنجاز حالياً. نُشرت القطع الثلاث الأولى على Behance وحققت تفاعلاً قوياً من مجتمعات التصميم الإقليمية والدولية.',
+      tools: ['Photoshop', 'Procreate', 'Illustrator'],
+      deliverables: 'سلسلة من 10 رسوم\nملفات طباعة عالية الجودة\nنسخ متحركة (قطع مختارة)'
+    },
+    year: 'قريباً / Soon'
+  },
+  {
+    id: 6, num: '06',
+    images: [], // Add image URLs: ['url1.jpg', 'url2.jpg']
+    en: { cat: 'Logo Design', title: 'Logo Suite',
+      role: 'Brand Designer',
+      problem: 'Four distinct brands — AmiSakura, AquilaCraft, UrbanRover, and Altitude Tech — each needed a unique logomark that communicated their identity instantly.',
+      idea: 'Each logo was built around a core conceptual idea: AmiSakura merges A+S into cherry blossom flow; AquilaCraft combines eagle strength with craftsmanship; UrbanRover embeds U+R inside a Hummer silhouette; Altitude Tech uses A+T in geometric futurism.',
+      result: 'All four logos delivered as complete brand marks with usage guidelines. The suite demonstrates range across Japanese elegance, industrial craft, mobility, and tech.',
+      tools: ['Adobe Illustrator', 'Photoshop'],
+      deliverables: '4 logo marks\nVector files\nUsage guidelines\nColor variations' },
+    ar: { cat: 'تصميم شعارات', title: 'مجموعة شعارات',
+      role: 'مصمم هوية بصرية',
+      problem: 'أربع علامات مختلفة — AmiSakura وAquilaCraft وUrbanRover وAltitude Tech — تحتاج كل واحدة شعاراً يعبّر عن هويتها بلمحة واحدة.',
+      idea: 'بُني كل شعار حول فكرة مفاهيمية: AmiSakura تمزج A+S بأسلوب أزهار الكرز؛ AquilaCraft تجمع قوة النسر بالحرفية؛ UrbanRover تضم U+R داخل سيلويت هامر؛ Altitude Tech تستخدم A+T بهندسة مستقبلية.',
+      result: 'سُلّمت الشعارات الأربعة كعلامات بصرية كاملة مع دليل استخدام. المجموعة تُظهر تنوعاً بين الأناقة اليابانية، الحرفية، التنقل، والتقنية.',
+      tools: ['Adobe Illustrator', 'Photoshop'],
+      deliverables: '4 شعارات متجهية\nملفات Vector\nدليل استخدام\nتنويعات الألوان' },
+    year: '2023'
+  },
+  {
+    id: 7, num: '07',
+    images: [], // Add image URLs: ['url1.jpg', 'url2.jpg']
+    en: { cat: 'Movie Poster', title: 'Faded Memorise',
+      role: 'Graphic Designer',
+      problem: 'Design a compelling poster for a fictional psychological drama — conveying the feeling of forgotten memories returning under moonlight.',
+      idea: 'A man facing an ominous, sketch-rendered mansion at night. Hand-drawn textures, a sophisticated script font, and the nocturnal ambiance combine to evoke emotional self-discovery without a single word of dialogue.',
+      result: 'The poster was selected as a top design piece at the university showcase. The atmospheric treatment and contrast between the drawn environment and photographic elements became a signature aesthetic.',
+      tools: ['Photoshop', 'Illustrator'],
+      deliverables: 'A2 print poster\nDigital formats\nDVD mockup' },
+    ar: { cat: 'بوستر سينمائي', title: 'ذكريات باهتة',
+      role: 'مصمم جرافيك',
+      problem: 'تصميم بوستر مؤثر لدراما نفسية خيالية — ينقل إحساس الذكريات المنسية وهي تعود تحت ضوء القمر.',
+      idea: 'رجل يواجه منزلاً مهجوراً مُرسوماً بخطوط يدوية في الليل. ملمس مرسوم، خط سكريبت راقٍ، وأجواء ليلية تستدعي رحلة اكتشاف ذاتي.',
+      result: 'اختير البوستر كأحد أبرز أعمال التصميم في العرض الختامي للجامعة.',
+      tools: ['Photoshop', 'Illustrator'],
+      deliverables: 'بوستر A2 للطباعة\nصيغ رقمية\nموكاب DVD' },
+    year: '2023'
+  },
+  {
+    id: 8, num: '08',
+    images: [], // Add image URLs: ['url1.jpg', 'url2.jpg']
+    en: { cat: 'Packaging Design', title: 'Chola Botanical Soda',
+      role: 'Packaging Designer',
+      problem: 'Design premium packaging for a botanical sparkling soda brand — Chola — with three flavours: Peony & Rhubarb, Rose & Raspberry, and Orange Blossom & White Tea.',
+      idea: 'Each flavour gets its own tonal gradient — deep burgundy, blush pink, and warm gold — with botanical floral illustration and refined serif typography. The result is elegant, premium, and shelf-ready.',
+      result: 'A cohesive three-variant packaging system that communicates botanical sophistication. The design positions Chola as a premium lifestyle product.',
+      tools: ['Illustrator', 'Photoshop', 'Mockup Tools'],
+      deliverables: '3 can label designs\nPrint-ready files\n3D mockups' },
+    ar: { cat: 'تصميم تغليف', title: 'Chola — مشروب نباتي',
+      role: 'مصمم تغليف',
+      problem: 'تصميم تغليف راقٍ لعلامة مشروبات نباتية غازية — Chola — بثلاثة نكهات.',
+      idea: 'لكل نكهة تدرج لوني خاص — برغندي عميق، وردي، وذهبي دافئ — مع رسوم نباتية زهرية وطباعة سيريف أنيقة.',
+      result: 'نظام تغليف متماسك بثلاثة تنويعات يضع Chola كمنتج نمط حياة فاخر.',
+      tools: ['Illustrator', 'Photoshop', 'أدوات موكاب'],
+      deliverables: '3 تصاميم علب\nملفات جاهزة للطباعة\nموكاب ثلاثي الأبعاد' },
+    year: '2024'
+  },
+  {
+    id: 9, num: '09',
+    images: [], // Add image URLs: ['url1.jpg', 'url2.jpg']
+    en: { cat: 'Movie Poster', title: '127 Hours',
+      role: 'Graphic Designer',
+      problem: 'Redesign the poster for the film 127 Hours — blending modern aesthetics with the film\'s visceral, survival-driven essence.',
+      idea: 'A silhouette double-exposure technique merges the protagonist\'s profile with the vast desert canyon landscape. Warm amber and rust tones mirror the relentless desert heat and psychological isolation.',
+      result: 'The redesign was presented in the university poster design course and praised for its conceptual clarity and cinematic execution.',
+      tools: ['Photoshop', 'Illustrator'],
+      deliverables: 'A2 movie poster\nDigital formats\nFramed mockup' },
+    ar: { cat: 'بوستر سينمائي', title: '127 ساعة',
+      role: 'مصمم جرافيك',
+      problem: 'إعادة تصميم بوستر فيلم 127 Hours — بمزج الجماليات الحديثة مع جوهر الفيلم القائم على البقاء.',
+      idea: 'تقنية سيلويت مزدوجة تدمج ملامح البطل مع منظر وادي الصحراء الشاسع. ألوان العنبر والصدأ تعكس حرارة الصحراء والعزلة النفسية.',
+      result: 'إعادة التصميم قُدّمت في مساق تصميم البوسترات وأُثني عليها لوضوحها المفاهيمي وإتقانها السينمائي.',
+      tools: ['Photoshop', 'Illustrator'],
+      deliverables: 'بوستر A2\nصيغ رقمية\nموكاب مؤطر' },
+    year: '2023'
+  },
+  {
+    id: 10, num: '10',
+    images: [], // Add image URLs: ['url1.jpg', 'url2.jpg']
+    en: { cat: 'Packaging Design', title: 'Sakrum',
+      role: 'Packaging Designer',
+      problem: 'Design premium perfume box packaging for Sakrum — a fragrance brand that needed to communicate luxury, calm, and modern minimalism.',
+      idea: 'A soft gradient transitioning from cool lavender to deep mauve, with refined gold typography. Three identical boxes in slightly different angles create a gallery-like presentation that feels both aspirational and serene.',
+      result: 'The packaging concept successfully communicates premium positioning through restraint — no excess, no noise, just material and colour doing the work.',
+      tools: ['Illustrator', 'Photoshop', 'Mockup Tools'],
+      deliverables: 'Box packaging design\n3D mockup\nPrint-ready files' },
+    ar: { cat: 'تصميم تغليف', title: 'Sakrum — عطر',
+      role: 'مصمم تغليف',
+      problem: 'تصميم علبة عطر فاخرة لـ Sakrum — علامة عطور تحتاج أن توصل الفخامة والهدوء والمينيمالية الحديثة.',
+      idea: 'تدرج ناعم من اللافندر البارد إلى الموف العميق، مع طباعة ذهبية راقية. ثلاث علب متطابقة بزوايا مختلفة قليلاً تخلق عرضاً شبيهاً بالغاليري.',
+      result: 'المفهوم التغليفي ينجح في إيصال الفخامة من خلال ضبط النفس — لا زيادة، لا ضوضاء.',
+      tools: ['Illustrator', 'Photoshop', 'أدوات موكاب'],
+      deliverables: 'تصميم علبة\nموكاب ثلاثي الأبعاد\nملفات جاهزة للطباعة' },
+    year: '2024'
+  },
+  {
+    id: 11, num: '11',
+    images: [], // Add image URLs: ['url1.jpg', 'url2.jpg']
+    en: { cat: 'Poster Design', title: '100 Yıl 81 İl',
+      role: 'Graphic Designer',
+      problem: 'Design a commemorative poster celebrating Turkey\'s 100th Republic anniversary — representing both the 100 years and Turkey\'s 81 provinces in a single, elegant mark.',
+      idea: 'Writing "100" using an infinity symbol that simultaneously reads as "8" — creating "81" embedded within "100". The deep red background references the Turkish flag, and the white mark stands with confident simplicity.',
+      result: 'The typographic concept received recognition for its conceptual ingenuity — combining three meanings (100, 8, 81) in one unified symbol.',
+      tools: ['Illustrator', 'Photoshop'],
+      deliverables: 'A2 commemorative poster\nHorizontal format\nDigital versions' },
+    ar: { cat: 'تصميم بوستر', title: '100 عام 81 ولاية',
+      role: 'مصمم جرافيك',
+      problem: 'تصميم بوستر تذكاري للاحتفال بمئوية الجمهورية التركية — يجمع بين المئة عام و81 ولاية في علامة واحدة أنيقة.',
+      idea: 'كتابة "100" باستخدام رمز اللانهاية الذي يُقرأ أيضاً بوصفه "8" — ليوّلد "81" مضمّناً في "100". الخلفية الحمراء العميقة تستحضر العلم التركي.',
+      result: 'المفهوم الطباعي نال اعترافاً بذكائه — ثلاثة معانٍ (100، 8، 81) في رمز واحد متماسك.',
+      tools: ['Illustrator', 'Photoshop'],
+      deliverables: 'بوستر A2 تذكاري\nصيغة أفقية\nنسخ رقمية' },
+    year: '2023'
+  },
+  {
+    id: 12, num: '12',
+    images: [], // Add image URLs: ['url1.jpg', 'url2.jpg']
+    en: { cat: 'Movie Poster', title: 'Fractured Minds',
+      role: 'Graphic Designer',
+      problem: 'Create a psychological thriller poster — Fractured Minds — that communicates identity fragmentation and psychological disintegration visually.',
+      idea: 'A pixelated, glitch-treated portrait of a man whose face is literally fractured into three displaced sections. Chromatic aberration, scan lines, and digital noise reinforce the theme of a shattered psyche.',
+      result: 'The poster stands as one of the strongest conceptual pieces in the portfolio — where technique and concept are inseparable.',
+      tools: ['Photoshop', 'After Effects'],
+      deliverables: 'Movie poster\nDigital formats\nSocial media versions' },
+    ar: { cat: 'بوستر سينمائي', title: 'عقول متشققة',
+      role: 'مصمم جرافيك',
+      problem: 'إنشاء بوستر لثريلر نفسي — Fractured Minds — يعبّر بصرياً عن تفكك الهوية والانهيار النفسي.',
+      idea: 'صورة بكسيلية مشوّهة لرجل وجهه مكسور حرفياً إلى ثلاثة أجزاء متباعدة. انزياح لوني، خطوط مسح، وضوضاء رقمية تعزّز موضوع النفس المتشظية.',
+      result: 'البوستر من أقوى الأعمال المفاهيمية في المحفظة — حيث لا يمكن فصل التقنية عن الفكرة.',
+      tools: ['Photoshop', 'After Effects'],
+      deliverables: 'بوستر الفيلم\nصيغ رقمية\nنسخ السوشيال ميديا' },
+    year: '2024'
+  },
+  {
+    id: 13, num: '13',
+    images: [], // Add image URLs: ['url1.jpg', 'url2.jpg']
+    en: { cat: 'Packaging Design', title: 'Mooolkk',
+      role: 'Packaging Designer',
+      problem: 'Design packaging for a premium milk brand — Mooolkk — that feels fresh, honest, and distinctly modern on crowded dairy shelves.',
+      idea: 'A glass bottle with a black-and-white cow-spot label pattern. The wordmark "Mooolkk" is playful yet clean — the extra O\'s mimicking a cow\'s moo. Minimal icons communicate Fresh, Natural, No Additives at a glance.',
+      result: 'The packaging concept achieves that rare balance: personality without gimmick, premium without pretension.',
+      tools: ['Illustrator', 'Photoshop', 'Mockup Tools'],
+      deliverables: 'Bottle label design\n3D mockup\nPrint-ready files' },
+    ar: { cat: 'تصميم تغليف', title: 'Mooolkk — حليب',
+      role: 'مصمم تغليف',
+      problem: 'تصميم تغليف لعلامة حليب فاخرة — Mooolkk — يبدو منعشاً وصادقاً وحديثاً على رفوف مزدحمة.',
+      idea: 'زجاجة زجاجية بملصق بنقاط بقرة بالأبيض والأسود. اسم العلامة "Mooolkk" مرح ونظيف في آنٍ واحد — الأحرف O الإضافية تحاكي صوت البقرة. أيقونات بسيطة توصل الطازج والطبيعي وخالٍ من المضافات بنظرة واحدة.',
+      result: 'التغليف يحقق توازناً نادراً: شخصية بدون استعراض، وفخامة بدون تعقيد.',
+      tools: ['Illustrator', 'Photoshop', 'أدوات موكاب'],
+      deliverables: 'تصميم ملصق الزجاجة\nموكاب ثلاثي الأبعاد\nملفات جاهزة للطباعة' },
+    year: '2024'
+  },
+  {
+    id: 14, num: '14',
+    images: [], // Add image URLs: ['url1.jpg', 'url2.jpg']
+    en: { cat: 'Logo Design', title: 'Strrow',
+      role: 'Brand Designer',
+      problem: 'Create a logo for Strrow — a company producing hospital kiosk machines — that communicates patient care, healthcare, and time efficiency in one mark.',
+      idea: 'A heart shape formed by two parent figures cradling a child, with a medical cross subtly embedded. The mark synthesises family, health, and protection — perfectly aligned with a healthcare kiosk context.',
+      result: 'The logo was applied across business cards and brand collateral. Its warmth and clarity made it immediately recognisable across medical environments.',
+      tools: ['Adobe Illustrator'],
+      deliverables: 'Logo mark\nBusiness card design\nBrand collateral' },
+    ar: { cat: 'تصميم شعار', title: 'Strrow',
+      role: 'مصمم هوية بصرية',
+      problem: 'تصميم شعار لـ Strrow — شركة تنتج أجهزة كيوسك للمستشفيات — يجمع رعاية المريض والصحة وكفاءة الوقت في علامة واحدة.',
+      idea: 'شكل قلب مكوّن من شخصيتين للوالدين تحتضنان طفلاً، مع صليب طبي مضمّن بشكل خفي. العلامة تجمع العائلة والصحة والحماية.',
+      result: 'طُبّق الشعار على بطاقات الأعمال والمواد التجارية. دفؤه ووضوحه جعله مميزاً فوراً في البيئات الطبية.',
+      tools: ['Adobe Illustrator'],
+      deliverables: 'علامة الشعار\nتصميم بطاقة عمل\nمواد العلامة التجارية' },
+    year: '2023'
+  }
+];
+
+let currentProjectId = null;
+let currentLang = 'en';
+
+/* ─── OPEN PROJECT ─── */
+function openProject(id) {
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  currentProjectId = id;
+  const lang = currentLang;
+  const d = p[lang];
+
+  document.getElementById('poNavTitle').textContent = d.title;
+  document.getElementById('poEyebrow').textContent = d.cat;
+  document.getElementById('poTitle').innerHTML = d.title.includes('×')
+    ? d.title.replace('×', '<em>×</em>')
+    : d.title;
+  document.getElementById('poYear').textContent = p.year;
+  document.getElementById('poCat').textContent = d.cat;
+  document.getElementById('poRole').textContent = d.role;
+  document.getElementById('poVisualNum').textContent = p.num;
+  document.getElementById('poVisualLabel').textContent = d.cat + ' — ' + p.year;
+
+  // Hero visual & gallery
+  const visual = document.getElementById('poVisual');
+  const gallery = document.getElementById('poGallery');
+  const imgs = p.images || [];
+
+  // Remove any previously injected image
+  const prevImg = visual.querySelector('.po-visual-img');
+  if (prevImg) prevImg.remove();
+  visual.classList.remove('has-image');
+
+  gallery.innerHTML = '';
+
+  if (imgs.length > 0) {
+    // First image → hero
+    const heroImg = document.createElement('img');
+    heroImg.className = 'po-visual-img';
+    heroImg.src = imgs[0];
+    heroImg.alt = d.title;
+    visual.appendChild(heroImg);
+    visual.classList.add('has-image');
+
+    // Remaining images → gallery
+    imgs.slice(1).forEach(src => {
+      const wrap = document.createElement('div');
+      wrap.className = 'po-gallery-img-wrap';
+      const img = document.createElement('img');
+      img.className = 'po-gallery-img';
+      img.src = src;
+      img.alt = d.title;
+      wrap.appendChild(img);
+      gallery.appendChild(wrap);
+    });
+  }
+  document.getElementById('poProblem').textContent = d.problem;
+  document.getElementById('poIdea').textContent = d.idea;
+  document.getElementById('poResult').textContent = d.result;
+  document.getElementById('poDeliverables').innerHTML = d.deliverables.split('\n').join('<br>');
+
+  const toolsEl = document.getElementById('poTools');
+  toolsEl.innerHTML = d.tools.map(t => `<span class="po-tag">${t}</span>`).join('');
+
+  // Next project
+  const nextId = id === projects.length ? 1 : id + 1;
+  const next = projects.find(x => x.id === nextId);
+  document.getElementById('poNextTitle').textContent = next[lang].title;
+  document.getElementById('poNextBtn').onclick = () => openProject(nextId);
+
+  // Update bilingual elements inside overlay
+  const overlay = document.getElementById('projOverlay');
+  overlay.querySelectorAll('[data-en]').forEach(el => {
+    el.innerHTML = el.getAttribute('data-' + lang);
+  });
+
+  const overlay_ = document.getElementById('projOverlay');
+  overlay_.scrollTop = 0;
+  overlay_.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProject() {
+  document.getElementById('projOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeProject();
+});
+
+// Make project cards clickable & add hover to cursor
+document.querySelectorAll('.pm-card, .proj-card').forEach(card => {
+  card.addEventListener('mouseenter', () => ring.classList.add('hover'));
+  card.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+});
+
+/* ─── NAV SCROLL ─── */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', scrollY > 60);
+});
+
+/* ─── SMOOTH SCROLL WITH NAV OFFSET ─── */
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const target = document.querySelector(link.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    const navH = document.getElementById('nav').offsetHeight;
+    const top = target.getBoundingClientRect().top + window.scrollY - navH;
+    window.scrollTo({ top, behavior: 'smooth' });
+  });
+});
+
+/* ─── REVEAL ON SCROLL ─── */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('in'), i * 80);
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: .07 });
+document.querySelectorAll('.rv').forEach(r => revealObs.observe(r));
+
+/* ─── SKILLS ANIMATION ─── */
+const skillsObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.skill-fill').forEach((bar, i) => {
+        setTimeout(() => bar.style.transform = `scaleX(${bar.dataset.w})`, i * 120);
+      });
+      skillsObs.unobserve(e.target);
+    }
+  });
+}, { threshold: .25 });
+const sl = document.getElementById('skillList');
+if (sl) skillsObs.observe(sl);
+
+/* ─── PROJECT FILTER ─── */
+document.querySelectorAll('.pf-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.pf-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.pm-card').forEach(card => {
+      const match = filter === 'all' || card.dataset.cat === filter;
+      card.classList.toggle('hidden', !match);
+    });
+    // update button text for current lang
+    document.querySelectorAll('.pf-btn').forEach(b => {
+      const key = 'data-' + currentLang;
+      if (b.getAttribute(key)) b.textContent = b.getAttribute(key);
+    });
+  });
+});
+
+/* ─── SERVICE DATA ─── */
+const services = [
+  {
+    id: 1, num: '01',
+    en: {
+      cat: 'AI Production',
+      title: 'AI Video Production',
+      tagline: 'Cinematic advertising without the cinematic budget. I build full video campaigns using AI tools — character-consistent, emotionally driven, and ready to run on any platform.',
+      what: 'AI Video Production is a new frontier in advertising — where a single creator can build a 60-second cinematic spot that previously required a full crew, locations, and months of production. I handle the entire pipeline: concept development, visual direction, AI generation, editing, and sound design. The result is broadcast-quality content at a fraction of traditional costs.',
+      how: 'I start with a concept brief, then develop the visual language using Midjourney for art direction. Video sequences are generated using Kling AI and Runway for character-consistent footage. Everything is assembled in Premiere Pro with custom sound design and motion graphics layered in After Effects. Each deliverable is platform-optimised — whether for TikTok, Instagram Reels, or a brand\'s website.',
+      delivers: ['60-second hero film', '3× platform-cut edits (9:16 / 1:1 / 16:9)', 'Still frames for ads', 'Sound design & music', 'Revision rounds included'],
+      tools: ['Kling AI', 'Runway', 'Midjourney', 'Premiere Pro', 'After Effects']
+    },
+    ar: {
+      cat: 'إنتاج AI',
+      title: 'إنتاج الفيديو بالذكاء الاصطناعي',
+      tagline: 'إعلان سينمائي بدون ميزانية سينمائية. أبني حملات فيديو كاملة بأدوات الذكاء الاصطناعي — متسقة بصرياً، مشحونة عاطفياً، وجاهزة للتشغيل على أي منصة.',
+      what: 'إنتاج الفيديو بالذكاء الاصطناعي هو أحدث آفاق الإعلان — حيث يستطيع مصمم واحد إنتاج إعلان سينمائي مدته 60 ثانية كان يحتاج سابقاً لفريق كامل وأشهر من التحضير. أتولى كامل العملية: تطوير المفهوم، الإخراج البصري، التوليد بالذكاء الاصطناعي، المونتاج، وتصميم الصوت.',
+      how: 'أبدأ بـ brief مفاهيمي، ثم أطوّر اللغة البصرية عبر Midjourney. تُولَّد مقاطع الفيديو بـ Kling AI وRunway لضمان تسق الشخصية. كل شيء يُجمَّع في Premiere Pro مع تصميم صوتي مخصص وموشن جرافيك في After Effects. كل مُخرَج محسَّن لمنصته — سواء TikTok أو Reels أو موقع العلامة.',
+      how_label: 'كيف أعمل',
+      delivers: ['فيلم رئيسي 60 ثانية', '3 نسخ لمنصات مختلفة (9:16 / 1:1 / 16:9)', 'صور ثابتة للإعلانات', 'تصميم صوتي وموسيقى', 'جولات تعديل مشمولة'],
+      tools: ['Kling AI', 'Runway', 'Midjourney', 'Premiere Pro', 'After Effects']
+    }
+  },
+  {
+    id: 2, num: '02',
+    en: {
+      cat: 'Visual Identity',
+      title: 'Brand Identity',
+      tagline: 'A brand is not a logo. It\'s a system — every colour, typeface, and touch point working together to say something consistent and true about who you are.',
+      what: 'Brand identity is the visual language of a business. It\'s what makes a brand immediately recognisable across every surface it appears on — from a business card to a billboard to an Instagram grid. I build complete visual systems: logo design, colour strategy, typography, and usage guidelines that give a brand a coherent, lasting presence.',
+      how: 'The process starts with a brand discovery conversation — understanding your values, your audience, and what you want to stand for. From there I develop logo concepts, refine through feedback rounds, and build the full system. Every deliverable is vector-based, production-ready, and documented in a brand guide so anyone can apply it correctly.',
+      delivers: ['Primary logo + variations', 'Colour palette with codes', 'Typography system', 'Brand usage guidelines', 'Social media templates', 'Business card design'],
+      tools: ['Adobe Illustrator', 'Photoshop', 'InDesign']
+    },
+    ar: {
+      cat: 'هوية بصرية',
+      title: 'الهوية البصرية',
+      tagline: 'العلامة التجارية ليست شعاراً فقط. هي منظومة — كل لون وخط وعنصر يعمل معاً ليقول شيئاً متسقاً وحقيقياً عن هويتك.',
+      what: 'الهوية البصرية هي اللغة المرئية للعمل التجاري. هي ما يجعل العلامة قابلة للتعرف فوراً على كل سطح تظهر عليه — من بطاقة العمل إلى اللوحة الإعلانية إلى الإنستغرام. أبني أنظمة بصرية كاملة: شعار، استراتيجية ألوان، طباعة، ودليل استخدام.',
+      how: 'تبدأ العملية بجلسة اكتشاف العلامة — فهم قيمك وجمهورك وما تريد أن تمثله. من هناك أطوّر مفاهيم الشعار، وأصقلها عبر جولات تغذية راجعة، وأبني النظام الكامل. كل مُخرَج متجه وجاهز للإنتاج وموثق في دليل العلامة.',
+      delivers: ['الشعار الرئيسي + التنويعات', 'لوحة الألوان مع الكودات', 'منظومة الخطوط', 'دليل استخدام العلامة', 'قوالب السوشيال ميديا', 'تصميم بطاقة العمل'],
+      tools: ['Adobe Illustrator', 'Photoshop', 'InDesign']
+    }
+  },
+  {
+    id: 3, num: '03',
+    en: {
+      cat: 'Motion Design',
+      title: 'Motion Graphics',
+      tagline: 'Motion transforms static design into something that breathes. The right movement — subtle, deliberate — makes every brand feel more alive.',
+      what: 'Motion graphics sit between design and film. They add dimension and timing to visual communication — turning a logo into an opener, a statistic into a story, a product into a cinematic moment. I create motion pieces that serve a clear purpose: to hold attention and communicate more effectively than a static image ever could.',
+      how: 'I start from existing brand assets or build motion from scratch. Each sequence is storyboarded first so you can approve the concept before a single frame is animated. I work primarily in After Effects, with Premiere Pro for final assembly. Deliverables are exported in all required formats — whether MP4 for web, transparent MOV for overlays, or GIF for lightweight use.',
+      delivers: ['Logo animation', 'Intro / outro sequences', 'Social motion templates', 'Lower thirds & titles', 'Product motion reels', 'Transparent file formats (MOV)'],
+      tools: ['After Effects', 'Premiere Pro', 'Illustrator']
+    },
+    ar: {
+      cat: 'تصميم حركي',
+      title: 'الموشن جرافيك',
+      tagline: 'الحركة تحوّل التصميم الثابت إلى شيء يتنفس. الحركة الصحيحة — الهادئة والمقصودة — تجعل كل علامة تبدو أكثر حياة.',
+      what: 'الموشن جرافيك يقع بين التصميم والسينما. يضيف بُعداً وتوقيتاً للتواصل البصري — يحوّل شعاراً إلى مقدمة، ورقماً إلى قصة، ومنتجاً إلى لحظة سينمائية. أصنع قطعاً متحركة تخدم غرضاً واضحاً: شدّ الانتباه والتواصل بفاعلية أكبر من أي صورة ثابتة.',
+      how: 'أبدأ من أصول العلامة الموجودة أو أبني الحركة من الصفر. كل تسلسل يُرسم له storyboard أولاً لتتمكن من اعتماد المفهوم قبل تحريك أي إطار. أعمل بـ After Effects أساساً مع Premiere Pro للتجميع النهائي.',
+      delivers: ['أنيميشن الشعار', 'مقدمات ونهايات', 'قوالب موشن للسوشيال', 'عناوين وتحتيات', 'ريلات عرض المنتج', 'صيغ شفافة (MOV)'],
+      tools: ['After Effects', 'Premiere Pro', 'Illustrator']
+    }
+  },
+  {
+    id: 4, num: '04',
+    en: {
+      cat: 'Content Strategy',
+      title: 'Social Media Content',
+      tagline: 'Content that stops the scroll is not about being louder — it\'s about being sharper. Every frame, every caption, every post has to earn its place in the feed.',
+      what: 'Social media content is the daily face of a brand. It needs to be consistent, platform-native, and built around what actually performs — not what just looks good in isolation. I deliver full content packages: from the creative concept and visual production to the caption strategy and publishing calendar.',
+      how: 'I start by understanding the platform — TikTok and Reels reward native-feel, movement, and sound. I build content around formats that consistently perform: trending hooks, product reveals, behind-the-scenes, and story-driven videos. Each piece is shot or generated, edited to platform specs, and delivered with caption and hashtag strategy included.',
+      delivers: ['Monthly content calendar', '8–20 posts / month (by package)', 'Reels & TikTok videos', 'Static posts & stories', 'Captions & hashtag sets', 'Platform analytics review'],
+      tools: ['Premiere Pro', 'After Effects', 'CapCut', 'Photoshop', 'Canva Pro']
+    },
+    ar: {
+      cat: 'استراتيجية محتوى',
+      title: 'محتوى السوشيال ميديا',
+      tagline: 'المحتوى الذي يوقف التمرير ليس عن الصراخ أكثر — بل عن الحدة والوضوح. كل إطار وكل منشور يجب أن يكسب مكانه في الفيد.',
+      what: 'محتوى السوشيال ميديا هو الوجه اليومي للعلامة. يحتاج أن يكون متسقاً، أصيلاً للمنصة، ومبنياً حول ما يُحقق نتائج فعلية — لا فقط ما يبدو جيداً منفرداً. أقدم حزم محتوى كاملة: من المفهوم الإبداعي والإنتاج البصري إلى استراتيجية الكابشن وتقويم النشر.',
+      how: 'أبدأ بفهم المنصة — TikTok وReels تكافئ الأسلوب الأصيل والحركة والصوت. أبني المحتوى حول صيغ تُحقق أداءً مستمراً: هوكات ترندينج، كشف المنتج، كواليس، وفيديوهات سرد قصصي. كل قطعة تُصنَّع أو تُولَّد وتُعدَّل بمواصفات المنصة.',
+      delivers: ['تقويم محتوى شهري', '8–20 منشور / شهر (حسب الباقة)', 'فيديوهات Reels وTikTok', 'منشورات ثابتة وستوريز', 'كابشنز وهاشتاقات', 'مراجعة تحليلات المنصة'],
+      tools: ['Premiere Pro', 'After Effects', 'CapCut', 'Photoshop', 'Canva Pro']
+    }
+  },
+  {
+    id: 5, num: '05',
+    en: {
+      cat: 'Visual Art',
+      title: 'Illustration',
+      tagline: 'Illustration is the most personal kind of design. It speaks where photography can\'t reach — telling stories that are entirely yours.',
+      what: 'Custom illustration brings a brand\'s personality to life in a way that stock imagery never can. Whether it\'s a character mascot, a product illustration, a campaign key visual, or an editorial piece — every illustration I create is built specifically for the brief, the brand, and the audience.',
+      how: 'I work digitally using Photoshop and Procreate, with Illustrator for vector-based work. The process starts with rough concept sketches for direction approval, then moves to refined line work and final colour. All files are delivered in both high-resolution print formats and optimised web formats.',
+      delivers: ['Custom character / mascot', 'Product illustrations', 'Campaign key visuals', 'Editorial illustrations', 'High-res print files', 'Web-optimised formats'],
+      tools: ['Photoshop', 'Procreate', 'Adobe Illustrator']
+    },
+    ar: {
+      cat: 'فن بصري',
+      title: 'الرسم الرقمي',
+      tagline: 'الرسم التوضيحي هو أكثر أنواع التصميم شخصية. يتحدث حيث لا تصل التصوير — يحكي قصصاً هي ملكك وحدك.',
+      what: 'الرسم المخصص يُحيي شخصية العلامة بطريقة لا يستطيعها أي مخزون صور. سواء كان ماسكوت شخصية، رسم منتج، صورة رئيسية لحملة، أو قطعة افتتاحية — كل رسم أصنعه مبني خصيصاً للـ brief والعلامة والجمهور.',
+      how: 'أعمل رقمياً بـ Photoshop وProcreate، مع Illustrator للأعمال المتجهة. تبدأ العملية برسومات مفاهيمية خشنة لاعتماد الاتجاه، ثم تصقيل الخطوط، ثم اللون النهائي.',
+      delivers: ['شخصية / ماسكوت مخصص', 'رسوم المنتجات', 'صور رئيسية للحملات', 'رسوم افتتاحية', 'ملفات طباعة عالية الدقة', 'صيغ ويب محسّنة'],
+      tools: ['Photoshop', 'Procreate', 'Adobe Illustrator']
+    }
+  },
+  {
+    id: 6, num: '06',
+    en: {
+      cat: 'Growth Strategy',
+      title: 'Digital Marketing',
+      tagline: 'Design without strategy is decoration. I combine visual creativity with data-driven thinking to build campaigns that don\'t just look good — they perform.',
+      what: 'Digital marketing is the engine that turns great content into measurable growth. I plan and execute paid advertising campaigns across Meta, TikTok, Snapchat, and Google — handling everything from ad creative and audience targeting to pixel setup, tracking, and optimisation. The goal is always the same: the right message to the right person at the right time, at the lowest possible cost per result.',
+      how: 'I start with a strategy phase: defining target audiences, setting KPIs, and allocating budget across platforms. Month one is always a testing phase — running multiple creative and audience variations to find what works. Month two, I scale what performs and cut what doesn\'t. Pixel tracking is set up from day one (Meta Pixel, TikTok Pixel, Google Tag) so every decision is data-backed. Retargeting audiences — visitors who didn\'t convert, cart abandoners — are activated from week two onward.',
+      delivers: ['Paid ad strategy & budget plan', 'Ad creative (static + video)', 'Audience targeting setup', 'Pixel & conversion tracking', 'Weekly performance reports', 'Retargeting campaign setup', 'Monthly optimisation review'],
+      tools: ['Meta Ads Manager', 'TikTok Ads', 'Google Ads', 'Snapchat Ads', 'Meta Pixel', 'Google Analytics']
+    },
+    ar: {
+      cat: 'استراتيجية نمو',
+      title: 'التسويق الرقمي',
+      tagline: 'التصميم بدون استراتيجية مجرد زينة. أجمع الإبداع البصري مع التفكير المبني على البيانات لبناء حملات لا تبدو جميلة فحسب — بل تُحقق نتائج.',
+      what: 'التسويق الرقمي هو المحرك الذي يحوّل المحتوى الجيد إلى نمو قابل للقياس. أخطط وأنفّذ حملات إعلانية مدفوعة عبر Meta وTikTok وسناب شات وGoogle — من التصميم الإعلاني واستهداف الجمهور إلى إعداد البيكسل والتتبع والتحسين. الهدف دائماً واحد: الرسالة الصحيحة للشخص الصحيح في الوقت الصحيح بأقل تكلفة اكتساب ممكنة.',
+      how: 'أبدأ بمرحلة الاستراتيجية: تحديد الجمهور المستهدف، وضع KPIs، وتوزيع الميزانية على المنصات. الشهر الأول دائماً اختبار — تشغيل تنويعات متعددة من التصميم والجمهور لمعرفة ما يُحقق نتائج. الشهر الثاني، أضخّم الناجح وأوقف الضعيف. يُعدّ تتبع البيكسل من اليوم الأول (Meta Pixel، TikTok Pixel، Google Tag) حتى تكون كل قرار مبنياً على بيانات. جماهير الريتارغتنج تُفعَّل من الأسبوع الثاني.',
+      delivers: ['خطة استراتيجية وتوزيع ميزانية', 'تصاميم إعلانية (ثابتة + فيديو)', 'إعداد استهداف الجمهور', 'إعداد البيكسل وتتبع التحويل', 'تقارير أداء أسبوعية', 'حملة ريتارغتنج', 'مراجعة تحسين شهرية'],
+      tools: ['Meta Ads Manager', 'TikTok Ads', 'Google Ads', 'Snapchat Ads', 'Meta Pixel', 'Google Analytics']
+    }
+  }
+];
+
+function openService(id) {
+  const s = services.find(x => x.id === id);
+  if (!s) return;
+  const lang = currentLang;
+  const d = s[lang];
+
+  document.getElementById('svcOvNum').textContent = s.num;
+  document.getElementById('svcNavTitle').textContent = d.title;
+  document.getElementById('svcOvCat').textContent = d.cat;
+  document.getElementById('svcOvTitle').textContent = d.title;
+  document.getElementById('svcOvTagline').textContent = d.tagline;
+  document.getElementById('svcOvWhat').textContent = d.what;
+  document.getElementById('svcOvHow').textContent = d.how;
+
+  // labels
+  document.getElementById('svcBackLabel').textContent = lang === 'ar' ? 'الخدمات' : 'Services';
+  document.getElementById('svcWhatLabel').textContent = lang === 'ar' ? 'ما هي الخدمة' : 'What it is';
+  document.getElementById('svcHowLabel').textContent = lang === 'ar' ? 'كيف أعمل' : 'How I do it';
+  document.getElementById('svcGetLabel').textContent = lang === 'ar' ? 'ما ستحصل عليه' : 'What you get';
+  document.getElementById('svcToolsLabel').textContent = lang === 'ar' ? 'الأدوات' : 'Tools';
+  document.getElementById('svcCtaText').textContent = lang === 'ar' ? 'ابدأ مشروعاً ←' : 'Start a project →';
+
+  // deliverables
+  const del = document.getElementById('svcOvDelivers');
+  del.innerHTML = d.delivers.map(item =>
+    `<div class="svc-ov-deliver-item">${item}</div>`
+  ).join('');
+
+  // tools
+  const tools = document.getElementById('svcOvTools');
+  tools.innerHTML = d.tools.map(t =>
+    `<span class="svc-ov-tool">${t}</span>`
+  ).join('');
+
+  const ov = document.getElementById('svcOverlay');
+  ov.scrollTop = 0;
+  ov.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeService() {
+  document.getElementById('svcOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+
+
+
+
+function setLang(lang) {
+  if (lang === currentLang) return;
+  currentLang = lang;
+
+  document.body.style.opacity = '0';
+  document.body.style.transition = 'opacity .35s ease';
+
+  setTimeout(() => {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+    document.getElementById('btnEN').classList.toggle('active', lang === 'en');
+    document.getElementById('btnAR').classList.toggle('active', lang === 'ar');
+
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+      const text = el.getAttribute('data-' + lang);
+      if (text !== null) {
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+          el.placeholder = text;
+        } else {
+          el.innerHTML = text;
+        }
+      }
+    });
+
+    document.querySelectorAll('[data-placeholder-' + lang + ']').forEach(el => {
+      el.placeholder = el.getAttribute('data-placeholder-' + lang);
+    });
+
+    // Re-render open project in new language
+    if (currentProjectId) openProject(currentProjectId);
+
+    // Update 404 page text
+    document.getElementById('e404Title').textContent = lang === 'ar' ? 'الصفحة غير موجودة' : 'Page not found';
+    document.getElementById('e404Back').textContent  = lang === 'ar' ? '→ العودة للرئيسية' : '← Back home';
+
+    document.body.style.opacity = '1';
+  }, 350);
+}
+</script>
+</body>
+</html>
