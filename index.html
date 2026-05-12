@@ -866,6 +866,28 @@ footer {
   .cursor-dot, .cursor-ring { display: none !important; }
 }
 
+/* ── CONTACT FORM ── */
+.cf-row { margin-bottom: 12px; }
+.cf-input {
+  width: 100%; padding: 16px 0;
+  border: none; border-bottom: 1px solid var(--faint);
+  background: none; color: var(--ink);
+  font-family: var(--font-sans); font-size: 14px; font-weight: 300;
+  outline: none; transition: border-color .2s;
+}
+.cf-input:focus { border-color: var(--ink); }
+.cf-input::placeholder { color: var(--mid); }
+.cf-textarea { resize: none; min-height: 120px; }
+.cf-btn {
+  margin-top: 28px;
+  font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--bg); background: var(--ink);
+  border: none; padding: 16px 32px; cursor: pointer;
+  transition: background .2s, transform .2s;
+  display: inline-block;
+}
+.cf-btn:hover { background: var(--accent); transform: translateY(-1px); }
+
 @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
 @keyframes lineUp { from{opacity:0;transform:translateY(110%)} to{opacity:1;transform:none} }
 
@@ -985,6 +1007,7 @@ html[dir="rtl"] .nav-name { font-style: normal; }
 .pm-logo-1 { background: linear-gradient(135deg, #f5f0e8 0%, #e8dcc8 100%); }
 .pm-logo-2 { background: linear-gradient(135deg, #1a3a5c 0%, #2e6da4 100%); }
 .pm-ai-1  { background: linear-gradient(135deg, #1a0f0a 0%, #3d2510 100%); }
+.pm-social-1 { background: linear-gradient(135deg, #0a1628 0%, #1a3a5c 50%, #2d1f4a 100%); }
 
 .pm-arrow {
   position: absolute; top: 20px; right: 20px; z-index: 2;
@@ -1372,6 +1395,7 @@ html[dir="rtl"] .po-next-btn { flex-direction: row-reverse; }
         <button class="pf-btn" data-filter="packaging" data-en="Packaging" data-ar="تغليف">Packaging</button>
         <button class="pf-btn" data-filter="identity" data-en="Identity" data-ar="هوية">Identity</button>
         <button class="pf-btn" data-filter="ai" data-en="AI Production" data-ar="إنتاج AI">AI Production</button>
+        <button class="pf-btn" data-filter="social" data-en="Social Media" data-ar="سوشيال ميديا">Social Media</button>
       </div>
     </div>
   </div>
@@ -1507,6 +1531,17 @@ html[dir="rtl"] .po-next-btn { flex-direction: row-reverse; }
       <div class="pm-info">
         <div class="pm-cat" data-en="Logo Design · 2023" data-ar="تصميم شعار · 2023">Logo Design · 2023</div>
         <div class="pm-title">Strrow</div>
+      </div>
+    </div>
+
+    <!-- 13 Social Media -->
+    <div class="pm-card pm-wide" data-cat="social" onclick="openProject(15)">
+      <div class="pm-bg pm-social-1"></div>
+      <div class="pm-overlay"></div>
+      <span class="pm-arrow">↗</span>
+      <div class="pm-info">
+        <div class="pm-cat" data-en="Social Media · 2024" data-ar="سوشيال ميديا · 2024">Social Media · 2024</div>
+        <div class="pm-title" data-en="Social Media Content" data-ar="محتوى سوشيال ميديا">Social Media Content</div>
       </div>
     </div>
 
@@ -1670,9 +1705,61 @@ html[dir="rtl"] .po-next-btn { flex-direction: row-reverse; }
           <div class="cred-n" data-en="Content Marketing" data-ar="تسويق المحتوى">Content Marketing</div>
           <div class="cred-s">HubSpot Academy</div>
         </div>
+        <span class="cred-arrow">↗</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-
-<!-- 404 PAGE -->
+<!-- CONTACT -->
+<section id="contact">
+  <div class="rv">
+    <div class="s-label" data-en="Get In Touch" data-ar="تواصل معي">Get In Touch</div>
+    <h2 class="ct-headline" data-en="Let's make<br><em>something</em><br>great." data-ar="لنصنع<br><em>شيئاً</em><br>رائعاً.">
+      Let's make<br><em>something</em><br>great.
+    </h2>
+    <p class="ct-sub" data-en="Available for freelance projects, brand collaborations, and full-time opportunities. Based in Saudi Arabia, working globally."
+       data-ar="متاح للمشاريع الحرة، تعاون العلامات، والفرص الكاملة. مقيم في السعودية، أعمل عالمياً.">
+      Available for freelance projects, brand collaborations, and full-time opportunities. Based in Saudi Arabia, working globally.
+    </p>
+    <div class="ct-links">
+      <a href="mailto:ahmad@example.com" class="ct-link">
+        <div>
+          <div class="ct-lbl" data-en="Email" data-ar="البريد الإلكتروني">Email</div>
+          <div class="ct-val">ahmad@example.com</div>
+        </div>
+        <span>↗</span>
+      </a>
+      <a href="https://instagram.com/" target="_blank" class="ct-link">
+        <div>
+          <div class="ct-lbl" data-en="Instagram" data-ar="إنستغرام">Instagram</div>
+          <div class="ct-val">@ahmadsattof</div>
+        </div>
+        <span>↗</span>
+      </a>
+      <a href="https://behance.net/" target="_blank" class="ct-link">
+        <div>
+          <div class="ct-lbl" data-en="Behance" data-ar="بيهانس">Behance</div>
+          <div class="ct-val">behance.net/ahmadsattof</div>
+        </div>
+        <span>↗</span>
+      </a>
+    </div>
+  </div>
+  <div class="rv contact-form">
+    <div class="s-label" data-en="Send a Message" data-ar="أرسل رسالة">Send a Message</div>
+    <div class="cf-row">
+      <input class="cf-input" type="text" data-placeholder-en="Your name" data-placeholder-ar="اسمك" placeholder="Your name">
+    </div>
+    <div class="cf-row">
+      <input class="cf-input" type="email" data-placeholder-en="Your email" data-placeholder-ar="بريدك الإلكتروني" placeholder="Your email">
+    </div>
+    <div class="cf-row">
+      <textarea class="cf-input cf-textarea" data-placeholder-en="Tell me about your project…" data-placeholder-ar="أخبرني عن مشروعك…" placeholder="Tell me about your project…"></textarea>
+    </div>
+    <button class="cf-btn" data-en="Send Message →" data-ar="أرسل الرسالة →">Send Message →</button>
+  </div>
+</section>
 <div class="page-404" id="page404">
   <div class="e404-num">404</div>
   <div class="e404-title" id="e404Title">Page not found</div>
@@ -2245,6 +2332,29 @@ const projects = [
       tools: ['Adobe Illustrator'],
       deliverables: 'علامة الشعار\nتصميم بطاقة عمل\nمواد العلامة التجارية' },
     year: '2023'
+  },
+  {
+    id: 15, num: '15',
+    images: [], // Add image URLs: ['url1.jpg', 'url2.jpg']
+    en: {
+      cat: 'Social Media', title: 'Social Media Content',
+      role: 'Content Creator & Designer',
+      problem: 'Brands needed a consistent, platform-native content presence that actually performs — not just looks good in isolation.',
+      idea: 'Building full content packages around what performs: trending hooks, product reveals, and story-driven visuals tailored for each platform\'s algorithm and audience behavior.',
+      result: 'Consistent monthly content delivery with measurable growth in engagement and reach across Instagram, TikTok, and Snapchat.',
+      tools: ['Premiere Pro', 'After Effects', 'CapCut', 'Photoshop', 'Canva Pro'],
+      deliverables: 'Monthly content calendar\nReels & TikTok videos\nStatic posts & stories\nCaptions & hashtag sets'
+    },
+    ar: {
+      cat: 'سوشيال ميديا', title: 'محتوى سوشيال ميديا',
+      role: 'منشئ محتوى ومصمم',
+      problem: 'العلامات تحتاج حضوراً متسقاً وأصيلاً على المنصات يُحقق نتائج فعلية — لا فقط محتوى يبدو جيداً منفرداً.',
+      idea: 'بناء حزم محتوى كاملة حول ما يُحقق أداءً: هوكات ترندينج، كشف المنتج، وبصريات سردية مصممة لخوارزمية وجمهور كل منصة.',
+      result: 'تسليم محتوى شهري منتظم مع نمو قابل للقياس في التفاعل والوصول عبر Instagram وTikTok وسناب شات.',
+      tools: ['Premiere Pro', 'After Effects', 'CapCut', 'Photoshop', 'Canva Pro'],
+      deliverables: 'تقويم محتوى شهري\nفيديوهات Reels وTikTok\nمنشورات ثابتة وستوريز\nكابشنز وهاشتاقات'
+    },
+    year: '2024'
   }
 ];
 
