@@ -6531,10 +6531,10 @@ function sendContactForm() {
   status.style.display = 'none';
 
   emailjs.send('service_949h5x7', 'template_fcl9p7f', {
-    from_name:    name,
-    from_email:   email,
-    message:      message,
-    to_email:     'ahdsya4@gmail.com'
+    name:       name,
+    email:      email,
+    message:    message,
+    to_email:   'ahdsya4@gmail.com'
   }).then(() => {
     btn.textContent = isAr ? 'تم الإرسال ✓' : 'Sent ✓';
     status.style.display = 'block';
