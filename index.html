@@ -3,8 +3,7 @@
 <html lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>emailjs.init("juORaAsZDvtRBdF8o");</script>
+
 <title>Ahmad Sattof — Visual Designer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link href="./Ahmad Sattof — Visual Designer_files/css2" rel="stylesheet">
@@ -2943,17 +2942,21 @@ html[dir="rtl"] .po-next-btn { flex-direction: row-reverse; }
   </div>
   <div class="rv contact-form">
     <div class="s-label" data-en="Send a Message" data-ar="أرسل رسالة">Send a Message</div>
-    <div class="cf-row">
-      <input class="cf-input" id="cfName" type="text" data-placeholder-en="Your name" data-placeholder-ar="اسمك" placeholder="Your name">
-    </div>
-    <div class="cf-row">
-      <input class="cf-input" id="cfEmail" type="email" data-placeholder-en="Your email" data-placeholder-ar="بريدك الإلكتروني" placeholder="Your email">
-    </div>
-    <div class="cf-row">
-      <textarea class="cf-input cf-textarea" id="cfMessage" data-placeholder-en="Tell me about your project…" data-placeholder-ar="أخبرني عن مشروعك…" placeholder="Tell me about your project…"></textarea>
-    </div>
-    <button class="cf-btn" id="cfBtn" onclick="sendContactForm()" data-en="Send Message →" data-ar="أرسل الرسالة →">Send Message →</button>
-    <div id="cfStatus" style="margin-top:14px;font-size:12px;letter-spacing:.08em;display:none"></div>
+    <form action="https://api.web3forms.com/submit" method="POST" id="contactForm" onsubmit="handleContactSubmit(event)">
+      <input type="hidden" name="access_key" value="ebab161a-2c1e-440d-b14e-72f35d6ee02c">
+      <input type="hidden" name="subject" value="New message from ahmadsattof.com">
+      <div class="cf-row">
+        <input class="cf-input" id="cfName" name="name" type="text" data-placeholder-en="Your name" data-placeholder-ar="اسمك" placeholder="Your name" required>
+      </div>
+      <div class="cf-row">
+        <input class="cf-input" id="cfEmail" name="email" type="email" data-placeholder-en="Your email" data-placeholder-ar="بريدك الإلكتروني" placeholder="Your email" required>
+      </div>
+      <div class="cf-row">
+        <textarea class="cf-input cf-textarea" id="cfMessage" name="message" data-placeholder-en="Tell me about your project…" data-placeholder-ar="أخبرني عن مشروعك…" placeholder="Tell me about your project…" required></textarea>
+      </div>
+      <button class="cf-btn" id="cfBtn" type="submit" data-en="Send Message →" data-ar="أرسل الرسالة →">Send Message →</button>
+      <div id="cfStatus" style="margin-top:14px;font-size:12px;letter-spacing:.08em;display:none"></div>
+    </form>
   </div>
 </section>
 <!-- SERVICE OVERLAY -->
@@ -6511,49 +6514,46 @@ document.getElementById('adminGate').addEventListener('click', function(e) {
 })();
 
 /* ── CONTACT FORM ── */
-function sendContactForm() {
-  const name    = document.getElementById('cfName').value.trim();
-  const email   = document.getElementById('cfEmail').value.trim();
-  const message = document.getElementById('cfMessage').value.trim();
-  const status  = document.getElementById('cfStatus');
-  const btn     = document.getElementById('cfBtn');
-  const isAr    = document.documentElement.getAttribute('lang') === 'ar';
-
-  if (!name || !email || !message) {
-    status.style.display = 'block';
-    status.style.color = 'var(--accent)';
-    status.textContent = isAr ? 'يرجى تعبئة جميع الحقول' : 'Please fill in all fields.';
-    return;
-  }
+function handleContactSubmit(e) {
+  e.preventDefault();
+  const form   = document.getElementById('contactForm');
+  const status = document.getElementById('cfStatus');
+  const btn    = document.getElementById('cfBtn');
+  const isAr   = document.documentElement.getAttribute('lang') === 'ar';
 
   btn.disabled = true;
   btn.textContent = isAr ? 'جاري الإرسال…' : 'Sending…';
   status.style.display = 'none';
 
-  emailjs.send('service_cilx6g8', 'template_fcl9p7f', {
-    name:       name,
-    email:      email,
-    message:    message,
-    to_email:   'ahdsya4@gmail.com'
-  }).then(() => {
-    btn.textContent = isAr ? 'تم الإرسال ✓' : 'Sent ✓';
-    status.style.display = 'block';
-    status.style.color = '#6aab6a';
-    status.textContent = isAr ? 'تم إرسال رسالتك بنجاح!' : 'Your message was sent successfully!';
-    document.getElementById('cfName').value = '';
-    document.getElementById('cfEmail').value = '';
-    document.getElementById('cfMessage').value = '';
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.textContent = isAr ? 'أرسل الرسالة →' : 'Send Message →';
-    }, 3000);
-  }).catch((err) => {
+  const data = new FormData(form);
+
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    body: data
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      btn.textContent = isAr ? 'تم الإرسال ✓' : 'Sent ✓';
+      status.style.display = 'block';
+      status.style.color = '#6aab6a';
+      status.textContent = isAr ? 'تم إرسال رسالتك بنجاح!' : 'Your message was sent successfully!';
+      form.reset();
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = isAr ? 'أرسل الرسالة →' : 'Send Message →';
+      }, 3000);
+    } else {
+      throw new Error(data.message);
+    }
+  })
+  .catch((err) => {
     btn.disabled = false;
     btn.textContent = isAr ? 'أرسل الرسالة →' : 'Send Message →';
     status.style.display = 'block';
     status.style.color = '#c47a7a';
     status.textContent = isAr ? 'حدث خطأ، حاول مرة أخرى.' : 'Something went wrong. Please try again.';
-    console.error('EmailJS error:', err);
+    console.error('Web3Forms error:', err);
   });
 }
 </script>
