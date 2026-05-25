@@ -6119,6 +6119,16 @@ function apSaveTexts() {
   if (lines[2]) setDataAttr(lines[2], document.getElementById('apHeroL3En').value, document.getElementById('apHeroL3Ar').value);
   if (stmt) setDataAttr(stmt, document.getElementById('apHeroStmtEn').value, document.getElementById('apHeroStmtAr').value);
 
+  // ── Persist hero texts ──
+  localStorage.setItem('apHeroTexts', JSON.stringify({
+    eyebrowEn: document.getElementById('apHeroEyebrowEn').value,
+    eyebrowAr: document.getElementById('apHeroEyebrowAr').value,
+    l1En: document.getElementById('apHeroL1En').value, l1Ar: document.getElementById('apHeroL1Ar').value,
+    l2En: document.getElementById('apHeroL2En').value, l2Ar: document.getElementById('apHeroL2Ar').value,
+    l3En: document.getElementById('apHeroL3En').value, l3Ar: document.getElementById('apHeroL3Ar').value,
+    stmtEn: document.getElementById('apHeroStmtEn').value, stmtAr: document.getElementById('apHeroStmtAr').value
+  }));
+
   apToast('✓ Hero texts updated live');
 }
 
@@ -6137,6 +6147,14 @@ function apSaveAbout() {
   const quote = document.querySelector('.about-quote');
   if (quote) setDataAttr(quote, document.getElementById('apAboutQuoteEn').value, document.getElementById('apAboutQuoteAr').value);
 
+  // ── Persist about texts ──
+  localStorage.setItem('apAboutTexts', JSON.stringify({
+    p1En: document.getElementById('apAboutP1En').value, p1Ar: document.getElementById('apAboutP1Ar').value,
+    p2En: document.getElementById('apAboutP2En').value, p2Ar: document.getElementById('apAboutP2Ar').value,
+    p3En: document.getElementById('apAboutP3En').value, p3Ar: document.getElementById('apAboutP3Ar').value,
+    quoteEn: document.getElementById('apAboutQuoteEn').value, quoteAr: document.getElementById('apAboutQuoteAr').value
+  }));
+
   apToast('✓ About section updated live');
 }
 
@@ -6147,6 +6165,8 @@ function apSaveFooter() {
   const en2 = document.getElementById('apFooterTagEn').value;
   if (ftCopy) { ftCopy.setAttribute('data-en', en1); ftCopy.textContent = en1; }
   if (ftNote) { ftNote.setAttribute('data-en', en2); ftNote.textContent = en2; }
+  // ── Persist footer ──
+  localStorage.setItem('apFooterTexts', JSON.stringify({ copyEn: en1, noteEn: en2 }));
   apToast('✓ Footer updated');
 }
 
@@ -6194,6 +6214,7 @@ function apLoadServices() {
 
 function apSaveServices() {
   const cards = document.querySelectorAll('.svc-card');
+  const svcData = [];
   cards.forEach((card, i) => {
     const titleEl = card.querySelector('.svc-title');
     const descEl  = card.querySelector('.svc-desc');
@@ -6213,7 +6234,10 @@ function apSaveServices() {
       descEl.setAttribute('data-ar', dAr.value);
       descEl.textContent = isAr ? dAr.value : dEn.value;
     }
+    svcData.push({ titleEn: tEn.value, titleAr: tAr.value, descEn: dEn.value, descAr: dAr.value });
   });
+  // ── Persist services ──
+  localStorage.setItem('apServices', JSON.stringify(svcData));
   apToast('✓ Services updated live');
 }
 
@@ -6302,6 +6326,14 @@ function apSaveContact() {
     subEl.textContent = isAr ? arV : enV;
   }
   apToast('✓ Contact section updated live');
+
+  // ── Persist contact texts ──
+  localStorage.setItem('apContactTexts', JSON.stringify({
+    h1En: document.getElementById('apCtH1En').value, h1Ar: document.getElementById('apCtH1Ar').value,
+    h2En: document.getElementById('apCtH2En').value, h2Ar: document.getElementById('apCtH2Ar').value,
+    h3En: document.getElementById('apCtH3En').value, h3Ar: document.getElementById('apCtH3Ar').value,
+    subEn: document.getElementById('apCtSubEn').value, subAr: document.getElementById('apCtSubAr').value
+  }));
 }
 
 function apSaveContactLinks() {
@@ -6320,6 +6352,9 @@ function apSaveContactLinks() {
   if (igVal) document.querySelectorAll('#contact a[href*="instagram"]').forEach(a => a.href = igVal);
   if (liVal) document.querySelectorAll('#contact a[href*="linkedin"]').forEach(a => a.href = liVal);
   if (beVal) document.querySelectorAll('#contact a[href*="behance"]').forEach(a => a.href = beVal);
+
+  // ── Persist contact links ──
+  localStorage.setItem('apContactLinks', JSON.stringify({ email: emailVal, instagram: igVal, linkedin: liVal, behance: beVal }));
 
   apToast('✓ Contact links updated');
 }
@@ -6431,6 +6466,7 @@ function apSaveSettings() {
       dot.style.display = 'none'; txt.textContent = '';
     }
   }
+  localStorage.setItem('apAvailability', status);
 
   apToast('✓ Settings saved');
 }
@@ -6438,6 +6474,7 @@ function apSaveSettings() {
 // ── On page load: restore saved data ──
 document.addEventListener('DOMContentLoaded', function() {
   apLoadSettings();
+  apRestoreAllEdits();
   // re-inject admin projects into the live site on load
   const adminProjs = getAdminProjects();
   if (adminProjs.length) {
@@ -6447,6 +6484,123 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(apInjectProjectCards, 200);
   }
 });
+
+/* ═══════════════════════════════════════
+   RESTORE ALL SAVED EDITS ON PAGE LOAD
+   ═══════════════════════════════════════ */
+function apRestoreAllEdits() {
+  const isAr = document.documentElement.getAttribute('lang') === 'ar';
+
+  // ── Hero Texts ──
+  try {
+    const h = JSON.parse(localStorage.getItem('apHeroTexts') || 'null');
+    if (h) {
+      const eyebrow = document.querySelector('.hero-eyebrow');
+      const lines   = document.querySelectorAll('.hero-headline .line span');
+      const stmt    = document.querySelector('.hero-statement');
+      const set = (el, en, ar) => { if (!el) return; el.setAttribute('data-en', en); el.setAttribute('data-ar', ar); el.textContent = isAr ? ar : en; };
+      set(eyebrow,  h.eyebrowEn, h.eyebrowAr);
+      set(lines[0], h.l1En, h.l1Ar);
+      set(lines[1], h.l2En, h.l2Ar);
+      set(lines[2], h.l3En, h.l3Ar);
+      set(stmt,     h.stmtEn, h.stmtAr);
+    }
+  } catch(e) {}
+
+  // ── About Texts ──
+  try {
+    const a = JSON.parse(localStorage.getItem('apAboutTexts') || 'null');
+    if (a) {
+      const ps    = document.querySelectorAll('.about-body p');
+      const quote = document.querySelector('.about-quote');
+      const set   = (el, en, ar) => { if (!el) return; el.setAttribute('data-en', en); el.setAttribute('data-ar', ar); el.textContent = isAr ? ar : en; };
+      set(ps[0], a.p1En, a.p1Ar);
+      set(ps[1], a.p2En, a.p2Ar);
+      set(ps[2], a.p3En, a.p3Ar);
+      set(quote, a.quoteEn, a.quoteAr);
+    }
+  } catch(e) {}
+
+  // ── Services ──
+  try {
+    const svcs = JSON.parse(localStorage.getItem('apServices') || 'null');
+    if (svcs && svcs.length) {
+      const cards = document.querySelectorAll('.svc-card');
+      cards.forEach((card, i) => {
+        if (!svcs[i]) return;
+        const titleEl = card.querySelector('.svc-title');
+        const descEl  = card.querySelector('.svc-desc');
+        const { titleEn, titleAr, descEn, descAr } = svcs[i];
+        if (titleEl) { titleEl.setAttribute('data-en', titleEn); titleEl.setAttribute('data-ar', titleAr); titleEl.textContent = isAr ? titleAr : titleEn; }
+        if (descEl)  { descEl.setAttribute('data-en', descEn);   descEl.setAttribute('data-ar', descAr);   descEl.textContent  = isAr ? descAr  : descEn;  }
+      });
+    }
+  } catch(e) {}
+
+  // ── Contact Texts ──
+  try {
+    const ct = JSON.parse(localStorage.getItem('apContactTexts') || 'null');
+    if (ct) {
+      const headlineEl = document.querySelector('.ct-headline');
+      if (headlineEl) {
+        const lines = headlineEl.querySelectorAll('.line');
+        const setLine = (line, en, ar) => {
+          if (!line) return;
+          const span = line.querySelector('span') || line;
+          span.setAttribute('data-en', en); span.setAttribute('data-ar', ar);
+          const emEl = span.querySelector('em');
+          if (emEl) emEl.textContent = isAr ? ar : en;
+          else span.textContent = isAr ? ar : en;
+        };
+        if (lines.length >= 3) { setLine(lines[0], ct.h1En, ct.h1Ar); setLine(lines[1], ct.h2En, ct.h2Ar); setLine(lines[2], ct.h3En, ct.h3Ar); }
+      }
+      const subEl = document.querySelector('.ct-sub');
+      if (subEl) { subEl.setAttribute('data-en', ct.subEn); subEl.setAttribute('data-ar', ct.subAr); subEl.textContent = isAr ? ct.subAr : ct.subEn; }
+    }
+  } catch(e) {}
+
+  // ── Contact Links ──
+  try {
+    const cl = JSON.parse(localStorage.getItem('apContactLinks') || 'null');
+    if (cl) {
+      if (cl.email) {
+        document.querySelectorAll('#contact a[href^="mailto"]').forEach(a => {
+          a.href = 'mailto:' + cl.email;
+          const span = a.querySelector('.ct-link-label,[data-en]');
+          if (span) span.textContent = cl.email;
+        });
+      }
+      if (cl.instagram) document.querySelectorAll('#contact a[href*="instagram"]').forEach(a => a.href = cl.instagram);
+      if (cl.linkedin)  document.querySelectorAll('#contact a[href*="linkedin"]').forEach(a => a.href = cl.linkedin);
+      if (cl.behance)   document.querySelectorAll('#contact a[href*="behance"]').forEach(a => a.href = cl.behance);
+    }
+  } catch(e) {}
+
+  // ── Footer ──
+  try {
+    const ft = JSON.parse(localStorage.getItem('apFooterTexts') || 'null');
+    if (ft) {
+      const ftCopy = document.querySelector('.ft-copy');
+      const ftNote = document.querySelector('.ft-note');
+      if (ftCopy && ft.copyEn) { ftCopy.setAttribute('data-en', ft.copyEn); ftCopy.textContent = ft.copyEn; }
+      if (ftNote && ft.noteEn) { ftNote.setAttribute('data-en', ft.noteEn); ftNote.textContent = ft.noteEn; }
+    }
+  } catch(e) {}
+
+  // ── Availability ──
+  try {
+    const avail = localStorage.getItem('apAvailability');
+    if (avail) {
+      const dot = document.querySelector('.avail-dot');
+      const txt = document.querySelector('.avail-text span[data-en]');
+      if (dot && txt) {
+        if (avail === 'available') { dot.style.background = '#6aab6a'; dot.style.display = ''; }
+        else if (avail === 'busy') { dot.style.background = '#c4a97a'; dot.style.display = ''; txt.textContent = 'Busy'; }
+        else { dot.style.display = 'none'; txt.textContent = ''; }
+      }
+    }
+  } catch(e) {}
+}
 
 // ── Escape closes modals/gate ──
 document.getElementById('apEditModal').addEventListener('click', function(e) {
