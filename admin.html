@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — Ahmad Sattof</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e0d;
+  --surface: #161614;
+  --surface2: #1e1e1c;
+  --border: #2a2a28;
+  --ink: #f0efe8;
+  --mid: #6e6e68;
+  --accent: #b5a48a;
+  --accent2: #c4a97a;
+  --green: #6aab6a;
+  --red: #c47a7a;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'IBM Plex Sans Arabic', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-weight: 300; min-height: 100vh; }
+
+/* LOGIN */
+#loginScreen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+.login-box {
+  width: 380px;
+  border: 1px solid var(--border);
+  padding: 48px 40px;
+  background: var(--surface);
+}
+.login-logo {
+  font-family: var(--serif);
+  font-size: 28px; font-weight: 300; font-style: italic;
+  color: var(--accent); margin-bottom: 8px; text-align: center;
+}
+.login-sub {
+  font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--mid); text-align: center; margin-bottom: 40px;
+}
+.l-field { margin-bottom: 18px; }
+.l-label {
+  font-size: 9px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--mid); display: block; margin-bottom: 8px;
+}
+.l-input {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border);
+  color: var(--ink); font-family: var(--sans); font-size: 14px; font-weight: 300;
+  padding: 12px 16px; outline: none; transition: border-color .2s;
+  direction: ltr;
+}
+.l-input:focus { border-color: var(--accent); }
+.l-btn {
+  width: 100%; background: var(--accent); border: none; color: var(--bg);
+  font-family: var(--sans); font-size: 11px; font-weight: 500;
+  letter-spacing: .16em; text-transform: uppercase;
+  padding: 14px; cursor: pointer; transition: background .2s; margin-top: 8px;
+}
+.l-btn:hover { background: var(--accent2); }
+.l-err {
+  color: var(--red); font-size: 12px; margin-top: 12px;
+  text-align: center; min-height: 18px;
+}
+
+/* LAYOUT */
+#app { display: none; min-height: 100vh; }
+.sidebar {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 220px;
+  background: var(--surface); border-left: 1px solid var(--border);
+  display: flex; flex-direction: column; z-index: 100;
+  overflow-y: auto;
+}
+.sb-logo {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.sb-logo-name {
+  font-family: var(--serif); font-size: 18px; font-style: italic;
+  color: var(--accent);
+}
+.sb-logo-sub {
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--mid); margin-top: 4px;
+}
+.sb-nav { flex: 1; padding: 16px 0; }
+.sb-section-label {
+  font-size: 8px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--mid); padding: 16px 24px 8px; opacity: .6;
+}
+.sb-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 24px; color: var(--mid); font-size: 13px;
+  cursor: pointer; transition: all .18s; border: none; background: none;
+  width: 100%; text-align: right; font-family: var(--sans); font-weight: 300;
+}
+.sb-link:hover { color: var(--ink); background: var(--surface2); }
+.sb-link.active { color: var(--accent); background: var(--surface2); border-right: 2px solid var(--accent); }
+.sb-link .icon { font-size: 14px; opacity: .7; }
+.sb-bottom {
+  padding: 16px 24px; border-top: 1px solid var(--border);
+}
+.sb-status {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; color: var(--mid); margin-bottom: 12px;
+}
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+.sb-logout {
+  font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--mid); background: none; border: 1px solid var(--border);
+  padding: 8px 14px; cursor: pointer; transition: all .2s; font-family: var(--sans); width: 100%;
+}
+.sb-logout:hover { border-color: var(--red); color: var(--red); }
+
+.main { margin-right: 220px; padding: 40px 48px; min-height: 100vh; }
+
+/* SECTIONS */
+.section { display: none; }
+.section.active { display: block; }
+
+.section-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--border);
+}
+.section-title {
+  font-family: var(--serif); font-size: 36px; font-weight: 300; font-style: italic;
+  color: var(--ink);
+}
+.section-sub { font-size: 12px; color: var(--mid); margin-top: 4px; letter-spacing: .06em; }
+
+/* SAVE BTN */
+.save-btn {
+  background: var(--accent); border: none; color: var(--bg);
+  font-family: var(--sans); font-size: 10px; font-weight: 500;
+  letter-spacing: .16em; text-transform: uppercase;
+  padding: 12px 24px; cursor: pointer; transition: background .2s;
+}
+.save-btn:hover { background: var(--accent2); }
+.save-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 14px 28px; font-size: 12px; letter-spacing: .08em;
+  opacity: 0; transition: all .3s; pointer-events: none; z-index: 9999;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { border-color: var(--green); color: var(--green); }
+.toast.error { border-color: var(--red); color: var(--red); }
+
+/* FORM GRID */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.form-grid.single { grid-template-columns: 1fr; }
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field.full { grid-column: 1 / -1; }
+.f-label {
+  font-size: 9px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--mid);
+}
+.f-input, .f-textarea, .f-select {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--ink); font-family: var(--sans); font-size: 14px; font-weight: 300;
+  padding: 12px 14px; outline: none; transition: border-color .2s; width: 100%;
+  direction: ltr;
+}
+.f-input:focus, .f-textarea:focus, .f-select:focus { border-color: var(--accent); }
+.f-textarea { resize: vertical; min-height: 100px; }
+.f-select { cursor: pointer; }
+
+/* CARD */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 28px 32px; margin-bottom: 16px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.card-title { font-size: 14px; font-weight: 400; color: var(--ink); }
+.card-num {
+  font-family: var(--serif); font-size: 22px; font-style: italic; color: var(--accent); opacity: .6;
+}
+
+/* LIST ITEMS */
+.list-item {
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 20px 24px; margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.list-item-info { flex: 1; }
+.list-item-title { font-size: 14px; color: var(--ink); margin-bottom: 4px; }
+.list-item-sub { font-size: 11px; color: var(--mid); letter-spacing: .04em; }
+.list-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.btn-edit, .btn-del, .btn-add {
+  font-size: 9px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+  padding: 8px 14px; border: 1px solid var(--border); background: none;
+  cursor: pointer; transition: all .2s; font-family: var(--sans); color: var(--mid);
+}
+.btn-edit:hover { border-color: var(--accent); color: var(--accent); }
+.btn-del:hover { border-color: var(--red); color: var(--red); }
+.btn-add {
+  color: var(--accent); border-color: var(--accent); margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-add:hover { background: var(--accent); color: var(--bg); }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(14,14,13,.92);
+  z-index: 1000; display: none; align-items: center; justify-content: center; padding: 32px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border);
+  width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px 32px; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--surface); z-index: 1;
+}
+.modal-title { font-family: var(--serif); font-size: 22px; font-style: italic; color: var(--ink); }
+.modal-close {
+  background: none; border: none; color: var(--mid); font-size: 22px;
+  cursor: pointer; transition: color .2s; line-height: 1;
+}
+.modal-close:hover { color: var(--red); }
+.modal-body { padding: 32px; }
+.modal-footer {
+  padding: 20px 32px; border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: 12px;
+}
+.btn-cancel {
+  font-size: 10px; letter-spacing: .14em; text-transform: uppercase; font-family: var(--sans);
+  padding: 10px 20px; border: 1px solid var(--border); background: none; color: var(--mid); cursor: pointer; transition: all .2s;
+}
+.btn-cancel:hover { border-color: var(--mid); color: var(--ink); }
+
+/* STAT CARD */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 24px 28px;
+}
+.stat-n {
+  font-family: var(--serif); font-size: 44px; font-weight: 300;
+  font-style: italic; color: var(--accent); line-height: 1;
+}
+.stat-l { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--mid); margin-top: 6px; }
+
+/* TOGGLE */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.toggle-label { font-size: 13px; color: var(--ink); }
+.toggle-sub { font-size: 11px; color: var(--mid); margin-top: 2px; }
+.toggle {
+  position: relative; width: 42px; height: 22px; cursor: pointer;
+}
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0; background: var(--surface2);
+  border: 1px solid var(--border); transition: .3s;
+}
+.toggle-slider::before {
+  content: ''; position: absolute; width: 14px; height: 14px;
+  background: var(--mid); top: 3px; right: 3px; transition: .3s;
+}
+input:checked + .toggle-slider { background: var(--accent); border-color: var(--accent); }
+input:checked + .toggle-slider::before { transform: translateX(-20px); background: var(--bg); }
+
+/* RANGE */
+.range-row { display: flex; align-items: center; gap: 16px; }
+.f-range { flex: 1; accent-color: var(--accent); }
+.range-val { font-family: var(--serif); font-size: 20px; font-style: italic; color: var(--accent); min-width: 40px; text-align: center; }
+
+/* COLOR */
+.f-color { width: 48px; height: 40px; border: 1px solid var(--border); background: none; cursor: pointer; padding: 2px; }
+
+/* LOADER */
+.section-loader { text-align: center; padding: 60px; color: var(--mid); font-size: 12px; letter-spacing: .1em; }
+
+/* QUICK NAV */
+.quick-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px; }
+.quick-link {
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 20px; cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 12px;
+}
+.quick-link:hover { border-color: var(--accent); }
+.ql-icon { font-size: 20px; }
+.ql-label { font-size: 12px; color: var(--mid); }
+.ql-title { font-size: 14px; color: var(--ink); margin-top: 2px; }
+
+@media (max-width: 900px) {
+  .sidebar { width: 180px; }
+  .main { margin-right: 180px; padding: 24px; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Ahmad Sattof</div>
+    <div class="login-sub">لوحة التحكم</div>
+    <div class="l-field">
+      <label class="l-label">البريد الإلكتروني</label>
+      <input class="l-input" id="loginEmail" type="email" placeholder="admin@email.com" dir="ltr">
+    </div>
+    <div class="l-field">
+      <label class="l-label">كلمة المرور</label>
+      <input class="l-input" id="loginPassword" type="password" placeholder="••••••••" dir="ltr">
+    </div>
+    <button class="l-btn" onclick="doLogin()">دخول</button>
+    <div class="l-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- APP -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-name">Ahmad Sattof</div>
+      <div class="sb-logo-sub">Admin Panel</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section-label">الرئيسية</div>
+      <button class="sb-link active" onclick="showSection('dashboard')">
+        <span class="icon">◈</span> لوحة التحكم
+      </button>
+
+      <div class="sb-section-label">المحتوى</div>
+      <button class="sb-link" onclick="showSection('hero')">
+        <span class="icon">✦</span> الهيرو
+      </button>
+      <button class="sb-link" onclick="showSection('about')">
+        <span class="icon">◎</span> من أنا
+      </button>
+      <button class="sb-link" onclick="showSection('projects')">
+        <span class="icon">◻</span> المشاريع
+      </button>
+      <button class="sb-link" onclick="showSection('services')">
+        <span class="icon">◈</span> الخدمات
+      </button>
+      <button class="sb-link" onclick="showSection('skills')">
+        <span class="icon">▸</span> المهارات
+      </button>
+      <button class="sb-link" onclick="showSection('testimonials')">
+        <span class="icon">❝</span> الآراء
+      </button>
+      <button class="sb-link" onclick="showSection('contact')">
+        <span class="icon">◌</span> التواصل
+      </button>
+
+      <div class="sb-section-label">الإعدادات</div>
+      <button class="sb-link" onclick="showSection('settings')">
+        <span class="icon">⚙</span> الإعدادات
+      </button>
+    </nav>
+    <div class="sb-bottom">
+      <div class="sb-status">
+        <span class="status-dot"></span> متصل بـ Firebase
+      </div>
+      <button class="sb-logout" onclick="doLogout()">تسجيل الخروج</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="sec-dashboard">
+      <div class="section-header">
+        <div>
+          <div class="section-title">مرحباً بك</div>
+          <div class="section-sub">لوحة تحكم بورتفوليو أحمد سطوف</div>
+        </div>
+        <a href="index.html" target="_blank" style="color:var(--mid);font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border:1px solid var(--border);padding:10px 18px;transition:all .2s;" onmouseenter="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--mid)'">↗ شاهد الموقع</a>
+      </div>
+
+      <div class="stats-row" id="dashStats">
+        <div class="stat-card"><div class="stat-n" id="dProj">—</div><div class="stat-l">مشروع</div></div>
+        <div class="stat-card"><div class="stat-n" id="dSvc">—</div><div class="stat-l">خدمة</div></div>
+        <div class="stat-card"><div class="stat-n" id="dSkill">—</div><div class="stat-l">مهارة</div></div>
+        <div class="stat-card"><div class="stat-n" id="dTesti">—</div><div class="stat-l">تقييم</div></div>
+      </div>
+
+      <div class="quick-links">
+        <div class="quick-link" onclick="showSection('hero')">
+          <span class="ql-icon">✦</span>
+          <div><div class="ql-label">تعديل</div><div class="ql-title">الهيرو</div></div>
+        </div>
+        <div class="quick-link" onclick="showSection('projects')">
+          <span class="ql-icon">◻</span>
+          <div><div class="ql-label">إدارة</div><div class="ql-title">المشاريع</div></div>
+        </div>
+        <div class="quick-link" onclick="showSection('contact')">
+          <span class="ql-icon">◌</span>
+          <div><div class="ql-label">تعديل</div><div class="ql-title">التواصل</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="section" id="sec-hero">
+      <div class="section-header">
+        <div>
+          <div class="section-title">الهيرو</div>
+          <div class="section-sub">العنوان الرئيسي والوصف</div>
+        </div>
+        <button class="save-btn" onclick="saveHero()">حفظ التغييرات</button>
+      </div>
+      <div class="card">
+        <div class="form-grid">
+          <div class="field full">
+            <label class="f-label">السطر الأول (Hero Line 1)</label>
+            <input class="f-input" id="heroLine1En" placeholder="I design" dir="ltr">
+          </div>
+          <div class="field full">
+            <label class="f-label">السطر المائل (Hero Italic)</label>
+            <input class="f-input" id="heroLine2En" placeholder="quiet" dir="ltr">
+          </div>
+          <div class="field full">
+            <label class="f-label">السطر الثالث (Hero Line 3)</label>
+            <input class="f-input" id="heroLine3En" placeholder="visuals." dir="ltr">
+          </div>
+          <div class="field full">
+            <label class="f-label">النص التعريفي (Statement)</label>
+            <textarea class="f-textarea" id="heroStatement" dir="ltr" style="min-height:80px"></textarea>
+          </div>
+          <div class="field">
+            <label class="f-label">رقم الواتساب</label>
+            <input class="f-input" id="heroWhatsapp" placeholder="966579683408" dir="ltr">
+          </div>
+          <div class="field">
+            <div class="toggle-row" style="border:none;padding:0;margin-top:20px">
+              <div>
+                <div class="toggle-label">متاح للمشاريع</div>
+                <div class="toggle-sub">يظهر النقطة الخضراء</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="heroAvailable">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="section" id="sec-about">
+      <div class="section-header">
+        <div>
+          <div class="section-title">من أنا</div>
+          <div class="section-sub">قسم About</div>
+        </div>
+        <button class="save-btn" onclick="saveAbout()">حفظ التغييرات</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">النصوص الرئيسية</div></div>
+        <div class="form-grid single">
+          <div class="field">
+            <label class="f-label">الفقرة الأولى</label>
+            <textarea class="f-textarea" id="aboutP1" dir="ltr"></textarea>
+          </div>
+          <div class="field">
+            <label class="f-label">الفقرة الثانية</label>
+            <textarea class="f-textarea" id="aboutP2" dir="ltr"></textarea>
+          </div>
+          <div class="field">
+            <label class="f-label">الفقرة الثالثة</label>
+            <textarea class="f-textarea" id="aboutP3" dir="ltr"></textarea>
+          </div>
+          <div class="field">
+            <label class="f-label">الاقتباس (Quote)</label>
+            <textarea class="f-textarea" id="aboutQuote" dir="ltr" style="min-height:70px"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-header"><div class="card-title">الإحصائيات (Stats)</div></div>
+        <div class="form-grid">
+          <div class="field">
+            <label class="f-label">الرقم الأول</label>
+            <input class="f-input" id="stat1n" placeholder="4+" dir="ltr">
+          </div>
+          <div class="field">
+            <label class="f-label">التسمية الأولى</label>
+            <input class="f-input" id="stat1l" placeholder="Years Designing" dir="ltr">
+          </div>
+          <div class="field">
+            <label class="f-label">الرقم الثاني</label>
+            <input class="f-input" id="stat2n" placeholder="3" dir="ltr">
+          </div>
+          <div class="field">
+            <label class="f-label">التسمية الثانية</label>
+            <input class="f-input" id="stat2l" placeholder="Languages Spoken" dir="ltr">
+          </div>
+          <div class="field">
+            <label class="f-label">الرقم الثالث</label>
+            <input class="f-input" id="stat3n" placeholder="AI" dir="ltr">
+          </div>
+          <div class="field">
+            <label class="f-label">التسمية الثالثة</label>
+            <input class="f-input" id="stat3l" placeholder="Powered Production" dir="ltr">
+          </div>
+          <div class="field">
+            <label class="f-label">الرقم الرابع</label>
+            <input class="f-input" id="stat4n" placeholder="∞" dir="ltr">
+          </div>
+          <div class="field">
+            <label class="f-label">التسمية الرابعة</label>
+            <input class="f-input" id="stat4l" placeholder="Ideas Per Day" dir="ltr">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="section" id="sec-projects">
+      <div class="section-header">
+        <div>
+          <div class="section-title">المشاريع</div>
+          <div class="section-sub">إضافة وتعديل وحذف المشاريع</div>
+        </div>
+      </div>
+      <button class="btn-add" onclick="openProjectModal()">+ إضافة مشروع جديد</button>
+      <div id="projectsList"><div class="section-loader">جاري التحميل…</div></div>
+    </div>
+
+    <!-- SERVICES -->
+    <div class="section" id="sec-services">
+      <div class="section-header">
+        <div>
+          <div class="section-title">الخدمات</div>
+          <div class="section-sub">تعديل الخدمات المقدمة</div>
+        </div>
+      </div>
+      <button class="btn-add" onclick="openServiceModal()">+ إضافة خدمة</button>
+      <div id="servicesList"><div class="section-loader">جاري التحميل…</div></div>
+    </div>
+
+    <!-- SKILLS -->
+    <div class="section" id="sec-skills">
+      <div class="section-header">
+        <div>
+          <div class="section-title">المهارات</div>
+          <div class="section-sub">إدارة مستويات المهارات</div>
+        </div>
+      </div>
+      <button class="btn-add" onclick="openSkillModal()">+ إضافة مهارة</button>
+      <div id="skillsList"><div class="section-loader">جاري التحميل…</div></div>
+    </div>
+
+    <!-- TESTIMONIALS -->
+    <div class="section" id="sec-testimonials">
+      <div class="section-header">
+        <div>
+          <div class="section-title">آراء العملاء</div>
+          <div class="section-sub">إضافة وتعديل التقييمات</div>
+        </div>
+      </div>
+      <button class="btn-add" onclick="openTestimonialModal()">+ إضافة تقييم</button>
+      <div id="testimonialsList"><div class="section-loader">جاري التحميل…</div></div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="section" id="sec-contact">
+      <div class="section-header">
+        <div>
+          <div class="section-title">التواصل</div>
+          <div class="section-sub">روابط التواصل الاجتماعي والمعلومات</div>
+        </div>
+        <button class="save-btn" onclick="saveContact()">حفظ التغييرات</button>
+      </div>
+      <div class="card">
+        <div class="form-grid">
+          <div class="field">
+            <label class="f-label">البريد الإلكتروني</label>
+            <input class="f-input" id="ctEmail" dir="ltr" placeholder="ahdsya4@gmail.com">
+          </div>
+          <div class="field">
+            <label class="f-label">رقم الواتساب</label>
+            <input class="f-input" id="ctWhatsapp" dir="ltr" placeholder="966579683408">
+          </div>
+          <div class="field">
+            <label class="f-label">Instagram (username)</label>
+            <input class="f-input" id="ctInstagram" dir="ltr" placeholder="@ahmadsattof">
+          </div>
+          <div class="field">
+            <label class="f-label">Behance (username)</label>
+            <input class="f-input" id="ctBehance" dir="ltr" placeholder="ahmadsattof">
+          </div>
+          <div class="field full">
+            <label class="f-label">نص الـ Contact (Subtitle)</label>
+            <textarea class="f-textarea" id="ctSubtitle" dir="ltr" style="min-height:70px"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="section" id="sec-settings">
+      <div class="section-header">
+        <div>
+          <div class="section-title">الإعدادات</div>
+          <div class="section-sub">إعدادات عامة للموقع</div>
+        </div>
+        <button class="save-btn" onclick="saveSettings()">حفظ</button>
+      </div>
+      <div class="card">
+        <div class="form-grid">
+          <div class="field">
+            <label class="f-label">اسم الصفحة (Title)</label>
+            <input class="f-input" id="siteTitle" dir="ltr">
+          </div>
+          <div class="field">
+            <label class="f-label">الاسم في الـ Nav</label>
+            <input class="f-input" id="siteName" dir="ltr">
+          </div>
+          <div class="field">
+            <label class="f-label">الوصف المائل في الـ Nav</label>
+            <input class="f-input" id="siteNameItalic" dir="ltr">
+          </div>
+          <div class="field">
+            <label class="f-label">لون الـ Accent</label>
+            <div style="display:flex;gap:12px;align-items:center">
+              <input type="color" class="f-color" id="siteAccent" value="#b5a48a">
+              <input class="f-input" id="siteAccentHex" placeholder="#b5a48a" dir="ltr" style="flex:1">
+            </div>
+          </div>
+          <div class="field full">
+            <label class="f-label">نص الـ Footer</label>
+            <input class="f-input" id="siteFooter" dir="ltr">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODALS -->
+
+<!-- Project Modal -->
+<div class="modal-overlay" id="projectModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="projectModalTitle">مشروع جديد</div>
+      <button class="modal-close" onclick="closeModal('projectModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field">
+          <label class="f-label">اسم المشروع (EN)</label>
+          <input class="f-input" id="pTitle" dir="ltr">
+        </div>
+        <div class="field">
+          <label class="f-label">اسم المشروع (AR)</label>
+          <input class="f-input" id="pTitleAr">
+        </div>
+        <div class="field">
+          <label class="f-label">التصنيف (EN)</label>
+          <input class="f-input" id="pCat" placeholder="Visual Identity" dir="ltr">
+        </div>
+        <div class="field">
+          <label class="f-label">التصنيف (AR)</label>
+          <input class="f-input" id="pCatAr" placeholder="هوية بصرية">
+        </div>
+        <div class="field">
+          <label class="f-label">السنة</label>
+          <input class="f-input" id="pYear" placeholder="2025" dir="ltr">
+        </div>
+        <div class="field">
+          <label class="f-label">الدور</label>
+          <input class="f-input" id="pRole" placeholder="Brand Designer" dir="ltr">
+        </div>
+        <div class="field full">
+          <label class="f-label">الوصف القصير</label>
+          <textarea class="f-textarea" id="pDesc" dir="ltr" style="min-height:80px"></textarea>
+        </div>
+        <div class="field full">
+          <label class="f-label">رابط الصورة الرئيسية (اختياري)</label>
+          <input class="f-input" id="pImg" placeholder="https://..." dir="ltr">
+        </div>
+        <div class="field full">
+          <label class="f-label">رابط المشروع (اختياري)</label>
+          <input class="f-input" id="pLink" placeholder="https://behance.net/..." dir="ltr">
+        </div>
+        <div class="field">
+          <label class="f-label">الترتيب (Order)</label>
+          <input class="f-input" id="pOrder" type="number" placeholder="1" dir="ltr">
+        </div>
+        <div class="field">
+          <div class="toggle-row" style="border:none;padding:0;margin-top:20px">
+            <div>
+              <div class="toggle-label">ظاهر في الموقع</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="pVisible" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('projectModal')">إلغاء</button>
+      <button class="save-btn" onclick="saveProject()">حفظ المشروع</button>
+    </div>
+  </div>
+</div>
+
+<!-- Service Modal -->
+<div class="modal-overlay" id="serviceModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="serviceModalTitle">خدمة جديدة</div>
+      <button class="modal-close" onclick="closeModal('serviceModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field">
+          <label class="f-label">العنوان (EN)</label>
+          <input class="f-input" id="sTitle" dir="ltr">
+        </div>
+        <div class="field">
+          <label class="f-label">العنوان (AR)</label>
+          <input class="f-input" id="sTitleAr">
+        </div>
+        <div class="field full">
+          <label class="f-label">الوصف (EN)</label>
+          <textarea class="f-textarea" id="sDesc" dir="ltr"></textarea>
+        </div>
+        <div class="field full">
+          <label class="f-label">الوصف (AR)</label>
+          <textarea class="f-textarea" id="sDescAr"></textarea>
+        </div>
+        <div class="field full">
+          <label class="f-label">الأدوات (مفصولة بفاصلة)</label>
+          <input class="f-input" id="sTags" placeholder="Figma, Photoshop, Illustrator" dir="ltr">
+        </div>
+        <div class="field">
+          <label class="f-label">الترتيب</label>
+          <input class="f-input" id="sOrder" type="number" placeholder="1" dir="ltr">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('serviceModal')">إلغاء</button>
+      <button class="save-btn" onclick="saveService()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Skill Modal -->
+<div class="modal-overlay" id="skillModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">مهارة</div>
+      <button class="modal-close" onclick="closeModal('skillModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field">
+          <label class="f-label">اسم المهارة (EN)</label>
+          <input class="f-input" id="skName" dir="ltr">
+        </div>
+        <div class="field">
+          <label class="f-label">اسم المهارة (AR)</label>
+          <input class="f-input" id="skNameAr">
+        </div>
+        <div class="field full">
+          <label class="f-label">النسبة المئوية</label>
+          <div class="range-row">
+            <input type="range" class="f-range" id="skPct" min="1" max="100" value="85" oninput="document.getElementById('skPctVal').textContent=this.value">
+            <div class="range-val" id="skPctVal">85</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="f-label">الترتيب</label>
+          <input class="f-input" id="skOrder" type="number" placeholder="1" dir="ltr">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('skillModal')">إلغاء</button>
+      <button class="save-btn" onclick="saveSkill()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Testimonial Modal -->
+<div class="modal-overlay" id="testimonialModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">تقييم عميل</div>
+      <button class="modal-close" onclick="closeModal('testimonialModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field">
+          <label class="f-label">اسم العميل</label>
+          <input class="f-input" id="tName" dir="ltr">
+        </div>
+        <div class="field">
+          <label class="f-label">الدور / الشركة</label>
+          <input class="f-input" id="tRole" dir="ltr">
+        </div>
+        <div class="field full">
+          <label class="f-label">النص (EN)</label>
+          <textarea class="f-textarea" id="tText" dir="ltr"></textarea>
+        </div>
+        <div class="field full">
+          <label class="f-label">النص (AR)</label>
+          <textarea class="f-textarea" id="tTextAr"></textarea>
+        </div>
+        <div class="field">
+          <label class="f-label">التقييم (1-5)</label>
+          <input class="f-input" id="tStars" type="number" min="1" max="5" value="5" dir="ltr">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('testimonialModal')">إلغاء</button>
+      <button class="save-btn" onclick="saveTestimonial()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE + APP SCRIPT -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, collection,
+         getDocs, addDoc, updateDoc, deleteDoc, query, orderBy }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDDs8dh6euqPzrlx0A_cV4n2Wn9tgOxhCk",
+  authDomain: "ahmads-deb8b.firebaseapp.com",
+  projectId: "ahmads-deb8b",
+  storageBucket: "ahmads-deb8b.firebasestorage.app",
+  messagingSenderId: "167543579053",
+  appId: "1:167543579053:web:9eaea491787d4e20eac124",
+  measurementId: "G-4ETEYC55ZZ"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const auth  = getAuth(fbApp);
+const db    = getFirestore(fbApp);
+
+// ── STATE ──
+let editingId = { project: null, service: null, skill: null, testimonial: null };
+
+// ── AUTH ──
+window.doLogin = async () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPassword').value;
+  const err   = document.getElementById('loginErr');
+  err.textContent = '';
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) {
+    err.textContent = 'البريد أو كلمة المرور غير صحيحة';
+  }
+};
+
+window.doLogout = () => signOut(auth);
+
+document.getElementById('loginPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') window.doLogin();
+});
+
+onAuthStateChanged(auth, user => {
+  if (user) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadAll();
+  } else {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+  }
+});
+
+// ── TOAST ──
+window.toast = (msg, type='success') => {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show ${type}`;
+  setTimeout(() => t.className = 'toast', 3000);
+};
+
+// ── NAVIGATION ──
+window.showSection = (id) => {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  document.querySelectorAll('.sb-link').forEach(l => {
+    if (l.textContent.trim().includes(sectionNames[id])) l.classList.add('active');
+  });
+};
+
+const sectionNames = {
+  dashboard:'لوحة', hero:'الهيرو', about:'من أنا', projects:'المشاريع',
+  services:'الخدمات', skills:'المهارات', testimonials:'آراء', contact:'التواصل', settings:'الإعدادات'
+};
+
+// Fix sidebar active by index
+window.showSection = (id) => {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  const map = { dashboard:0, hero:1, about:2, projects:3, services:4, skills:5, testimonials:6, contact:7, settings:8 };
+  const links = document.querySelectorAll('.sb-link');
+  if (links[map[id]]) links[map[id]].classList.add('active');
+};
+
+// ── MODAL ──
+window.closeModal = (id) => document.getElementById(id).classList.remove('open');
+window.openProjectModal = (data=null, docId=null) => {
+  editingId.project = docId;
+  document.getElementById('projectModalTitle').textContent = docId ? 'تعديل مشروع' : 'مشروع جديد';
+  const fields = ['pTitle','pTitleAr','pCat','pCatAr','pYear','pRole','pDesc','pImg','pLink','pOrder'];
+  const keys   = ['titleEn','titleAr','catEn','catAr','year','role','desc','img','link','order'];
+  fields.forEach((f,i) => document.getElementById(f).value = data ? (data[keys[i]] ?? '') : '');
+  document.getElementById('pVisible').checked = data ? (data.visible !== false) : true;
+  document.getElementById('projectModal').classList.add('open');
+};
+window.openServiceModal = (data=null, docId=null) => {
+  editingId.service = docId;
+  document.getElementById('serviceModalTitle').textContent = docId ? 'تعديل خدمة' : 'خدمة جديدة';
+  document.getElementById('sTitle').value   = data?.titleEn || '';
+  document.getElementById('sTitleAr').value = data?.titleAr || '';
+  document.getElementById('sDesc').value    = data?.descEn  || '';
+  document.getElementById('sDescAr').value  = data?.descAr  || '';
+  document.getElementById('sTags').value    = data?.tags?.join(', ') || '';
+  document.getElementById('sOrder').value   = data?.order ?? '';
+  document.getElementById('serviceModal').classList.add('open');
+};
+window.openSkillModal = (data=null, docId=null) => {
+  editingId.skill = docId;
+  document.getElementById('skName').value   = data?.nameEn || '';
+  document.getElementById('skNameAr').value = data?.nameAr || '';
+  const pct = data?.pct ?? 85;
+  document.getElementById('skPct').value    = pct;
+  document.getElementById('skPctVal').textContent = pct;
+  document.getElementById('skOrder').value  = data?.order ?? '';
+  document.getElementById('skillModal').classList.add('open');
+};
+window.openTestimonialModal = (data=null, docId=null) => {
+  editingId.testimonial = docId;
+  document.getElementById('tName').value    = data?.name   || '';
+  document.getElementById('tRole').value    = data?.role   || '';
+  document.getElementById('tText').value    = data?.textEn || '';
+  document.getElementById('tTextAr').value  = data?.textAr || '';
+  document.getElementById('tStars').value   = data?.stars  ?? 5;
+  document.getElementById('testimonialModal').classList.add('open');
+};
+
+// ── LOAD ALL ──
+async function loadAll() {
+  loadHero(); loadAbout(); loadContact(); loadSettings();
+  loadProjects(); loadServices(); loadSkills(); loadTestimonials();
+}
+
+// ── HERO ──
+async function loadHero() {
+  try {
+    const d = await getDoc(doc(db, 'portfolio', 'hero'));
+    const data = d.exists() ? d.data() : {};
+    document.getElementById('heroLine1En').value   = data.line1 || 'I design';
+    document.getElementById('heroLine2En').value   = data.line2 || 'quiet';
+    document.getElementById('heroLine3En').value   = data.line3 || 'visuals.';
+    document.getElementById('heroStatement').value = data.statement || '';
+    document.getElementById('heroWhatsapp').value  = data.whatsapp || '966579683408';
+    document.getElementById('heroAvailable').checked = data.available !== false;
+  } catch(e) {}
+}
+window.saveHero = async () => {
+  try {
+    await setDoc(doc(db, 'portfolio', 'hero'), {
+      line1: document.getElementById('heroLine1En').value,
+      line2: document.getElementById('heroLine2En').value,
+      line3: document.getElementById('heroLine3En').value,
+      statement: document.getElementById('heroStatement').value,
+      whatsapp: document.getElementById('heroWhatsapp').value,
+      available: document.getElementById('heroAvailable').checked,
+      updatedAt: new Date().toISOString()
+    });
+    toast('✓ تم حفظ الهيرو');
+  } catch(e) { toast('حدث خطأ: ' + e.message, 'error'); }
+};
+
+// ── ABOUT ──
+async function loadAbout() {
+  try {
+    const d = await getDoc(doc(db, 'portfolio', 'about'));
+    const data = d.exists() ? d.data() : {};
+    document.getElementById('aboutP1').value    = data.p1 || '';
+    document.getElementById('aboutP2').value    = data.p2 || '';
+    document.getElementById('aboutP3').value    = data.p3 || '';
+    document.getElementById('aboutQuote').value = data.quote || '';
+    document.getElementById('stat1n').value = data.stat1n || '4+';
+    document.getElementById('stat1l').value = data.stat1l || 'Years Designing';
+    document.getElementById('stat2n').value = data.stat2n || '3';
+    document.getElementById('stat2l').value = data.stat2l || 'Languages Spoken';
+    document.getElementById('stat3n').value = data.stat3n || 'AI';
+    document.getElementById('stat3l').value = data.stat3l || 'Powered Production';
+    document.getElementById('stat4n').value = data.stat4n || '∞';
+    document.getElementById('stat4l').value = data.stat4l || 'Ideas Per Day';
+  } catch(e) {}
+}
+window.saveAbout = async () => {
+  try {
+    await setDoc(doc(db, 'portfolio', 'about'), {
+      p1: document.getElementById('aboutP1').value,
+      p2: document.getElementById('aboutP2').value,
+      p3: document.getElementById('aboutP3').value,
+      quote: document.getElementById('aboutQuote').value,
+      stat1n: document.getElementById('stat1n').value,
+      stat1l: document.getElementById('stat1l').value,
+      stat2n: document.getElementById('stat2n').value,
+      stat2l: document.getElementById('stat2l').value,
+      stat3n: document.getElementById('stat3n').value,
+      stat3l: document.getElementById('stat3l').value,
+      stat4n: document.getElementById('stat4n').value,
+      stat4l: document.getElementById('stat4l').value,
+      updatedAt: new Date().toISOString()
+    });
+    toast('✓ تم حفظ قسم About');
+  } catch(e) { toast('حدث خطأ: ' + e.message, 'error'); }
+};
+
+// ── CONTACT ──
+async function loadContact() {
+  try {
+    const d = await getDoc(doc(db, 'portfolio', 'contact'));
+    const data = d.exists() ? d.data() : {};
+    document.getElementById('ctEmail').value     = data.email     || 'ahdsya4@gmail.com';
+    document.getElementById('ctWhatsapp').value  = data.whatsapp  || '966579683408';
+    document.getElementById('ctInstagram').value = data.instagram || '@ahmadsattof';
+    document.getElementById('ctBehance').value   = data.behance   || 'ahmadsattof';
+    document.getElementById('ctSubtitle').value  = data.subtitle  || '';
+  } catch(e) {}
+}
+window.saveContact = async () => {
+  try {
+    await setDoc(doc(db, 'portfolio', 'contact'), {
+      email:     document.getElementById('ctEmail').value,
+      whatsapp:  document.getElementById('ctWhatsapp').value,
+      instagram: document.getElementById('ctInstagram').value,
+      behance:   document.getElementById('ctBehance').value,
+      subtitle:  document.getElementById('ctSubtitle').value,
+      updatedAt: new Date().toISOString()
+    });
+    toast('✓ تم حفظ معلومات التواصل');
+  } catch(e) { toast('حدث خطأ: ' + e.message, 'error'); }
+};
+
+// ── SETTINGS ──
+async function loadSettings() {
+  try {
+    const d = await getDoc(doc(db, 'portfolio', 'settings'));
+    const data = d.exists() ? d.data() : {};
+    document.getElementById('siteTitle').value       = data.title      || 'Ahmad Sattof — Visual Designer';
+    document.getElementById('siteName').value        = data.name       || 'Ahmad Sattof';
+    document.getElementById('siteNameItalic').value  = data.nameItalic || 'Visual Designer';
+    document.getElementById('siteAccent').value      = data.accent     || '#b5a48a';
+    document.getElementById('siteAccentHex').value   = data.accent     || '#b5a48a';
+    document.getElementById('siteFooter').value      = data.footer     || '© 2025 Ahmad Sattof';
+  } catch(e) {}
+}
+window.saveSettings = async () => {
+  try {
+    const accent = document.getElementById('siteAccentHex').value || document.getElementById('siteAccent').value;
+    await setDoc(doc(db, 'portfolio', 'settings'), {
+      title:       document.getElementById('siteTitle').value,
+      name:        document.getElementById('siteName').value,
+      nameItalic:  document.getElementById('siteNameItalic').value,
+      accent,
+      footer:      document.getElementById('siteFooter').value,
+      updatedAt: new Date().toISOString()
+    });
+    toast('✓ تم حفظ الإعدادات');
+  } catch(e) { toast('حدث خطأ: ' + e.message, 'error'); }
+};
+document.getElementById('siteAccent').addEventListener('input', e => {
+  document.getElementById('siteAccentHex').value = e.target.value;
+});
+
+// ── PROJECTS ──
+async function loadProjects() {
+  try {
+    const q   = query(collection(db, 'projects'), orderBy('order'));
+    const snap = await getDocs(q);
+    const list = document.getElementById('projectsList');
+    document.getElementById('dProj').textContent = snap.size;
+    if (snap.empty) { list.innerHTML = '<div class="section-loader">لا توجد مشاريع بعد — أضف مشروعك الأول!</div>'; return; }
+    list.innerHTML = '';
+    snap.forEach(d => {
+      const data = d.data();
+      const el = document.createElement('div');
+      el.className = 'list-item';
+      el.innerHTML = `
+        <div class="list-item-info">
+          <div class="list-item-title">${data.titleEn || '—'}</div>
+          <div class="list-item-sub">${data.catEn || ''} · ${data.year || ''} ${data.visible === false ? '· <span style="color:var(--red)">مخفي</span>' : ''}</div>
+        </div>
+        <div class="list-item-actions">
+          <button class="btn-edit" onclick="openProjectModal(${JSON.stringify(data).replace(/"/g,'&quot;')}, '${d.id}')">تعديل</button>
+          <button class="btn-del"  onclick="deleteItem('projects','${d.id}', loadProjects)">حذف</button>
+        </div>`;
+      list.appendChild(el);
+    });
+  } catch(e) { document.getElementById('projectsList').innerHTML = '<div class="section-loader" style="color:var(--red)">خطأ في التحميل</div>'; }
+}
+
+window.saveProject = async () => {
+  const data = {
+    titleEn: document.getElementById('pTitle').value,
+    titleAr: document.getElementById('pTitleAr').value,
+    catEn:   document.getElementById('pCat').value,
+    catAr:   document.getElementById('pCatAr').value,
+    year:    document.getElementById('pYear').value,
+    role:    document.getElementById('pRole').value,
+    desc:    document.getElementById('pDesc').value,
+    img:     document.getElementById('pImg').value,
+    link:    document.getElementById('pLink').value,
+    order:   parseInt(document.getElementById('pOrder').value) || 99,
+    visible: document.getElementById('pVisible').checked,
+    updatedAt: new Date().toISOString()
+  };
+  try {
+    if (editingId.project) {
+      await updateDoc(doc(db, 'projects', editingId.project), data);
+    } else {
+      await addDoc(collection(db, 'projects'), data);
+    }
+    closeModal('projectModal');
+    loadProjects();
+    toast('✓ تم حفظ المشروع');
+  } catch(e) { toast('حدث خطأ: ' + e.message, 'error'); }
+};
+
+// ── SERVICES ──
+async function loadServices() {
+  try {
+    const q   = query(collection(db, 'services'), orderBy('order'));
+    const snap = await getDocs(q);
+    const list = document.getElementById('servicesList');
+    document.getElementById('dSvc').textContent = snap.size;
+    if (snap.empty) { list.innerHTML = '<div class="section-loader">لا توجد خدمات — أضف أول خدمة!</div>'; return; }
+    list.innerHTML = '';
+    snap.forEach(d => {
+      const data = d.data();
+      const el = document.createElement('div');
+      el.className = 'list-item';
+      el.innerHTML = `
+        <div class="list-item-info">
+          <div class="list-item-title">${data.titleEn || '—'}</div>
+          <div class="list-item-sub">${data.tags?.join(' · ') || ''}</div>
+        </div>
+        <div class="list-item-actions">
+          <button class="btn-edit" onclick="openServiceModal(${JSON.stringify(data).replace(/"/g,'&quot;')}, '${d.id}')">تعديل</button>
+          <button class="btn-del"  onclick="deleteItem('services','${d.id}', loadServices)">حذف</button>
+        </div>`;
+      list.appendChild(el);
+    });
+  } catch(e) {}
+}
+
+window.saveService = async () => {
+  const data = {
+    titleEn: document.getElementById('sTitle').value,
+    titleAr: document.getElementById('sTitleAr').value,
+    descEn:  document.getElementById('sDesc').value,
+    descAr:  document.getElementById('sDescAr').value,
+    tags:    document.getElementById('sTags').value.split(',').map(t => t.trim()).filter(Boolean),
+    order:   parseInt(document.getElementById('sOrder').value) || 99,
+    updatedAt: new Date().toISOString()
+  };
+  try {
+    if (editingId.service) {
+      await updateDoc(doc(db, 'services', editingId.service), data);
+    } else {
+      await addDoc(collection(db, 'services'), data);
+    }
+    closeModal('serviceModal');
+    loadServices();
+    toast('✓ تم حفظ الخدمة');
+  } catch(e) { toast('حدث خطأ: ' + e.message, 'error'); }
+};
+
+// ── SKILLS ──
+async function loadSkills() {
+  try {
+    const q   = query(collection(db, 'skills'), orderBy('order'));
+    const snap = await getDocs(q);
+    const list = document.getElementById('skillsList');
+    document.getElementById('dSkill').textContent = snap.size;
+    if (snap.empty) { list.innerHTML = '<div class="section-loader">لا توجد مهارات بعد!</div>'; return; }
+    list.innerHTML = '';
+    snap.forEach(d => {
+      const data = d.data();
+      const el = document.createElement('div');
+      el.className = 'list-item';
+      el.innerHTML = `
+        <div class="list-item-info">
+          <div class="list-item-title">${data.nameEn || '—'}</div>
+          <div class="list-item-sub">${data.pct || 0}%</div>
+        </div>
+        <div class="list-item-actions">
+          <button class="btn-edit" onclick="openSkillModal(${JSON.stringify(data).replace(/"/g,'&quot;')}, '${d.id}')">تعديل</button>
+          <button class="btn-del"  onclick="deleteItem('skills','${d.id}', loadSkills)">حذف</button>
+        </div>`;
+      list.appendChild(el);
+    });
+  } catch(e) {}
+}
+
+window.saveSkill = async () => {
+  const data = {
+    nameEn: document.getElementById('skName').value,
+    nameAr: document.getElementById('skNameAr').value,
+    pct:    parseInt(document.getElementById('skPct').value),
+    order:  parseInt(document.getElementById('skOrder').value) || 99,
+    updatedAt: new Date().toISOString()
+  };
+  try {
+    if (editingId.skill) {
+      await updateDoc(doc(db, 'skills', editingId.skill), data);
+    } else {
+      await addDoc(collection(db, 'skills'), data);
+    }
+    closeModal('skillModal');
+    loadSkills();
+    toast('✓ تم حفظ المهارة');
+  } catch(e) { toast('حدث خطأ: ' + e.message, 'error'); }
+};
+
+// ── TESTIMONIALS ──
+async function loadTestimonials() {
+  try {
+    const snap = await getDocs(collection(db, 'testimonials'));
+    const list = document.getElementById('testimonialsList');
+    document.getElementById('dTesti').textContent = snap.size;
+    if (snap.empty) { list.innerHTML = '<div class="section-loader">لا توجد تقييمات بعد!</div>'; return; }
+    list.innerHTML = '';
+    snap.forEach(d => {
+      const data = d.data();
+      const el = document.createElement('div');
+      el.className = 'list-item';
+      el.innerHTML = `
+        <div class="list-item-info">
+          <div class="list-item-title">${data.name || '—'}</div>
+          <div class="list-item-sub">${data.role || ''} · ${'★'.repeat(data.stars || 5)}</div>
+        </div>
+        <div class="list-item-actions">
+          <button class="btn-edit" onclick="openTestimonialModal(${JSON.stringify(data).replace(/"/g,'&quot;')}, '${d.id}')">تعديل</button>
+          <button class="btn-del"  onclick="deleteItem('testimonials','${d.id}', loadTestimonials)">حذف</button>
+        </div>`;
+      list.appendChild(el);
+    });
+  } catch(e) {}
+}
+
+window.saveTestimonial = async () => {
+  const data = {
+    name:   document.getElementById('tName').value,
+    role:   document.getElementById('tRole').value,
+    textEn: document.getElementById('tText').value,
+    textAr: document.getElementById('tTextAr').value,
+    stars:  parseInt(document.getElementById('tStars').value) || 5,
+    updatedAt: new Date().toISOString()
+  };
+  try {
+    if (editingId.testimonial) {
+      await updateDoc(doc(db, 'testimonials', editingId.testimonial), data);
+    } else {
+      await addDoc(collection(db, 'testimonials'), data);
+    }
+    closeModal('testimonialModal');
+    loadTestimonials();
+    toast('✓ تم حفظ التقييم');
+  } catch(e) { toast('حدث خطأ: ' + e.message, 'error'); }
+};
+
+// ── DELETE ──
+window.deleteItem = async (collName, id, reload) => {
+  if (!confirm('هل أنت متأكد من الحذف؟')) return;
+  try {
+    await deleteDoc(doc(db, collName, id));
+    reload();
+    toast('✓ تم الحذف', 'success');
+  } catch(e) { toast('خطأ في الحذف', 'error'); }
+};
+
+// expose reload funcs
+window.loadProjects     = loadProjects;
+window.loadServices     = loadServices;
+window.loadSkills       = loadSkills;
+window.loadTestimonials = loadTestimonials;
+</script>
+</body>
+</html>
