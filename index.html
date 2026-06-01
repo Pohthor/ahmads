@@ -2028,6 +2028,23 @@ html[dir="rtl"] .po-next-btn { flex-direction: row-reverse; }
   .pm-card.pm-banner { height: 220px; }
   .hero-headline { font-size: clamp(52px, 14vw, 90px); }
 }
+
+/* ── Responsive masonry: content-sized rows (fixes mobile gaps) ── */
+@media (max-width: 960px) {
+  .proj-masonry { grid-auto-rows: auto !important; }
+  .pm-card { grid-row: auto !important; height: auto !important; }
+  .pm-card.pm-full-banner,
+  .pm-card.pm-wide,
+  .pm-card.pm-banner { grid-column: 1 / -1 !important; aspect-ratio: 1584 / 672 !important; height: auto !important; }
+  .pm-card:not(.pm-full-banner):not(.pm-wide):not(.pm-banner) { aspect-ratio: 16 / 11 !important; }
+}
+@media (max-width: 600px) {
+  .proj-masonry { grid-template-columns: 1fr !important; grid-auto-rows: auto !important; }
+  .pm-card { grid-column: auto !important; grid-row: auto !important; height: auto !important; aspect-ratio: 16 / 11 !important; }
+  .pm-card.pm-full-banner,
+  .pm-card.pm-wide,
+  .pm-card.pm-banner { aspect-ratio: 1584 / 672 !important; margin: 8px 0 !important; }
+}
 /* ── ADMIN PANEL ── */
 #adminGate {
   position: fixed; inset: 0; z-index: 99000;
