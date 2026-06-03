@@ -82,8 +82,8 @@ class GazeDetector(
     }
 
     private fun onResult(result: FaceLandmarkerResult) {
-        val landmarksList = result.faceLandmarks()
-        if (!landmarksList.isPresent || landmarksList.get().isEmpty()) {
+        val landmarksList = result.faceLandmarks()   // List<List<NormalizedLandmark>> — no Optional
+        if (landmarksList.isEmpty()) {
             lookUpStartTime = 0L
             lookDownStartTime = 0L
             smoothedPitch = 0.7f
@@ -91,7 +91,7 @@ class GazeDetector(
             return
         }
 
-        val landmarks = landmarksList.get()[0]
+        val landmarks = landmarksList[0]
 
         // Landmark 33: left eye outer corner | 263: right eye outer | 1: nose tip
         val leftEye  = landmarks[33]

@@ -222,8 +222,7 @@ class MainActivity : AppCompatActivity() {
                 val bitmap = proxy.toBitmap()
                 val mp = BitmapImageBuilder(bitmap).build()
                 val result = try { previewFaceLandmarker?.detect(mp) } catch (e: Exception) { null }
-                val detected = result?.faceLandmarks()?.isPresent == true &&
-                               result.faceLandmarks().get().isNotEmpty()
+                val detected = result?.faceLandmarks()?.isNotEmpty() == true
                 runOnUiThread {
                     binding.labelFaceStatus.text = if (detected)
                         "Face detected — tilt head up/down to scroll"
