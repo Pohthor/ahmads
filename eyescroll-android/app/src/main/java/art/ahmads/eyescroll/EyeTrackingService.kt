@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.graphics.ImageFormat
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -16,15 +15,10 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import java.io.File
-import java.net.URL
 import java.util.concurrent.Executors
 
 class EyeTrackingService : LifecycleService() {
@@ -42,8 +36,6 @@ class EyeTrackingService : LifecycleService() {
         const val MODEL_URL = "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task"
         const val MODEL_FILENAME = "face_landmarker.task"
 
-        fun modelFile(service: EyeTrackingService) = File(service.filesDir, MODEL_FILENAME)
-
         enum class ModelStatus { CHECKING, DOWNLOADING, READY, ERROR }
     }
 
@@ -51,27 +43,15 @@ class EyeTrackingService : LifecycleService() {
     private val CHANNEL_ID = "eyescroll_tracking"
     private val NOTIFICATION_ID = 1
 
-    private val serviceScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     private var gazeDetector: GazeDetector? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private val analysisExecutor = Executors.newSingleThreadExecutor()
 
-    var headTurnThreshold: Float = 0.10f
-        set(value) {
-            field = value
-            gazeDetector?.headTurnThreshold = value
-        }
-
-    var dwellTimeMs: Long = 0L
-        set(value) {
-            field = value
-            gazeDetector?.dwellTimeMs = value
-        }
-
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
-        checkModel()
+        val model = File(filesDir, MODEL_FILENAME)
+        _modelStatus.value = if (model.exists() && model.length() > 100_000) ModelStatus.READY else ModelStatus.CHECKING
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -79,7 +59,7 @@ class EyeTrackingService : LifecycleService() {
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("EyeScroll")
-            .setContentText("Head tracking active — turn right/left to scroll")
+            .setContentText("Wink right → next  |  Wink left → prev  |  Double wink → like")
             .setSmallIcon(android.R.drawable.ic_menu_camera)
             .setOngoing(true)
             .setContentIntent(
@@ -114,47 +94,6 @@ class EyeTrackingService : LifecycleService() {
         super.onDestroy()
     }
 
-    private fun checkModel() {
-        val model = File(filesDir, MODEL_FILENAME)
-        _modelStatus.value = if (model.exists() && model.length() > 100_000) {
-            ModelStatus.READY
-        } else {
-            ModelStatus.CHECKING
-        }
-    }
-
-    fun downloadModel(onProgress: (Float) -> Unit, onDone: (Boolean) -> Unit) {
-        _modelStatus.value = ModelStatus.DOWNLOADING
-        serviceScope.launch(Dispatchers.IO) {
-            try {
-                val out = File(filesDir, MODEL_FILENAME)
-                val connection = URL(MODEL_URL).openConnection()
-                connection.connect()
-                val total = connection.contentLengthLong.toFloat()
-                var downloaded = 0L
-
-                connection.getInputStream().use { input ->
-                    out.outputStream().use { output ->
-                        val buf = ByteArray(8192)
-                        var n: Int
-                        while (input.read(buf).also { n = it } != -1) {
-                            output.write(buf, 0, n)
-                            downloaded += n
-                            if (total > 0) onProgress(downloaded / total)
-                        }
-                    }
-                }
-
-                _modelStatus.value = ModelStatus.READY
-                onDone(true)
-            } catch (e: Exception) {
-                Log.e(TAG, "Model download failed", e)
-                _modelStatus.value = ModelStatus.ERROR
-                onDone(false)
-            }
-        }
-    }
-
     private fun startTracking() {
         val modelFile = File(filesDir, MODEL_FILENAME)
         if (!modelFile.exists()) {
@@ -162,27 +101,30 @@ class EyeTrackingService : LifecycleService() {
             return
         }
 
+        // Map sensitivity pref (0-100%) → wink threshold (0.80 → 0.50)
+        val sensitivity = getSharedPreferences("eyescroll", MODE_PRIVATE).getInt("sensitivity", 60)
+        val winkThreshold = 0.80f - (sensitivity / 100f) * 0.30f
+
         val detector = GazeDetector(this, object : GazeDetector.Listener {
             override fun onGazeUpdate(state: GazeState) {
                 _gazeState.value = state
             }
-
             override fun onScrollTriggered(direction: GazeDetector.ScrollDirection) {
-                Log.d(TAG, "Scroll triggered: $direction")
+                Log.d(TAG, "Scroll: $direction")
                 when (direction) {
                     GazeDetector.ScrollDirection.NEXT -> EyeScrollAccessibilityService.scrollToNext()
                     GazeDetector.ScrollDirection.PREV -> EyeScrollAccessibilityService.scrollToPrev()
                 }
             }
-
+            override fun onDoubleTap() {
+                Log.d(TAG, "Double tap (like)")
+                EyeScrollAccessibilityService.doubleTap()
+            }
             override fun onError(message: String) {
                 Log.e(TAG, "GazeDetector error: $message")
             }
         }).also {
-            // Map sensitivity pref (0-100) to threshold: higher sensitivity = smaller threshold
-            val sensitivity = getSharedPreferences("eyescroll", MODE_PRIVATE).getInt("sensitivity", 60)
-            it.headTurnThreshold = 0.20f - (sensitivity / 100f) * 0.15f
-            it.dwellTimeMs = dwellTimeMs
+            it.winkThreshold = winkThreshold
         }
 
         try {
@@ -209,26 +151,17 @@ class EyeTrackingService : LifecycleService() {
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
             .build()
 
-        imageAnalysis.setAnalyzer(analysisExecutor) { imageProxy ->
-            processImageProxy(imageProxy, detector)
+        imageAnalysis.setAnalyzer(analysisExecutor) { proxy ->
+            detector.processFrame(proxy.toBitmap())
+            proxy.close()
         }
 
         try {
             cameraProvider?.unbindAll()
-            cameraProvider?.bindToLifecycle(
-                this,
-                CameraSelector.DEFAULT_FRONT_CAMERA,
-                imageAnalysis
-            )
+            cameraProvider?.bindToLifecycle(this, CameraSelector.DEFAULT_FRONT_CAMERA, imageAnalysis)
         } catch (e: Exception) {
             Log.e(TAG, "Camera bind failed", e)
         }
-    }
-
-    private fun processImageProxy(imageProxy: ImageProxy, detector: GazeDetector) {
-        val bitmap = imageProxy.toBitmap()
-        detector.processFrame(bitmap)
-        imageProxy.close()
     }
 
     private fun stopTracking() {
@@ -238,11 +171,7 @@ class EyeTrackingService : LifecycleService() {
     }
 
     private fun createNotificationChannel() {
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            "Eye Tracking",
-            NotificationManager.IMPORTANCE_LOW
-        ).apply {
+        val channel = NotificationChannel(CHANNEL_ID, "Eye Tracking", NotificationManager.IMPORTANCE_LOW).apply {
             description = "EyeScroll background tracking"
             setShowBadge(false)
         }

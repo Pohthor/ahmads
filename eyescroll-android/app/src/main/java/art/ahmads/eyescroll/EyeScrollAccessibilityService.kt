@@ -14,6 +14,7 @@ class EyeScrollAccessibilityService : AccessibilityService() {
 
         fun scrollToNext() { instance?.performSwipeUp() }
         fun scrollToPrev() { instance?.performSwipeDown() }
+        fun doubleTap()    { instance?.performDoubleTap() }
     }
 
     override fun onServiceConnected() {
@@ -32,41 +33,49 @@ class EyeScrollAccessibilityService : AccessibilityService() {
 
     fun performSwipeUp() {
         try {
-            val metrics = resources.displayMetrics
-            val cx = metrics.widthPixels / 2f
-            val startY = metrics.heightPixels * 0.72f
-            val endY = metrics.heightPixels * 0.28f
-
+            val m = resources.displayMetrics
+            val cx = m.widthPixels / 2f
             val path = Path().apply {
-                moveTo(cx, startY)
-                lineTo(cx, endY)
-            }
-
-            val gesture = GestureDescription.Builder()
-                .addStroke(GestureDescription.StrokeDescription(path, 0L, 350L))
-                .build()
-
-            dispatchGesture(gesture, null, null)
-        } catch (e: Exception) {
-            // Ignore gesture failures silently
-        }
-    }
-
-    fun performSwipeDown() {
-        try {
-            val metrics = resources.displayMetrics
-            val cx = metrics.widthPixels / 2f
-            val startY = metrics.heightPixels * 0.28f
-            val endY = metrics.heightPixels * 0.72f
-            val path = Path().apply {
-                moveTo(cx, startY)
-                lineTo(cx, endY)
+                moveTo(cx, m.heightPixels * 0.72f)
+                lineTo(cx, m.heightPixels * 0.28f)
             }
             dispatchGesture(
                 GestureDescription.Builder()
                     .addStroke(GestureDescription.StrokeDescription(path, 0L, 350L))
-                    .build(),
-                null, null
+                    .build(), null, null
+            )
+        } catch (e: Exception) {}
+    }
+
+    fun performSwipeDown() {
+        try {
+            val m = resources.displayMetrics
+            val cx = m.widthPixels / 2f
+            val path = Path().apply {
+                moveTo(cx, m.heightPixels * 0.28f)
+                lineTo(cx, m.heightPixels * 0.72f)
+            }
+            dispatchGesture(
+                GestureDescription.Builder()
+                    .addStroke(GestureDescription.StrokeDescription(path, 0L, 350L))
+                    .build(), null, null
+            )
+        } catch (e: Exception) {}
+    }
+
+    fun performDoubleTap() {
+        try {
+            val m = resources.displayMetrics
+            val cx = m.widthPixels / 2f
+            val cy = m.heightPixels / 2f
+            // Two taps 120ms apart — Instagram registers this as a like
+            val tap1 = Path().apply { moveTo(cx, cy - 1f); lineTo(cx, cy + 1f) }
+            val tap2 = Path().apply { moveTo(cx, cy - 1f); lineTo(cx, cy + 1f) }
+            dispatchGesture(
+                GestureDescription.Builder()
+                    .addStroke(GestureDescription.StrokeDescription(tap1, 0L,   60L))
+                    .addStroke(GestureDescription.StrokeDescription(tap2, 120L, 60L))
+                    .build(), null, null
             )
         } catch (e: Exception) {}
     }

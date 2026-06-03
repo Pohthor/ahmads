@@ -15,17 +15,16 @@ class EyeGazeView @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : View(context, attrs) {
 
-    // Colours matching the dark portfolio palette
-    private val colorSclera = Color.parseColor("#2A2A27")
+    private val colorSclera   = Color.parseColor("#2A2A27")
     private val colorIrisIdle = Color.parseColor("#6E6E68")
-    private val colorIrisDwell = Color.parseColor("#C4A97A")
-    private val colorIrisScroll = Color.parseColor("#F0EFE8")
+    private val colorIrisWink = Color.parseColor("#C4A97A")
+    private val colorIrisFlash = Color.parseColor("#F0EFE8")
     private val colorProgress = Color.parseColor("#C4A97A")
-    private val colorNoFace = Color.parseColor("#1A1A17")
+    private val colorNoFace   = Color.parseColor("#1A1A17")
 
-    private val scleraPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = colorSclera }
-    private val irisPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = colorIrisIdle }
-    private val pupilPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#0E0E0D") }
+    private val scleraPaint  = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = colorSclera }
+    private val irisPaint    = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = colorIrisIdle }
+    private val pupilPaint   = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#0E0E0D") }
     private val progressPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = colorProgress
         style = Paint.Style.STROKE
@@ -33,11 +32,9 @@ class EyeGazeView @JvmOverloads constructor(
     }
 
     private val scleraRect = RectF()
-    private val arcRect = RectF()
+    private val arcRect    = RectF()
 
-    // Animated values — iris moves horizontally (right/left)
     private var displayIrisX = 0f
-    private var displayDwellProgress = 0f
     private var irisXAnimator: ValueAnimator? = null
 
     var faceDetected = false
@@ -49,31 +46,27 @@ class EyeGazeView @JvmOverloads constructor(
         if (!state.faceDetected) {
             animateIrisTo(0f)
             irisPaint.color = colorIrisIdle
-            displayDwellProgress = 0f
             invalidate()
             return
         }
 
         val targetX = when {
-            state.isLookingRight -> 0.6f
-            state.isLookingLeft  -> -0.6f
+            state.isWinkingRight -> 0.6f
+            state.isWinkingLeft  -> -0.6f
             else                 -> 0f
         }
         animateIrisTo(targetX)
-
-        irisPaint.color = if (state.isInDwell) colorIrisDwell else colorIrisIdle
-
-        displayDwellProgress = state.dwellProgress
+        irisPaint.color = if (state.isWinkingRight || state.isWinkingLeft) colorIrisWink else colorIrisIdle
         invalidate()
     }
 
-    fun flashScroll() {
-        irisPaint.color = colorIrisScroll
+    fun flashDoubleTap() {
+        irisPaint.color = colorIrisFlash
         invalidate()
         postDelayed({
             irisPaint.color = colorIrisIdle
             invalidate()
-        }, 300)
+        }, 400)
     }
 
     private fun animateIrisTo(target: Float) {
@@ -96,7 +89,6 @@ class EyeGazeView @JvmOverloads constructor(
         val rx = w * 0.42f
         val ry = h * 0.28f
         scleraRect.set(cx - rx, cy - ry, cx + rx, cy + ry)
-
         val arcPad = w * 0.06f
         arcRect.set(arcPad, arcPad, w - arcPad, h - arcPad)
         progressPaint.strokeWidth = w * 0.045f
@@ -115,15 +107,8 @@ class EyeGazeView @JvmOverloads constructor(
 
         if (faceDetected) {
             val irisX = cx + displayIrisX * rx * 0.55f
-
             canvas.drawCircle(irisX, cy, irisR, irisPaint)
             canvas.drawCircle(irisX, cy, pupilR, pupilPaint)
-
-            // Dwell progress ring
-            if (displayDwellProgress > 0f) {
-                val sweep = displayDwellProgress * 360f
-                canvas.drawArc(arcRect, -90f, sweep, false, progressPaint)
-            }
         }
     }
 }

@@ -12,14 +12,11 @@ import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarker
 import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarkerResult
 import java.io.File
 import java.nio.ByteBuffer
-import kotlin.math.abs
 
 data class GazeState(
     val faceDetected: Boolean = false,
-    val isLookingRight: Boolean = false,
-    val isLookingLeft: Boolean = false,
-    val isInDwell: Boolean = false,
-    val dwellProgress: Float = 0f
+    val isWinkingRight: Boolean = false,
+    val isWinkingLeft: Boolean = false
 )
 
 class GazeDetector(
@@ -31,22 +28,23 @@ class GazeDetector(
     interface Listener {
         fun onGazeUpdate(state: GazeState)
         fun onScrollTriggered(direction: ScrollDirection)
+        fun onDoubleTap()
         fun onError(message: String)
     }
 
-    // Normalized yaw = (noseX - eyeMidX) / IOD
-    // Neutral ≈ 0 | Head turns RIGHT → negative | Head turns LEFT → positive
-    var headTurnThreshold: Float = 0.10f
-    var dwellTimeMs: Long = 0L
-    var scrollCooldownMs: Long = 2_500L
+    // eyeBlinkRight/Left blendshape score: 0.0 = fully open, 1.0 = fully closed
+    var winkThreshold: Float = 0.65f        // score to register a wink
+    var winkReleaseThreshold: Float = 0.30f // score below which eye is considered open again
+    var scrollCooldownMs: Long = 1_000L
+    private val doubleTapWindowMs: Long = 700L
 
     private var faceLandmarker: FaceLandmarker? = null
     private val imageProcessingOptions = ImageProcessingOptions.builder().build()
 
-    private var lookRightStartTime = 0L
-    private var lookLeftStartTime = 0L
+    private var rightEyeWinking = false
+    private var leftEyeWinking = false
     private var lastScrollTime = 0L
-    private var smoothedYaw = 0f
+    private var lastRightWinkTime = 0L
 
     fun initialize(modelFile: File) {
         val bytes = modelFile.readBytes()
@@ -63,7 +61,7 @@ class GazeDetector(
             )
             .setRunningMode(RunningMode.LIVE_STREAM)
             .setNumFaces(1)
-            .setOutputFaceBlendshapes(false)
+            .setOutputFaceBlendshapes(true)
             .setResultListener { result: FaceLandmarkerResult, _: MPImage ->
                 onResult(result)
             }
@@ -81,76 +79,60 @@ class GazeDetector(
     }
 
     private fun onResult(result: FaceLandmarkerResult) {
-        val landmarksList = result.faceLandmarks()   // List<List<NormalizedLandmark>> — no Optional
-        if (landmarksList.isEmpty()) {
-            lookRightStartTime = 0L
-            lookLeftStartTime = 0L
-            smoothedYaw = 0f
+        if (result.faceLandmarks().isEmpty()) {
+            rightEyeWinking = false
+            leftEyeWinking = false
             listener.onGazeUpdate(GazeState(faceDetected = false))
             return
         }
 
-        val landmarks = landmarksList[0]
-
-        // Landmark 33: left eye outer corner | 263: right eye outer | 1: nose tip
-        val leftEye  = landmarks[33]
-        val rightEye = landmarks[263]
-        val noseTip  = landmarks[1]
-
-        val eyeMidX = (leftEye.x() + rightEye.x()) / 2f
-        val iod = abs(leftEye.x() - rightEye.x())
-
-        if (iod < 0.01f) {
+        val blendshapes = result.faceBlendshapes()
+        if (!blendshapes.isPresent || blendshapes.get().isEmpty()) {
             listener.onGazeUpdate(GazeState(faceDetected = true))
             return
         }
 
-        val rawYaw = (noseTip.x() - eyeMidX) / iod
-        smoothedYaw = smoothedYaw * 0.6f + rawYaw * 0.4f
+        val categories = blendshapes.get()[0]
+        val rightBlink = categories.find { it.categoryName() == "eyeBlinkRight" }?.score() ?: 0f
+        val leftBlink  = categories.find { it.categoryName() == "eyeBlinkLeft"  }?.score() ?: 0f
+
+        // Wink = one eye closes while the other stays relatively open (not a natural blink)
+        val rightWinking = rightBlink > winkThreshold && leftBlink < 0.45f
+        val leftWinking  = leftBlink  > winkThreshold && rightBlink < 0.45f
 
         val now = System.currentTimeMillis()
 
-        when {
-            smoothedYaw < -headTurnThreshold -> {
-                // Head turned right → next post
-                lookLeftStartTime = 0L
-                if (lookRightStartTime == 0L) lookRightStartTime = now
-                val elapsed = now - lookRightStartTime
-                val progress = if (dwellTimeMs == 0L) 1f
-                               else (elapsed.toFloat() / dwellTimeMs).coerceIn(0f, 1f)
-                listener.onGazeUpdate(GazeState(
-                    faceDetected = true, isLookingRight = true,
-                    isInDwell = true, dwellProgress = progress
-                ))
-                if (elapsed >= dwellTimeMs && (now - lastScrollTime) >= scrollCooldownMs) {
-                    lastScrollTime = now
-                    lookRightStartTime = 0L
-                    listener.onScrollTriggered(ScrollDirection.NEXT)
-                }
+        // Right eye wink — rising edge only
+        if (rightWinking && !rightEyeWinking) {
+            rightEyeWinking = true
+            val isDoubleTap = lastRightWinkTime > 0 && (now - lastRightWinkTime) < doubleTapWindowMs
+            lastRightWinkTime = now
+            if (isDoubleTap) {
+                listener.onDoubleTap()
+            } else if ((now - lastScrollTime) >= scrollCooldownMs) {
+                lastScrollTime = now
+                listener.onScrollTriggered(ScrollDirection.NEXT)
             }
-            smoothedYaw > headTurnThreshold -> {
-                // Head turned left → previous post
-                lookRightStartTime = 0L
-                if (lookLeftStartTime == 0L) lookLeftStartTime = now
-                val elapsed = now - lookLeftStartTime
-                val progress = if (dwellTimeMs == 0L) 1f
-                               else (elapsed.toFloat() / dwellTimeMs).coerceIn(0f, 1f)
-                listener.onGazeUpdate(GazeState(
-                    faceDetected = true, isLookingLeft = true,
-                    isInDwell = true, dwellProgress = progress
-                ))
-                if (elapsed >= dwellTimeMs && (now - lastScrollTime) >= scrollCooldownMs) {
-                    lastScrollTime = now
-                    lookLeftStartTime = 0L
-                    listener.onScrollTriggered(ScrollDirection.PREV)
-                }
-            }
-            else -> {
-                lookRightStartTime = 0L
-                lookLeftStartTime = 0L
-                listener.onGazeUpdate(GazeState(faceDetected = true))
-            }
+        } else if (!rightWinking && rightBlink < winkReleaseThreshold) {
+            rightEyeWinking = false
         }
+
+        // Left eye wink — rising edge only
+        if (leftWinking && !leftEyeWinking) {
+            leftEyeWinking = true
+            if ((now - lastScrollTime) >= scrollCooldownMs) {
+                lastScrollTime = now
+                listener.onScrollTriggered(ScrollDirection.PREV)
+            }
+        } else if (!leftWinking && leftBlink < winkReleaseThreshold) {
+            leftEyeWinking = false
+        }
+
+        listener.onGazeUpdate(GazeState(
+            faceDetected = true,
+            isWinkingRight = rightEyeWinking,
+            isWinkingLeft = leftEyeWinking
+        ))
     }
 
     fun close() {
