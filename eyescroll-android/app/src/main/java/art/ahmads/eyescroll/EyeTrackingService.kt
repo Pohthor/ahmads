@@ -101,9 +101,9 @@ class EyeTrackingService : LifecycleService() {
             return
         }
 
-        // Map sensitivity pref (0-100%) → wink threshold (0.80 → 0.50)
+        // Map sensitivity pref (0-100%) → wink threshold (0.90 → 0.60)
         val sensitivity = getSharedPreferences("eyescroll", MODE_PRIVATE).getInt("sensitivity", 60)
-        val winkThreshold = 0.80f - (sensitivity / 100f) * 0.30f
+        val winkThreshold = 0.90f - (sensitivity / 100f) * 0.30f
 
         val detector = GazeDetector(this, object : GazeDetector.Listener {
             override fun onGazeUpdate(state: GazeState) {

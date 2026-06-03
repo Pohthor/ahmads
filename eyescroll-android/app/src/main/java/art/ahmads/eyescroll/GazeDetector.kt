@@ -32,17 +32,21 @@ class GazeDetector(
         fun onError(message: String)
     }
 
-    // eyeBlinkRight/Left blendshape score: 0.0 = fully open, 1.0 = fully closed
-    var winkThreshold: Float = 0.65f        // score to register a wink
-    var winkReleaseThreshold: Float = 0.30f // score below which eye is considered open again
-    var scrollCooldownMs: Long = 1_000L
-    private val doubleTapWindowMs: Long = 700L
+    // Wink detection thresholds
+    var winkThreshold: Float = 0.72f        // score to start a wink (raised to avoid natural blink triggers)
+    var winkReleaseThreshold: Float = 0.45f // score below which eye is "open" again (raised for easier double wink)
+    var scrollCooldownMs: Long = 1_200L
+    private val minWinkDurationMs: Long = 80L   // must hold wink this long — filters out accidental blinks
+    private val doubleTapWindowMs: Long = 900L  // window for second wink to count as double-tap
 
     private var faceLandmarker: FaceLandmarker? = null
     private val imageProcessingOptions = ImageProcessingOptions.builder().build()
 
+    // Per-eye state
     private var rightEyeWinking = false
     private var leftEyeWinking = false
+    private var rightWinkOnsetTime = 0L   // when right eye first crossed threshold
+    private var leftWinkOnsetTime = 0L
     private var lastScrollTime = 0L
     private var lastRightWinkTime = 0L
 
@@ -82,6 +86,8 @@ class GazeDetector(
         if (result.faceLandmarks().isEmpty()) {
             rightEyeWinking = false
             leftEyeWinking = false
+            rightWinkOnsetTime = 0L
+            leftWinkOnsetTime = 0L
             listener.onGazeUpdate(GazeState(faceDetected = false))
             return
         }
@@ -96,14 +102,35 @@ class GazeDetector(
         val rightBlink = categories.find { it.categoryName() == "eyeBlinkRight" }?.score() ?: 0f
         val leftBlink  = categories.find { it.categoryName() == "eyeBlinkLeft"  }?.score() ?: 0f
 
-        // Wink = one eye closes while the other stays relatively open (not a natural blink)
-        val rightWinking = rightBlink > winkThreshold && leftBlink < 0.45f
-        val leftWinking  = leftBlink  > winkThreshold && rightBlink < 0.45f
-
         val now = System.currentTimeMillis()
 
-        // Right eye wink — rising edge only
-        if (rightWinking && !rightEyeWinking) {
+        // A genuine wink: one eye clearly closed + other eye clearly open + strong asymmetry
+        // This triple check eliminates natural blinks where both eyes close together
+        val rightIsWinking = rightBlink > winkThreshold
+                          && leftBlink < 0.40f
+                          && (rightBlink - leftBlink) > 0.30f
+        val leftIsWinking  = leftBlink  > winkThreshold
+                          && rightBlink < 0.40f
+                          && (leftBlink - rightBlink) > 0.30f
+
+        // Track onset time (for minimum-duration filter)
+        if (rightIsWinking) {
+            if (rightWinkOnsetTime == 0L) rightWinkOnsetTime = now
+        } else {
+            rightWinkOnsetTime = 0L
+            if (rightBlink < winkReleaseThreshold) rightEyeWinking = false
+        }
+
+        if (leftIsWinking) {
+            if (leftWinkOnsetTime == 0L) leftWinkOnsetTime = now
+        } else {
+            leftWinkOnsetTime = 0L
+            if (leftBlink < winkReleaseThreshold) leftEyeWinking = false
+        }
+
+        // Fire only after wink is held for minWinkDurationMs (rising edge)
+        val rightConfirmed = rightWinkOnsetTime > 0 && (now - rightWinkOnsetTime) >= minWinkDurationMs
+        if (rightConfirmed && !rightEyeWinking) {
             rightEyeWinking = true
             val isDoubleTap = lastRightWinkTime > 0 && (now - lastRightWinkTime) < doubleTapWindowMs
             lastRightWinkTime = now
@@ -113,19 +140,15 @@ class GazeDetector(
                 lastScrollTime = now
                 listener.onScrollTriggered(ScrollDirection.NEXT)
             }
-        } else if (!rightWinking && rightBlink < winkReleaseThreshold) {
-            rightEyeWinking = false
         }
 
-        // Left eye wink — rising edge only
-        if (leftWinking && !leftEyeWinking) {
+        val leftConfirmed = leftWinkOnsetTime > 0 && (now - leftWinkOnsetTime) >= minWinkDurationMs
+        if (leftConfirmed && !leftEyeWinking) {
             leftEyeWinking = true
             if ((now - lastScrollTime) >= scrollCooldownMs) {
                 lastScrollTime = now
                 listener.onScrollTriggered(ScrollDirection.PREV)
             }
-        } else if (!leftWinking && leftBlink < winkReleaseThreshold) {
-            leftEyeWinking = false
         }
 
         listener.onGazeUpdate(GazeState(
