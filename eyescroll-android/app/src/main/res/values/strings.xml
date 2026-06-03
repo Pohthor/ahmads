@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EyeScroll</string>
+    <string name="accessibility_service_label">EyeScroll — Eye Tracking</string>
+    <string name="accessibility_service_description">Allows EyeScroll to swipe to the next post in Instagram and TikTok when your eye gaze is detected looking upward.</string>
+</resources>
