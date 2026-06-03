@@ -124,7 +124,8 @@ class EyeTrackingService : LifecycleService() {
                 Log.e(TAG, "GazeDetector error: $message")
             }
         }).also {
-            it.velocityThreshold = 0.28f - (sensitivity / 100f) * 0.18f
+            // sensitivity 0%=0.45 (needs big flick)  60%=0.30 (default)  100%=0.20 (easy)
+            it.velocityThreshold = 0.45f - (sensitivity / 100f) * 0.25f
         }
 
         try {

@@ -33,10 +33,10 @@ class GazeDetector(
         fun onError(message: String)
     }
 
-    // Velocity threshold: how much yaw must change within the window to trigger
-    var velocityThreshold: Float = 0.18f
+    // Velocity threshold: yaw change needed within the window to trigger
+    var velocityThreshold: Float = 0.30f
     var scrollCooldownMs: Long = 1_500L
-    private val historyWindowMs = 400L  // look at movement over last 400ms
+    private val historyWindowMs = 250L  // short window = only quick flicks trigger, not slow drifts
 
     private var faceLandmarker: FaceLandmarker? = null
     private val imageProcessingOptions = ImageProcessingOptions.builder().build()
