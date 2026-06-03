@@ -1,6 +1,7 @@
 package art.ahmads.eyescroll
 
 import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.accessibilityservice.GestureDescription
 import android.graphics.Path
 import android.view.accessibility.AccessibilityEvent
@@ -18,6 +19,13 @@ class EyeScrollAccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         instance = this
+        // Explicitly configure the service so it's recognised on all manufacturers
+        serviceInfo = serviceInfo?.apply {
+            eventTypes = AccessibilityEvent.TYPES_ALL_MASK
+            feedbackType = AccessibilityServiceInfo.FEEDBACK_ALL_MASK
+            flags = flags or AccessibilityServiceInfo.FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY
+            notificationTimeout = 0
+        }
     }
 
     override fun onDestroy() {
