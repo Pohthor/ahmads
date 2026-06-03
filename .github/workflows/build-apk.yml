@@ -1,0 +1,72 @@
+name: Build EyeScroll APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/eye-tracking-autoscroll-WOci9]
+    paths: [eyescroll-android/**]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android platform and build-tools
+        run: |
+          sdkmanager "platform-tools" "build-tools;35.0.0" "platforms;android-35" --sdk_root=$ANDROID_SDK_ROOT
+
+      - name: Download MediaPipe model
+        run: |
+          cd eyescroll-android
+          chmod +x download_model.sh
+          ./download_model.sh
+
+      - name: Build debug APK
+        run: |
+          cd eyescroll-android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
+
+      - name: Rename APK
+        run: cp eyescroll-android/app/build/outputs/apk/debug/app-debug.apk EyeScroll.apk
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: EyeScroll-APK
+          path: EyeScroll.apk
+          retention-days: 90
+
+      - name: Create / update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: EyeScroll v1.0
+          body: |
+            ## EyeScroll — Eye Tracking Auto Scroll for Instagram & TikTok
+
+            Look **up** for ~1 second when you're done watching → automatically scrolls to the next video.
+
+            ### Install
+            1. Download **EyeScroll.apk** below
+            2. Enable *Install from unknown sources* on your phone
+            3. Open the APK and install
+            4. Open EyeScroll and follow the 3-step setup (camera + accessibility + AI model)
+          files: EyeScroll.apk
+          make_latest: true
