@@ -4,10 +4,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.SystemClock
 import com.google.mediapipe.framework.image.BitmapImageBuilder
+import com.google.mediapipe.framework.image.MPImage
+import com.google.mediapipe.tasks.components.containers.Category
 import com.google.mediapipe.tasks.core.BaseOptions
+import com.google.mediapipe.tasks.vision.core.ImageProcessingOptions
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarker
-import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarkerOptions
 import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarkerResult
 import java.io.File
 import java.nio.ByteBuffer
@@ -17,7 +19,7 @@ data class GazeState(
     val lookUpScore: Float = 0f,
     val lookDownScore: Float = 0f,
     val isInDwell: Boolean = false,
-    val dwellProgress: Float = 0f   // 0..1, how close to scroll trigger
+    val dwellProgress: Float = 0f
 )
 
 class GazeDetector(
@@ -35,19 +37,21 @@ class GazeDetector(
     var scrollCooldownMs: Long = 2_500L
 
     private var faceLandmarker: FaceLandmarker? = null
+    private val imageProcessingOptions = ImageProcessingOptions.builder().build()
+
     private var lookUpStartTime = 0L
     private var lastScrollTime = 0L
     private var smoothedUp = 0f
     private var smoothedDown = 0f
 
     fun initialize(modelFile: File) {
-        val modelBytes = modelFile.readBytes()
-        val modelBuffer = ByteBuffer.allocateDirect(modelBytes.size).apply {
-            put(modelBytes)
+        val bytes = modelFile.readBytes()
+        val modelBuffer = ByteBuffer.allocateDirect(bytes.size).apply {
+            put(bytes)
             rewind()
         }
 
-        val options = FaceLandmarkerOptions.builder()
+        val options = FaceLandmarker.FaceLandmarkerOptions.builder()
             .setBaseOptions(
                 BaseOptions.builder()
                     .setModelAssetBuffer(modelBuffer)
@@ -56,8 +60,10 @@ class GazeDetector(
             .setRunningMode(RunningMode.LIVE_STREAM)
             .setNumFaces(1)
             .setOutputFaceBlendshapes(true)
-            .setResultListener(::onResult)
-            .setErrorListener { error ->
+            .setResultListener { result: FaceLandmarkerResult, _: MPImage ->
+                onResult(result)
+            }
+            .setErrorListener { error: RuntimeException ->
                 listener.onError(error.message ?: "MediaPipe error")
             }
             .build()
@@ -67,24 +73,23 @@ class GazeDetector(
 
     fun processFrame(bitmap: Bitmap) {
         val mpImage = BitmapImageBuilder(bitmap).build()
-        faceLandmarker?.detectAsync(mpImage, SystemClock.uptimeMillis())
+        faceLandmarker?.detectAsync(mpImage, imageProcessingOptions, SystemClock.uptimeMillis())
     }
 
-    private fun onResult(result: FaceLandmarkerResult, @Suppress("UNUSED_PARAMETER") input: com.google.mediapipe.framework.image.MPImage) {
-        val blendshapes = result.faceBlendshapes()
-        if (blendshapes.isEmpty || blendshapes.get().isEmpty()) {
-            smoothedUp = smoothedUp * 0.7f
-            smoothedDown = smoothedDown * 0.7f
+    private fun onResult(result: FaceLandmarkerResult) {
+        val blendshapesOpt = result.faceBlendshapes()
+        if (!blendshapesOpt.isPresent || blendshapesOpt.get().isEmpty()) {
+            smoothedUp *= 0.7f
+            smoothedDown *= 0.7f
             lookUpStartTime = 0L
             listener.onGazeUpdate(GazeState(faceDetected = false))
             return
         }
 
-        val shapes = blendshapes.get()[0]
+        val shapes: List<Category> = blendshapesOpt.get()[0]
         val rawUp = shapes.avgScore("eyeLookUpLeft", "eyeLookUpRight")
         val rawDown = shapes.avgScore("eyeLookDownLeft", "eyeLookDownRight")
 
-        // Exponential smoothing to reduce jitter
         smoothedUp = smoothedUp * 0.5f + rawUp * 0.5f
         smoothedDown = smoothedDown * 0.5f + rawDown * 0.5f
 
@@ -106,8 +111,7 @@ class GazeDetector(
                 )
             )
 
-            val sinceLast = now - lastScrollTime
-            if (elapsed >= dwellTimeMs && sinceLast >= scrollCooldownMs) {
+            if (elapsed >= dwellTimeMs && (now - lastScrollTime) >= scrollCooldownMs) {
                 lastScrollTime = now
                 lookUpStartTime = 0L
                 listener.onScrollTriggered()
@@ -126,17 +130,12 @@ class GazeDetector(
         }
     }
 
-    private fun List<com.google.mediapipe.tasks.components.containers.Category>.avgScore(
-        vararg names: String
-    ): Float {
+    private fun List<Category>.avgScore(vararg names: String): Float {
         var total = 0f
-        var count = 0
         for (name in names) {
-            val score = firstOrNull { it.categoryName() == name }?.score() ?: 0f
-            total += score
-            count++
+            total += firstOrNull { it.categoryName() == name }?.score() ?: 0f
         }
-        return if (count == 0) 0f else total / count
+        return total / names.size
     }
 
     fun close() {

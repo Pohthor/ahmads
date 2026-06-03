@@ -20,12 +20,12 @@
         android:fillColor="#C4A97A"
         android:centerX="54"
         android:centerY="54"
-        android:radius="12" />
+        android:radius="12dp" />
 
     <!-- Pupil -->
     <circle
         android:fillColor="#0E0E0D"
         android:centerX="54"
         android:centerY="54"
-        android:radius="5.5" />
+        android:radius="5dp" />
 </vector>
