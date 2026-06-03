@@ -26,8 +26,14 @@ class MainActivity : AppCompatActivity() {
     private val cameraPermLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        if (granted) refreshSetupSteps()
-        else Toast.makeText(this, "Camera permission is required", Toast.LENGTH_SHORT).show()
+        if (granted) {
+            refreshSetupSteps()
+            // Auto-start model download after camera permission is granted
+            val modelFile = java.io.File(filesDir, EyeTrackingService.MODEL_FILENAME)
+            if (!modelFile.exists() || modelFile.length() < 100_000) downloadModel()
+        } else {
+            Toast.makeText(this, "Camera permission is required", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +49,15 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         refreshSetupSteps()
+        // Auto-download model when camera permission is already granted and model is missing
+        if (hasCameraPermission()) {
+            val modelFile = java.io.File(filesDir, EyeTrackingService.MODEL_FILENAME)
+            val status = EyeTrackingService.modelStatus.value
+            if ((!modelFile.exists() || modelFile.length() < 100_000) &&
+                status == EyeTrackingService.Companion.ModelStatus.IDLE) {
+                downloadModel()
+            }
+        }
     }
 
     private fun setupUI() {
@@ -145,13 +160,16 @@ class MainActivity : AppCompatActivity() {
 
         binding.stepCamera.setStepDone(cameraOk)
         binding.btnGrantCamera.isEnabled = !cameraOk
+        binding.btnGrantCamera.text = if (cameraOk) "✓  Permission granted" else "Grant permission"
 
         binding.stepAccessibility.setStepDone(accessOk)
         binding.btnGrantAccessibility.isEnabled = !accessOk
+        binding.btnGrantAccessibility.text = if (accessOk) "✓  Service enabled" else "Open Accessibility Settings"
 
         binding.stepModel.setStepDone(modelOk)
         binding.btnDownloadModel.isEnabled = !modelOk && modelStatus != EyeTrackingService.Companion.ModelStatus.DOWNLOADING
         binding.btnDownloadModel.text = when (modelStatus) {
+            EyeTrackingService.Companion.ModelStatus.READY -> "✓  Model ready"
             EyeTrackingService.Companion.ModelStatus.DOWNLOADING -> "Downloading..."
             EyeTrackingService.Companion.ModelStatus.ERROR -> "Retry download"
             else -> "Download AI model (~5MB)"
@@ -225,11 +243,18 @@ class MainActivity : AppCompatActivity() {
         ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
 
     private fun isAccessibilityEnabled(): Boolean {
-        val am = getSystemService(ACCESSIBILITY_SERVICE) as AccessibilityManager
         val pkg = packageName
-        return am.getEnabledAccessibilityServiceList(
+        // Primary check via AccessibilityManager
+        val am = getSystemService(ACCESSIBILITY_SERVICE) as AccessibilityManager
+        val viaManager = am.getEnabledAccessibilityServiceList(
             android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_ALL_MASK
         ).any { it.resolveInfo.serviceInfo.packageName == pkg }
+        if (viaManager) return true
+        // Fallback via Settings.Secure — more reliable on Xiaomi/MIUI
+        val enabled = Settings.Secure.getString(
+            contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        ) ?: return false
+        return enabled.contains(pkg, ignoreCase = true)
     }
 
     private fun currentThreshold(): Float {
