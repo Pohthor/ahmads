@@ -144,15 +144,21 @@ class EyeTrackingService : LifecycleService() {
         }, ContextCompat.getMainExecutor(this))
     }
 
+    private var lastProcessedFrameTime = 0L
+
     private fun bindCamera(detector: GazeDetector) {
         val imageAnalysis = ImageAnalysis.Builder()
-            .setTargetResolution(android.util.Size(320, 240))
+            .setTargetResolution(android.util.Size(192, 144))  // smaller = lighter
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
             .build()
 
         imageAnalysis.setAnalyzer(analysisExecutor) { proxy ->
-            detector.processFrame(proxy.toBitmap())
+            val now = System.currentTimeMillis()
+            if (now - lastProcessedFrameTime >= 67L) {  // ~15fps max
+                lastProcessedFrameTime = now
+                detector.processFrame(proxy.toBitmap())
+            }
             proxy.close()
         }
 
