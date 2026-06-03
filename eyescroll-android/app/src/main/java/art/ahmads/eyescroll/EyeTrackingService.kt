@@ -56,16 +56,10 @@ class EyeTrackingService : LifecycleService() {
     private var cameraProvider: ProcessCameraProvider? = null
     private val analysisExecutor = Executors.newSingleThreadExecutor()
 
-    var headUpThreshold: Float = 0.50f
+    var headTurnThreshold: Float = 0.10f
         set(value) {
             field = value
-            gazeDetector?.headUpThreshold = value
-        }
-
-    var headDownThreshold: Float = 0.90f
-        set(value) {
-            field = value
-            gazeDetector?.headDownThreshold = value
+            gazeDetector?.headTurnThreshold = value
         }
 
     var dwellTimeMs: Long = 0L
@@ -85,7 +79,7 @@ class EyeTrackingService : LifecycleService() {
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("EyeScroll")
-            .setContentText("Eye tracking active — look up to scroll")
+            .setContentText("Head tracking active — turn right/left to scroll")
             .setSmallIcon(android.R.drawable.ic_menu_camera)
             .setOngoing(true)
             .setContentIntent(
@@ -185,8 +179,9 @@ class EyeTrackingService : LifecycleService() {
                 Log.e(TAG, "GazeDetector error: $message")
             }
         }).also {
-            it.headUpThreshold = headUpThreshold
-            it.headDownThreshold = headDownThreshold
+            // Map sensitivity pref (0-100) to threshold: higher sensitivity = smaller threshold
+            val sensitivity = getSharedPreferences("eyescroll", MODE_PRIVATE).getInt("sensitivity", 60)
+            it.headTurnThreshold = 0.20f - (sensitivity / 100f) * 0.15f
             it.dwellTimeMs = dwellTimeMs
         }
 

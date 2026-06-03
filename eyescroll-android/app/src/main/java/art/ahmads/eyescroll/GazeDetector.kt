@@ -16,8 +16,8 @@ import kotlin.math.abs
 
 data class GazeState(
     val faceDetected: Boolean = false,
-    val isLookingUp: Boolean = false,
-    val isLookingDown: Boolean = false,
+    val isLookingRight: Boolean = false,
+    val isLookingLeft: Boolean = false,
     val isInDwell: Boolean = false,
     val dwellProgress: Float = 0f
 )
@@ -34,20 +34,19 @@ class GazeDetector(
         fun onError(message: String)
     }
 
-    // Normalized pitch = (noseY - eyeMidY) / IOD
-    // Neutral ≈ 0.70 | Head tilts UP (back) → decreases | Head tilts DOWN (forward) → increases
-    var headUpThreshold: Float = 0.50f
-    var headDownThreshold: Float = 0.90f
+    // Normalized yaw = (noseX - eyeMidX) / IOD
+    // Neutral ≈ 0 | Head turns RIGHT → negative | Head turns LEFT → positive
+    var headTurnThreshold: Float = 0.10f
     var dwellTimeMs: Long = 0L
     var scrollCooldownMs: Long = 2_500L
 
     private var faceLandmarker: FaceLandmarker? = null
     private val imageProcessingOptions = ImageProcessingOptions.builder().build()
 
-    private var lookUpStartTime = 0L
-    private var lookDownStartTime = 0L
+    private var lookRightStartTime = 0L
+    private var lookLeftStartTime = 0L
     private var lastScrollTime = 0L
-    private var smoothedPitch = 0.7f
+    private var smoothedYaw = 0f
 
     fun initialize(modelFile: File) {
         val bytes = modelFile.readBytes()
@@ -84,9 +83,9 @@ class GazeDetector(
     private fun onResult(result: FaceLandmarkerResult) {
         val landmarksList = result.faceLandmarks()   // List<List<NormalizedLandmark>> — no Optional
         if (landmarksList.isEmpty()) {
-            lookUpStartTime = 0L
-            lookDownStartTime = 0L
-            smoothedPitch = 0.7f
+            lookRightStartTime = 0L
+            lookLeftStartTime = 0L
+            smoothedYaw = 0f
             listener.onGazeUpdate(GazeState(faceDetected = false))
             return
         }
@@ -98,7 +97,7 @@ class GazeDetector(
         val rightEye = landmarks[263]
         val noseTip  = landmarks[1]
 
-        val eyeMidY = (leftEye.y() + rightEye.y()) / 2f
+        val eyeMidX = (leftEye.x() + rightEye.x()) / 2f
         val iod = abs(leftEye.x() - rightEye.x())
 
         if (iod < 0.01f) {
@@ -106,47 +105,49 @@ class GazeDetector(
             return
         }
 
-        val rawPitch = (noseTip.y() - eyeMidY) / iod
-        smoothedPitch = smoothedPitch * 0.6f + rawPitch * 0.4f
+        val rawYaw = (noseTip.x() - eyeMidX) / iod
+        smoothedYaw = smoothedYaw * 0.6f + rawYaw * 0.4f
 
         val now = System.currentTimeMillis()
 
         when {
-            smoothedPitch < headUpThreshold -> {
-                lookDownStartTime = 0L
-                if (lookUpStartTime == 0L) lookUpStartTime = now
-                val elapsed = now - lookUpStartTime
+            smoothedYaw < -headTurnThreshold -> {
+                // Head turned right → next post
+                lookLeftStartTime = 0L
+                if (lookRightStartTime == 0L) lookRightStartTime = now
+                val elapsed = now - lookRightStartTime
                 val progress = if (dwellTimeMs == 0L) 1f
                                else (elapsed.toFloat() / dwellTimeMs).coerceIn(0f, 1f)
                 listener.onGazeUpdate(GazeState(
-                    faceDetected = true, isLookingUp = true,
+                    faceDetected = true, isLookingRight = true,
                     isInDwell = true, dwellProgress = progress
                 ))
                 if (elapsed >= dwellTimeMs && (now - lastScrollTime) >= scrollCooldownMs) {
                     lastScrollTime = now
-                    lookUpStartTime = 0L
+                    lookRightStartTime = 0L
                     listener.onScrollTriggered(ScrollDirection.NEXT)
                 }
             }
-            smoothedPitch > headDownThreshold -> {
-                lookUpStartTime = 0L
-                if (lookDownStartTime == 0L) lookDownStartTime = now
-                val elapsed = now - lookDownStartTime
+            smoothedYaw > headTurnThreshold -> {
+                // Head turned left → previous post
+                lookRightStartTime = 0L
+                if (lookLeftStartTime == 0L) lookLeftStartTime = now
+                val elapsed = now - lookLeftStartTime
                 val progress = if (dwellTimeMs == 0L) 1f
                                else (elapsed.toFloat() / dwellTimeMs).coerceIn(0f, 1f)
                 listener.onGazeUpdate(GazeState(
-                    faceDetected = true, isLookingDown = true,
+                    faceDetected = true, isLookingLeft = true,
                     isInDwell = true, dwellProgress = progress
                 ))
                 if (elapsed >= dwellTimeMs && (now - lastScrollTime) >= scrollCooldownMs) {
                     lastScrollTime = now
-                    lookDownStartTime = 0L
+                    lookLeftStartTime = 0L
                     listener.onScrollTriggered(ScrollDirection.PREV)
                 }
             }
             else -> {
-                lookUpStartTime = 0L
-                lookDownStartTime = 0L
+                lookRightStartTime = 0L
+                lookLeftStartTime = 0L
                 listener.onGazeUpdate(GazeState(faceDetected = true))
             }
         }

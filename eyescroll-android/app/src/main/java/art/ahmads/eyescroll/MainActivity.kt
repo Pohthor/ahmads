@@ -146,8 +146,8 @@ class MainActivity : AppCompatActivity() {
                         if (EyeTrackingService.isTracking.value) {
                             binding.labelStatus.text = when {
                                 !state.faceDetected  -> "Looking for face..."
-                                state.isLookingUp    -> "↑ Head up — next post"
-                                state.isLookingDown  -> "↓ Head down — prev post"
+                                state.isLookingRight -> "→ Head right — next post"
+                                state.isLookingLeft  -> "← Head left — prev post"
                                 else                 -> "Head neutral — watching"
                             }
                         }
@@ -225,7 +225,7 @@ class MainActivity : AppCompatActivity() {
                 val detected = result?.faceLandmarks()?.isNotEmpty() == true
                 runOnUiThread {
                     binding.labelFaceStatus.text = if (detected)
-                        "Face detected — tilt head up/down to scroll"
+                        "Face detected — turn head right/left to scroll"
                     else
                         "Position your face in frame"
                     binding.labelFaceStatus.setTextColor(Color.parseColor(

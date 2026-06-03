@@ -35,11 +35,10 @@ class EyeGazeView @JvmOverloads constructor(
     private val scleraRect = RectF()
     private val arcRect = RectF()
 
-    // Animated values
-    private var displayIrisY = 0f
+    // Animated values — iris moves horizontally (right/left)
+    private var displayIrisX = 0f
     private var displayDwellProgress = 0f
-    private var displayIrisColor = colorIrisIdle
-    private var irisYAnimator: ValueAnimator? = null
+    private var irisXAnimator: ValueAnimator? = null
 
     var faceDetected = false
         private set
@@ -55,18 +54,14 @@ class EyeGazeView @JvmOverloads constructor(
             return
         }
 
-        val targetY = when {
-            state.isLookingUp   -> -0.6f
-            state.isLookingDown ->  0.6f
-            else                ->  0f
+        val targetX = when {
+            state.isLookingRight -> 0.6f
+            state.isLookingLeft  -> -0.6f
+            else                 -> 0f
         }
-        animateIrisTo(targetY)
+        animateIrisTo(targetX)
 
-        val targetColor = when {
-            state.isInDwell -> colorIrisDwell
-            else -> colorIrisIdle
-        }
-        irisPaint.color = targetColor
+        irisPaint.color = if (state.isInDwell) colorIrisDwell else colorIrisIdle
 
         displayDwellProgress = state.dwellProgress
         invalidate()
@@ -82,12 +77,12 @@ class EyeGazeView @JvmOverloads constructor(
     }
 
     private fun animateIrisTo(target: Float) {
-        irisYAnimator?.cancel()
-        irisYAnimator = ValueAnimator.ofFloat(displayIrisY, target).apply {
+        irisXAnimator?.cancel()
+        irisXAnimator = ValueAnimator.ofFloat(displayIrisX, target).apply {
             duration = 120
             interpolator = DecelerateInterpolator()
             addUpdateListener {
-                displayIrisY = it.animatedValue as Float
+                displayIrisX = it.animatedValue as Float
                 invalidate()
             }
             start()
@@ -110,6 +105,7 @@ class EyeGazeView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         val cx = width / 2f
         val cy = height / 2f
+        val rx = scleraRect.width() / 2f
         val ry = scleraRect.height() / 2f
         val irisR = ry * 0.58f
         val pupilR = irisR * 0.42f
@@ -118,10 +114,10 @@ class EyeGazeView @JvmOverloads constructor(
         canvas.drawOval(scleraRect, scleraPaint)
 
         if (faceDetected) {
-            val irisY = cy + displayIrisY * ry * 0.55f
+            val irisX = cx + displayIrisX * rx * 0.55f
 
-            canvas.drawCircle(cx, irisY, irisR, irisPaint)
-            canvas.drawCircle(cx, irisY, pupilR, pupilPaint)
+            canvas.drawCircle(irisX, cy, irisR, irisPaint)
+            canvas.drawCircle(irisX, cy, pupilR, pupilPaint)
 
             // Dwell progress ring
             if (displayDwellProgress > 0f) {
