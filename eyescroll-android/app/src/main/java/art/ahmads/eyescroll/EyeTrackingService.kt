@@ -101,9 +101,9 @@ class EyeTrackingService : LifecycleService() {
             return
         }
 
-        // Map sensitivity pref (0-100%) → wink threshold (0.90 → 0.60)
+        // Map sensitivity (0-100%) → EAR close threshold (0.08 → 0.18)
+        // Higher sensitivity = higher threshold = easier to trigger wink
         val sensitivity = getSharedPreferences("eyescroll", MODE_PRIVATE).getInt("sensitivity", 60)
-        val winkThreshold = 0.90f - (sensitivity / 100f) * 0.30f
 
         val detector = GazeDetector(this, object : GazeDetector.Listener {
             override fun onGazeUpdate(state: GazeState) {
@@ -124,7 +124,7 @@ class EyeTrackingService : LifecycleService() {
                 Log.e(TAG, "GazeDetector error: $message")
             }
         }).also {
-            it.winkThreshold = winkThreshold
+            it.earCloseThreshold = 0.08f + (sensitivity / 100f) * 0.10f
         }
 
         try {
@@ -148,7 +148,7 @@ class EyeTrackingService : LifecycleService() {
 
     private fun bindCamera(detector: GazeDetector) {
         val imageAnalysis = ImageAnalysis.Builder()
-            .setTargetResolution(android.util.Size(192, 144))  // smaller = lighter
+            .setTargetResolution(android.util.Size(320, 240))
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
             .build()
@@ -161,7 +161,6 @@ class EyeTrackingService : LifecycleService() {
             }
             proxy.close()
         }
-
         try {
             cameraProvider?.unbindAll()
             cameraProvider?.bindToLifecycle(this, CameraSelector.DEFAULT_FRONT_CAMERA, imageAnalysis)

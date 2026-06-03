@@ -12,6 +12,7 @@ import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarker
 import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarkerResult
 import java.io.File
 import java.nio.ByteBuffer
+import kotlin.math.abs
 
 data class GazeState(
     val faceDetected: Boolean = false,
@@ -32,21 +33,21 @@ class GazeDetector(
         fun onError(message: String)
     }
 
-    // Wink detection thresholds
-    var winkThreshold: Float = 0.72f        // score to start a wink (raised to avoid natural blink triggers)
-    var winkReleaseThreshold: Float = 0.45f // score below which eye is "open" again (raised for easier double wink)
+    // Eye Aspect Ratio thresholds (EAR = eye_height / eye_width)
+    // Open eye ≈ 0.20-0.35 | Closed/winking eye ≈ 0.02-0.10
+    var earCloseThreshold: Float = 0.14f  // EAR below this = eye is winking
+    var earOpenThreshold: Float  = 0.18f  // EAR above this = eye is open
     var scrollCooldownMs: Long = 1_200L
-    private val minWinkDurationMs: Long = 80L   // must hold wink this long — filters out accidental blinks
-    private val doubleTapWindowMs: Long = 900L  // window for second wink to count as double-tap
+    private val minWinkDurationMs: Long = 80L
+    private val doubleTapWindowMs: Long = 900L
 
     private var faceLandmarker: FaceLandmarker? = null
     private val imageProcessingOptions = ImageProcessingOptions.builder().build()
 
-    // Per-eye state
     private var rightEyeWinking = false
-    private var leftEyeWinking = false
-    private var rightWinkOnsetTime = 0L   // when right eye first crossed threshold
-    private var leftWinkOnsetTime = 0L
+    private var leftEyeWinking  = false
+    private var rightWinkOnsetTime = 0L
+    private var leftWinkOnsetTime  = 0L
     private var lastScrollTime = 0L
     private var lastRightWinkTime = 0L
 
@@ -65,7 +66,7 @@ class GazeDetector(
             )
             .setRunningMode(RunningMode.LIVE_STREAM)
             .setNumFaces(1)
-            .setOutputFaceBlendshapes(true)
+            .setOutputFaceBlendshapes(false)  // not needed — we use EAR from landmarks
             .setResultListener { result: FaceLandmarkerResult, _: MPImage ->
                 onResult(result)
             }
@@ -83,52 +84,49 @@ class GazeDetector(
     }
 
     private fun onResult(result: FaceLandmarkerResult) {
-        if (result.faceLandmarks().isEmpty()) {
+        val landmarksList = result.faceLandmarks()
+        if (landmarksList.isEmpty()) {
             rightEyeWinking = false
-            leftEyeWinking = false
+            leftEyeWinking  = false
             rightWinkOnsetTime = 0L
-            leftWinkOnsetTime = 0L
+            leftWinkOnsetTime  = 0L
             listener.onGazeUpdate(GazeState(faceDetected = false))
             return
         }
 
-        val blendshapes = result.faceBlendshapes()
-        if (!blendshapes.isPresent || blendshapes.get().isEmpty()) {
-            listener.onGazeUpdate(GazeState(faceDetected = true))
-            return
-        }
+        val lm = landmarksList[0]
 
-        val categories = blendshapes.get()[0]
-        val rightBlink = categories.find { it.categoryName() == "eyeBlinkRight" }?.score() ?: 0f
-        val leftBlink  = categories.find { it.categoryName() == "eyeBlinkLeft"  }?.score() ?: 0f
+        // Right eye (person's right): outer=33, inner=133, top=159, bottom=145
+        // Left eye  (person's left):  outer=263, inner=362, top=386, bottom=374
+        val rightEAR = ear(lm[33], lm[133], lm[159], lm[145])
+        val leftEAR  = ear(lm[263], lm[362], lm[386], lm[374])
+
+        // Wink = one eye clearly closed, other clearly open, strong asymmetry
+        val rightIsWinking = rightEAR < earCloseThreshold
+                          && leftEAR  > earOpenThreshold
+                          && (leftEAR - rightEAR) > 0.06f
+        val leftIsWinking  = leftEAR  < earCloseThreshold
+                          && rightEAR > earOpenThreshold
+                          && (rightEAR - leftEAR) > 0.06f
 
         val now = System.currentTimeMillis()
 
-        // A genuine wink: one eye clearly closed + other eye clearly open + strong asymmetry
-        // This triple check eliminates natural blinks where both eyes close together
-        val rightIsWinking = rightBlink > winkThreshold
-                          && leftBlink < 0.40f
-                          && (rightBlink - leftBlink) > 0.30f
-        val leftIsWinking  = leftBlink  > winkThreshold
-                          && rightBlink < 0.40f
-                          && (leftBlink - rightBlink) > 0.30f
-
-        // Track onset time (for minimum-duration filter)
+        // Track onset times
         if (rightIsWinking) {
             if (rightWinkOnsetTime == 0L) rightWinkOnsetTime = now
         } else {
             rightWinkOnsetTime = 0L
-            if (rightBlink < winkReleaseThreshold) rightEyeWinking = false
+            if (rightEAR > earOpenThreshold) rightEyeWinking = false
         }
 
         if (leftIsWinking) {
             if (leftWinkOnsetTime == 0L) leftWinkOnsetTime = now
         } else {
             leftWinkOnsetTime = 0L
-            if (leftBlink < winkReleaseThreshold) leftEyeWinking = false
+            if (leftEAR > earOpenThreshold) leftEyeWinking = false
         }
 
-        // Fire only after wink is held for minWinkDurationMs (rising edge)
+        // Fire on rising edge after minWinkDurationMs
         val rightConfirmed = rightWinkOnsetTime > 0 && (now - rightWinkOnsetTime) >= minWinkDurationMs
         if (rightConfirmed && !rightEyeWinking) {
             rightEyeWinking = true
@@ -154,8 +152,20 @@ class GazeDetector(
         listener.onGazeUpdate(GazeState(
             faceDetected = true,
             isWinkingRight = rightEyeWinking,
-            isWinkingLeft = leftEyeWinking
+            isWinkingLeft  = leftEyeWinking
         ))
+    }
+
+    // Eye Aspect Ratio = vertical opening / horizontal width
+    private fun ear(
+        outer: com.google.mediapipe.tasks.components.containers.NormalizedLandmark,
+        inner: com.google.mediapipe.tasks.components.containers.NormalizedLandmark,
+        top:   com.google.mediapipe.tasks.components.containers.NormalizedLandmark,
+        bottom: com.google.mediapipe.tasks.components.containers.NormalizedLandmark
+    ): Float {
+        val width = abs(outer.x() - inner.x())
+        if (width < 0.001f) return 0.25f
+        return abs(top.y() - bottom.y()) / width
     }
 
     fun close() {
