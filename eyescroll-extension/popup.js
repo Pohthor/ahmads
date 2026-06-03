@@ -38,8 +38,8 @@ dwellSlider.addEventListener('input', () => {
 
 function updateLabels() {
   sensVal.textContent  = sensSlider.value + '%';
-  const ms = Math.round(dwellSlider.value * 100);
-  dwellVal.textContent = (ms / 1000).toFixed(1) + 's';
+  const ms = Math.round(dwellSlider.value * 10); // 0-100 → 0-1000ms
+  dwellVal.textContent = ms === 0 ? 'Instant' : (ms / 1000).toFixed(1) + 's';
 }
 
 // ── Receive gaze state from background ───────────────────────────────────────

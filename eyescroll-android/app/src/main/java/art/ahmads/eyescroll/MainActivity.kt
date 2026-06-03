@@ -106,9 +106,8 @@ class MainActivity : AppCompatActivity() {
         // Dwell time slider: 0-100 → 500ms..2500ms
         binding.seekDwell.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                val ms = 500L + (progress / 100f * 2000f).toLong()
-                val label = "%.1f".format(ms / 1000f)
-                binding.labelDwell.text = "Hold for: ${label}s"
+                val ms = (progress / 100f * 1000f).toLong()
+                binding.labelDwell.text = if (ms == 0L) "Hold for: Instant" else "Hold for: ${"%.1f".format(ms / 1000f)}s"
                 savePrefs(currentThreshold(), ms)
             }
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
@@ -273,7 +272,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun currentDwellMs(): Long {
         val dwell = binding.seekDwell.progress
-        return 500L + (dwell / 100f * 2000f).toLong()
+        return (dwell / 100f * 1000f).toLong()
     }
 
     private fun savePrefs(threshold: Float, dwellMs: Long) {

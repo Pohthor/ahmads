@@ -4,7 +4,7 @@ const MP_WASM_PATH   = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.1
 const MODEL_URL      = 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task';
 
 const LOOK_UP_THRESHOLD = 0.30;
-const DWELL_MS          = 1000;
+const DWELL_MS          = 0;
 const COOLDOWN_MS       = 2500;
 
 // ── State ────────────────────────────────────────────────────────────────────

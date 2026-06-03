@@ -33,7 +33,7 @@ class GazeDetector(
     }
 
     var lookUpThreshold: Float = 0.30f
-    var dwellTimeMs: Long = 1_000L
+    var dwellTimeMs: Long = 0L
     var scrollCooldownMs: Long = 2_500L
 
     private var faceLandmarker: FaceLandmarker? = null
@@ -99,7 +99,7 @@ class GazeDetector(
         if (isLookingUp) {
             if (lookUpStartTime == 0L) lookUpStartTime = now
             val elapsed = now - lookUpStartTime
-            val dwellProgress = (elapsed.toFloat() / dwellTimeMs).coerceIn(0f, 1f)
+            val dwellProgress = if (dwellTimeMs == 0L) 1f else (elapsed.toFloat() / dwellTimeMs).coerceIn(0f, 1f)
 
             listener.onGazeUpdate(
                 GazeState(
