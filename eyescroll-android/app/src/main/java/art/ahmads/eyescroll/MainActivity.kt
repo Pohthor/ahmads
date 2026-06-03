@@ -54,7 +54,8 @@ class MainActivity : AppCompatActivity() {
             val modelFile = java.io.File(filesDir, EyeTrackingService.MODEL_FILENAME)
             val status = EyeTrackingService.modelStatus.value
             if ((!modelFile.exists() || modelFile.length() < 100_000) &&
-                status == EyeTrackingService.Companion.ModelStatus.IDLE) {
+                status != EyeTrackingService.Companion.ModelStatus.READY &&
+                status != EyeTrackingService.Companion.ModelStatus.DOWNLOADING) {
                 downloadModel()
             }
         }
