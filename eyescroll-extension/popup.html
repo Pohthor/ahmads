@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width: 240px;
+    background: #0e0e0d;
+    color: #f0efe8;
+    font-family: -apple-system, sans-serif;
+    padding: 20px;
+  }
+  h1 { font-size:17px; font-weight:300; letter-spacing:.05em; }
+  p.sub { font-size:11px; color:#6e6e68; margin-top:2px; margin-bottom:18px; }
+
+  /* Eye canvas */
+  #eye { display:block; margin:0 auto 6px; }
+  #statusLabel { text-align:center; font-size:11px; color:#6e6e68; margin-bottom:18px; }
+
+  /* Toggle row */
+  .toggle-row {
+    display:flex; align-items:center; justify-content:space-between;
+    background:#1a1a17; border-radius:10px; padding:12px 14px;
+    margin-bottom:16px;
+  }
+  .toggle-row span { font-size:13px; }
+  .switch { position:relative; width:40px; height:22px; cursor:pointer; }
+  .switch input { opacity:0; width:0; height:0; }
+  .slider {
+    position:absolute; inset:0; border-radius:11px;
+    background:#2a2a27; transition:.25s;
+  }
+  .slider::before {
+    content:''; position:absolute; width:16px; height:16px;
+    left:3px; top:3px; border-radius:50%; background:#6e6e68; transition:.25s;
+  }
+  input:checked + .slider { background:#c4a97a; }
+  input:checked + .slider::before { transform:translateX(18px); background:#0e0e0d; }
+
+  /* Divider */
+  hr { border:none; border-top:1px solid #1e1e1c; margin-bottom:14px; }
+
+  /* Sensitivity */
+  label { font-size:11px; color:#6e6e68; display:flex; justify-content:space-between; }
+  input[type=range] {
+    width:100%; accent-color:#c4a97a; margin:6px 0 14px;
+  }
+
+  /* Works on label */
+  .works-on { font-size:10px; color:#6e6e68; text-align:center; }
+  .works-on span { color:#c4a97a; }
+</style>
+</head>
+<body>
+  <h1>EyeScroll</h1>
+  <p class="sub">Look up to scroll to the next post</p>
+
+  <canvas id="eye" width="100" height="56"></canvas>
+  <p id="statusLabel">Off</p>
+
+  <div class="toggle-row">
+    <span>Enable tracking</span>
+    <label class="switch">
+      <input type="checkbox" id="toggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <hr>
+
+  <label>
+    Sensitivity
+    <span id="sensVal">60%</span>
+  </label>
+  <input type="range" id="sensitivity" min="10" max="90" value="60">
+
+  <label>
+    Look-up hold time
+    <span id="dwellVal">1.0s</span>
+  </label>
+  <input type="range" id="dwell" min="5" max="30" value="10">
+
+  <p class="works-on">Works on <span>instagram.com</span> &amp; <span>tiktok.com</span></p>
+
+  <script src="popup.js"></script>
+</body>
+</html>

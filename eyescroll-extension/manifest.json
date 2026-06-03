@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "EyeScroll — Eye Tracking Auto Scroll",
+  "short_name": "EyeScroll",
+  "version": "1.0",
+  "description": "Look up to scroll to the next post on Instagram and TikTok. Powered by MediaPipe eye tracking.",
+
+  "permissions": ["storage", "offscreen", "tabs"],
+  "host_permissions": [
+    "https://www.instagram.com/*",
+    "https://www.tiktok.com/*",
+    "https://cdn.jsdelivr.net/*",
+    "https://storage.googleapis.com/*"
+  ],
+
+  "background": { "service_worker": "background.js" },
+
+  "content_scripts": [{
+    "matches": ["https://www.instagram.com/*", "https://www.tiktok.com/*"],
+    "js": ["content.js"],
+    "run_at": "document_idle"
+  }],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16":  "icons/16.png",
+      "48":  "icons/48.png",
+      "128": "icons/128.png"
+    }
+  },
+
+  "icons": {
+    "16":  "icons/16.png",
+    "48":  "icons/48.png",
+    "128": "icons/128.png"
+  }
+}
