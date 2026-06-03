@@ -51,12 +51,12 @@ class EyeGazeView @JvmOverloads constructor(
         }
 
         val targetX = when {
-            state.isWinkingRight -> 0.6f
-            state.isWinkingLeft  -> -0.6f
-            else                 -> 0f
+            state.isMovingRight -> 0.6f
+            state.isMovingLeft  -> -0.6f
+            else                -> 0f
         }
         animateIrisTo(targetX)
-        irisPaint.color = if (state.isWinkingRight || state.isWinkingLeft) colorIrisWink else colorIrisIdle
+        irisPaint.color = if (state.isMovingRight || state.isMovingLeft) colorIrisWink else colorIrisIdle
         invalidate()
     }
 

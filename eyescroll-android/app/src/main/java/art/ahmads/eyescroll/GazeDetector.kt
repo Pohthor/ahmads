@@ -16,8 +16,8 @@ import kotlin.math.abs
 
 data class GazeState(
     val faceDetected: Boolean = false,
-    val isWinkingRight: Boolean = false,
-    val isWinkingLeft: Boolean = false
+    val isMovingRight: Boolean = false,
+    val isMovingLeft: Boolean = false
 )
 
 class GazeDetector(
@@ -33,23 +33,17 @@ class GazeDetector(
         fun onError(message: String)
     }
 
-    // Eye Aspect Ratio thresholds (EAR = eye_height / eye_width)
-    // Open eye ≈ 0.20-0.35 | Closed/winking eye ≈ 0.02-0.10
-    var earCloseThreshold: Float = 0.14f  // EAR below this = eye is winking
-    var earOpenThreshold: Float  = 0.18f  // EAR above this = eye is open
-    var scrollCooldownMs: Long = 1_200L
-    private val minWinkDurationMs: Long = 80L
-    private val doubleTapWindowMs: Long = 900L
+    // Velocity threshold: how much yaw must change within the window to trigger
+    var velocityThreshold: Float = 0.18f
+    var scrollCooldownMs: Long = 1_500L
+    private val historyWindowMs = 400L  // look at movement over last 400ms
 
     private var faceLandmarker: FaceLandmarker? = null
     private val imageProcessingOptions = ImageProcessingOptions.builder().build()
 
-    private var rightEyeWinking = false
-    private var leftEyeWinking  = false
-    private var rightWinkOnsetTime = 0L
-    private var leftWinkOnsetTime  = 0L
+    // Ring buffer of (yaw, timestamp) for velocity calculation
+    private val yawHistory = ArrayDeque<Pair<Float, Long>>()
     private var lastScrollTime = 0L
-    private var lastRightWinkTime = 0L
 
     fun initialize(modelFile: File) {
         val bytes = modelFile.readBytes()
@@ -66,7 +60,7 @@ class GazeDetector(
             )
             .setRunningMode(RunningMode.LIVE_STREAM)
             .setNumFaces(1)
-            .setOutputFaceBlendshapes(false)  // not needed — we use EAR from landmarks
+            .setOutputFaceBlendshapes(false)
             .setResultListener { result: FaceLandmarkerResult, _: MPImage ->
                 onResult(result)
             }
@@ -86,86 +80,63 @@ class GazeDetector(
     private fun onResult(result: FaceLandmarkerResult) {
         val landmarksList = result.faceLandmarks()
         if (landmarksList.isEmpty()) {
-            rightEyeWinking = false
-            leftEyeWinking  = false
-            rightWinkOnsetTime = 0L
-            leftWinkOnsetTime  = 0L
+            yawHistory.clear()
             listener.onGazeUpdate(GazeState(faceDetected = false))
             return
         }
 
         val lm = landmarksList[0]
 
-        // Right eye (person's right): outer=33, inner=133, top=159, bottom=145
-        // Left eye  (person's left):  outer=263, inner=362, top=386, bottom=374
-        val rightEAR = ear(lm[33], lm[133], lm[159], lm[145])
-        val leftEAR  = ear(lm[263], lm[362], lm[386], lm[374])
+        // Yaw proxy: (noseX - eyeMidX) / IOD
+        // Stable, proven formula — neutral ≈ 0, turns left/right change the sign
+        val leftEye  = lm[33]
+        val rightEye = lm[263]
+        val noseTip  = lm[1]
 
-        // Wink = one eye clearly closed, other clearly open, strong asymmetry
-        val rightIsWinking = rightEAR < earCloseThreshold
-                          && leftEAR  > earOpenThreshold
-                          && (leftEAR - rightEAR) > 0.06f
-        val leftIsWinking  = leftEAR  < earCloseThreshold
-                          && rightEAR > earOpenThreshold
-                          && (rightEAR - leftEAR) > 0.06f
+        val eyeMidX = (leftEye.x() + rightEye.x()) / 2f
+        val iod = abs(leftEye.x() - rightEye.x())
 
+        if (iod < 0.01f) {
+            listener.onGazeUpdate(GazeState(faceDetected = true))
+            return
+        }
+
+        val rawYaw = (noseTip.x() - eyeMidX) / iod
         val now = System.currentTimeMillis()
 
-        // Track onset times
-        if (rightIsWinking) {
-            if (rightWinkOnsetTime == 0L) rightWinkOnsetTime = now
-        } else {
-            rightWinkOnsetTime = 0L
-            if (rightEAR > earOpenThreshold) rightEyeWinking = false
+        // Add to history and trim old entries
+        yawHistory.addLast(Pair(rawYaw, now))
+        while (yawHistory.size > 1 && now - yawHistory.first().second > historyWindowMs) {
+            yawHistory.removeFirst()
         }
 
-        if (leftIsWinking) {
-            if (leftWinkOnsetTime == 0L) leftWinkOnsetTime = now
-        } else {
-            leftWinkOnsetTime = 0L
-            if (leftEAR > earOpenThreshold) leftEyeWinking = false
-        }
+        // Velocity = change in yaw over the history window
+        val velocity = if (yawHistory.size >= 2) rawYaw - yawHistory.first().first else 0f
 
-        // Fire on rising edge after minWinkDurationMs
-        val rightConfirmed = rightWinkOnsetTime > 0 && (now - rightWinkOnsetTime) >= minWinkDurationMs
-        if (rightConfirmed && !rightEyeWinking) {
-            rightEyeWinking = true
-            val isDoubleTap = lastRightWinkTime > 0 && (now - lastRightWinkTime) < doubleTapWindowMs
-            lastRightWinkTime = now
-            if (isDoubleTap) {
-                listener.onDoubleTap()
-            } else if ((now - lastScrollTime) >= scrollCooldownMs) {
+        val cooldownOk = (now - lastScrollTime) >= scrollCooldownMs
+
+        when {
+            velocity > velocityThreshold && cooldownOk -> {
                 lastScrollTime = now
-                listener.onScrollTriggered(ScrollDirection.NEXT)
-            }
-        }
-
-        val leftConfirmed = leftWinkOnsetTime > 0 && (now - leftWinkOnsetTime) >= minWinkDurationMs
-        if (leftConfirmed && !leftEyeWinking) {
-            leftEyeWinking = true
-            if ((now - lastScrollTime) >= scrollCooldownMs) {
-                lastScrollTime = now
+                yawHistory.clear()
                 listener.onScrollTriggered(ScrollDirection.PREV)
+                listener.onGazeUpdate(GazeState(faceDetected = true, isMovingLeft = true))
+            }
+            velocity < -velocityThreshold && cooldownOk -> {
+                lastScrollTime = now
+                yawHistory.clear()
+                listener.onScrollTriggered(ScrollDirection.NEXT)
+                listener.onGazeUpdate(GazeState(faceDetected = true, isMovingRight = true))
+            }
+            else -> {
+                val moving = abs(velocity) > velocityThreshold * 0.5f
+                listener.onGazeUpdate(GazeState(
+                    faceDetected = true,
+                    isMovingRight = velocity < -velocityThreshold * 0.5f,
+                    isMovingLeft  = velocity >  velocityThreshold * 0.5f
+                ))
             }
         }
-
-        listener.onGazeUpdate(GazeState(
-            faceDetected = true,
-            isWinkingRight = rightEyeWinking,
-            isWinkingLeft  = leftEyeWinking
-        ))
-    }
-
-    // Eye Aspect Ratio = vertical opening / horizontal width
-    private fun ear(
-        outer: com.google.mediapipe.tasks.components.containers.NormalizedLandmark,
-        inner: com.google.mediapipe.tasks.components.containers.NormalizedLandmark,
-        top:   com.google.mediapipe.tasks.components.containers.NormalizedLandmark,
-        bottom: com.google.mediapipe.tasks.components.containers.NormalizedLandmark
-    ): Float {
-        val width = abs(outer.x() - inner.x())
-        if (width < 0.001f) return 0.25f
-        return abs(top.y() - bottom.y()) / width
     }
 
     fun close() {

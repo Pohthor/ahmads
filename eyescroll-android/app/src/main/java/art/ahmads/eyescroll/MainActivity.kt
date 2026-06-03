@@ -145,10 +145,10 @@ class MainActivity : AppCompatActivity() {
                         binding.eyeView.updateState(state)
                         if (EyeTrackingService.isTracking.value) {
                             binding.labelStatus.text = when {
-                                !state.faceDetected   -> "Looking for face..."
-                                state.isWinkingRight  -> "→ Right wink — next post"
-                                state.isWinkingLeft   -> "← Left wink — prev post"
-                                else                  -> "Ready — wink to scroll"
+                                !state.faceDetected  -> "Looking for face..."
+                                state.isMovingRight  -> "→ Turning right — next"
+                                state.isMovingLeft   -> "← Turning left — prev"
+                                else                 -> "Face detected — turn head to scroll"
                             }
                         }
                     }

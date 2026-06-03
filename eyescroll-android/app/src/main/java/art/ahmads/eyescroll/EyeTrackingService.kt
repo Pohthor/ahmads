@@ -101,8 +101,8 @@ class EyeTrackingService : LifecycleService() {
             return
         }
 
-        // Map sensitivity (0-100%) → EAR close threshold (0.08 → 0.18)
-        // Higher sensitivity = higher threshold = easier to trigger wink
+        // Map sensitivity (0-100%) → velocity threshold (0.28 → 0.10)
+        // Higher sensitivity = smaller threshold = less head movement needed
         val sensitivity = getSharedPreferences("eyescroll", MODE_PRIVATE).getInt("sensitivity", 60)
 
         val detector = GazeDetector(this, object : GazeDetector.Listener {
@@ -124,7 +124,7 @@ class EyeTrackingService : LifecycleService() {
                 Log.e(TAG, "GazeDetector error: $message")
             }
         }).also {
-            it.earCloseThreshold = 0.08f + (sensitivity / 100f) * 0.10f
+            it.velocityThreshold = 0.28f - (sensitivity / 100f) * 0.18f
         }
 
         try {
