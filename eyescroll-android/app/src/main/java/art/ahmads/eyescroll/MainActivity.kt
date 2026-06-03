@@ -157,7 +157,12 @@ class MainActivity : AppCompatActivity() {
     ) {
         val cameraOk = hasCameraPermission()
         val accessOk = isAccessibilityEnabled()
-        val modelOk = modelStatus == EyeTrackingService.Companion.ModelStatus.READY
+        // Check file on disk — StateFlow starts as CHECKING until service starts,
+        // but the model may already exist from a previous session
+        val modelFile = java.io.File(filesDir, EyeTrackingService.MODEL_FILENAME)
+        val modelOk = modelStatus == EyeTrackingService.Companion.ModelStatus.READY ||
+                (modelFile.exists() && modelFile.length() > 100_000 &&
+                        modelStatus != EyeTrackingService.Companion.ModelStatus.DOWNLOADING)
 
         binding.stepCamera.setStepDone(cameraOk)
         binding.btnGrantCamera.isEnabled = !cameraOk
@@ -236,9 +241,12 @@ class MainActivity : AppCompatActivity() {
         serviceIntent = null
     }
 
-    private fun canStartTracking() =
-        hasCameraPermission() && isAccessibilityEnabled() &&
-                EyeTrackingService.modelStatus.value == EyeTrackingService.Companion.ModelStatus.READY
+    private fun canStartTracking(): Boolean {
+        if (!hasCameraPermission() || !isAccessibilityEnabled()) return false
+        // Check model file directly — StateFlow may still be CHECKING if service never started
+        val modelFile = java.io.File(filesDir, EyeTrackingService.MODEL_FILENAME)
+        return modelFile.exists() && modelFile.length() > 100_000
+    }
 
     private fun hasCameraPermission() =
         ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
