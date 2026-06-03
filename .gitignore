@@ -1,0 +1,10 @@
+# Built APK
+EyeScroll.apk
+*.apk
+*.aab
+
+# Android build outputs
+eyescroll-android/.gradle/
+eyescroll-android/build/
+eyescroll-android/app/build/
+eyescroll-android/local.properties
