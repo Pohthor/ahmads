@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Header -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EyeScroll"
+            android:textColor="@color/text_primary"
+            android:textSize="28sp"
+            android:fontFamily="sans-serif-light"
+            android:letterSpacing="0.04"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Look up to scroll to the next post"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Eye visualizer -->
+        <art.ahmads.eyescroll.EyeGazeView
+            android:id="@+id/eyeView"
+            android:layout_width="140dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/labelStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tracking off"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="28dp" />
+
+        <!-- Enable toggle -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/toggleTracking"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enable Eye Tracking"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:enabled="false"
+            android:layout_marginBottom="32dp"
+            app:trackTint="@color/accent" />
+
+        <!-- ─── Setup Steps ─── -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SETUP"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Step 1: Camera -->
+        <LinearLayout
+            android:id="@+id/stepCamera"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/surface"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1  Camera permission"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btnGrantCamera"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Grant permission"
+                android:textColor="@color/accent"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <!-- Step 2: Accessibility -->
+        <LinearLayout
+            android:id="@+id/stepAccessibility"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/surface"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2  Accessibility service"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Allows EyeScroll to swipe in Instagram &amp; TikTok"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp" />
+
+            <Button
+                android:id="@+id/btnGrantAccessibility"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Open Accessibility Settings"
+                android:textColor="@color/accent"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <!-- Step 3: Model download -->
+        <LinearLayout
+            android:id="@+id/stepModel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/surface"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3  AI model"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="MediaPipe face landmarker — one-time download"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp" />
+
+            <Button
+                android:id="@+id/btnDownloadModel"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Download AI model (~5MB)"
+                android:textColor="@color/accent"
+                android:layout_marginTop="8dp" />
+
+            <ProgressBar
+                android:id="@+id/progressModel"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="0"
+                android:visibility="gone"
+                android:progressTint="@color/accent"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <!-- ─── Settings ─── -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SETTINGS"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/surface"
+            android:padding="16dp"
+            android:layout_marginBottom="32dp">
+
+            <TextView
+                android:id="@+id/labelSensitivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sensitivity: 60%"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                android:layout_marginBottom="4dp" />
+
+            <SeekBar
+                android:id="@+id/seekSensitivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="60"
+                android:progressTint="@color/accent"
+                android:thumbTint="@color/accent"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/labelDwell"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hold for: 1.0s"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                android:layout_marginBottom="4dp" />
+
+            <SeekBar
+                android:id="@+id/seekDwell"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="25"
+                android:progressTint="@color/accent"
+                android:thumbTint="@color/accent" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

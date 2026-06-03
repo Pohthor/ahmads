@@ -1,0 +1,130 @@
+package art.ahmads.eyescroll
+
+import android.animation.ValueAnimator
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
+import android.util.AttributeSet
+import android.view.View
+import android.view.animation.DecelerateInterpolator
+
+class EyeGazeView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : View(context, attrs) {
+
+    // Colours matching the dark portfolio palette
+    private val colorSclera = Color.parseColor("#2A2A27")
+    private val colorIrisIdle = Color.parseColor("#6E6E68")
+    private val colorIrisDwell = Color.parseColor("#C4A97A")
+    private val colorIrisScroll = Color.parseColor("#F0EFE8")
+    private val colorProgress = Color.parseColor("#C4A97A")
+    private val colorNoFace = Color.parseColor("#1A1A17")
+
+    private val scleraPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = colorSclera }
+    private val irisPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = colorIrisIdle }
+    private val pupilPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#0E0E0D") }
+    private val progressPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = colorProgress
+        style = Paint.Style.STROKE
+        strokeCap = Paint.Cap.ROUND
+    }
+
+    private val scleraRect = RectF()
+    private val arcRect = RectF()
+
+    // Animated values
+    private var displayIrisY = 0f
+    private var displayDwellProgress = 0f
+    private var displayIrisColor = colorIrisIdle
+    private var irisYAnimator: ValueAnimator? = null
+
+    var faceDetected = false
+        private set
+
+    fun updateState(state: GazeState) {
+        faceDetected = state.faceDetected
+
+        if (!state.faceDetected) {
+            animateIrisTo(0f)
+            irisPaint.color = colorIrisIdle
+            displayDwellProgress = 0f
+            invalidate()
+            return
+        }
+
+        // Iris moves up (negative fraction) when looking up, down when looking down
+        val targetY = (state.lookDownScore - state.lookUpScore).coerceIn(-0.6f, 0.6f)
+        animateIrisTo(targetY)
+
+        val targetColor = when {
+            state.isInDwell -> colorIrisDwell
+            else -> colorIrisIdle
+        }
+        irisPaint.color = targetColor
+
+        displayDwellProgress = state.dwellProgress
+        invalidate()
+    }
+
+    fun flashScroll() {
+        irisPaint.color = colorIrisScroll
+        invalidate()
+        postDelayed({
+            irisPaint.color = colorIrisIdle
+            invalidate()
+        }, 300)
+    }
+
+    private fun animateIrisTo(target: Float) {
+        irisYAnimator?.cancel()
+        irisYAnimator = ValueAnimator.ofFloat(displayIrisY, target).apply {
+            duration = 120
+            interpolator = DecelerateInterpolator()
+            addUpdateListener {
+                displayIrisY = it.animatedValue as Float
+                invalidate()
+            }
+            start()
+        }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        val cx = w / 2f
+        val cy = h / 2f
+        val rx = w * 0.42f
+        val ry = h * 0.28f
+        scleraRect.set(cx - rx, cy - ry, cx + rx, cy + ry)
+
+        val arcPad = w * 0.06f
+        arcRect.set(arcPad, arcPad, w - arcPad, h - arcPad)
+        progressPaint.strokeWidth = w * 0.045f
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        val cx = width / 2f
+        val cy = height / 2f
+        val ry = scleraRect.height() / 2f
+        val irisR = ry * 0.58f
+        val pupilR = irisR * 0.42f
+
+        scleraPaint.color = if (faceDetected) colorSclera else colorNoFace
+        canvas.drawOval(scleraRect, scleraPaint)
+
+        if (faceDetected) {
+            val irisY = cy + displayIrisY * ry * 0.55f
+
+            canvas.drawCircle(cx, irisY, irisR, irisPaint)
+            canvas.drawCircle(cx, irisY, pupilR, pupilPaint)
+
+            // Dwell progress ring
+            if (displayDwellProgress > 0f) {
+                val sweep = displayDwellProgress * 360f
+                canvas.drawArc(arcRect, -90f, sweep, false, progressPaint)
+            }
+        }
+    }
+}
