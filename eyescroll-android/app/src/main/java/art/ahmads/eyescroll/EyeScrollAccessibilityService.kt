@@ -1,7 +1,6 @@
 package art.ahmads.eyescroll
 
 import android.accessibilityservice.AccessibilityService
-import android.accessibilityservice.AccessibilityServiceInfo
 import android.accessibilityservice.GestureDescription
 import android.graphics.Path
 import android.view.accessibility.AccessibilityEvent
@@ -9,6 +8,7 @@ import android.view.accessibility.AccessibilityEvent
 class EyeScrollAccessibilityService : AccessibilityService() {
 
     companion object {
+        @Volatile
         var instance: EyeScrollAccessibilityService? = null
             private set
 
@@ -19,13 +19,11 @@ class EyeScrollAccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         instance = this
-        // Explicitly configure the service so it's recognised on all manufacturers
-        serviceInfo = serviceInfo?.apply {
-            eventTypes = AccessibilityEvent.TYPES_ALL_MASK
-            feedbackType = AccessibilityServiceInfo.FEEDBACK_ALL_MASK
-            flags = flags or AccessibilityServiceInfo.FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY
-            notificationTimeout = 0
-        }
+    }
+
+    override fun onUnbind(intent: android.content.Intent?): Boolean {
+        instance = null
+        return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
@@ -34,21 +32,25 @@ class EyeScrollAccessibilityService : AccessibilityService() {
     }
 
     fun performSwipeUp() {
-        val metrics = resources.displayMetrics
-        val cx = metrics.widthPixels / 2f
-        val startY = metrics.heightPixels * 0.72f
-        val endY = metrics.heightPixels * 0.28f
+        try {
+            val metrics = resources.displayMetrics
+            val cx = metrics.widthPixels / 2f
+            val startY = metrics.heightPixels * 0.72f
+            val endY = metrics.heightPixels * 0.28f
 
-        val path = Path().apply {
-            moveTo(cx, startY)
-            lineTo(cx, endY)
+            val path = Path().apply {
+                moveTo(cx, startY)
+                lineTo(cx, endY)
+            }
+
+            val gesture = GestureDescription.Builder()
+                .addStroke(GestureDescription.StrokeDescription(path, 0L, 350L))
+                .build()
+
+            dispatchGesture(gesture, null, null)
+        } catch (e: Exception) {
+            // Ignore gesture failures silently
         }
-
-        val gesture = GestureDescription.Builder()
-            .addStroke(GestureDescription.StrokeDescription(path, 0L, 350L))
-            .build()
-
-        dispatchGesture(gesture, null, null)
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {}
