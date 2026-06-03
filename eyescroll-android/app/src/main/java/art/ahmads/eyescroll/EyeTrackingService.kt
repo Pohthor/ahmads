@@ -56,13 +56,19 @@ class EyeTrackingService : LifecycleService() {
     private var cameraProvider: ProcessCameraProvider? = null
     private val analysisExecutor = Executors.newSingleThreadExecutor()
 
-    var lookUpThreshold: Float = 0.30f
+    var headUpThreshold: Float = 0.50f
         set(value) {
             field = value
-            gazeDetector?.lookUpThreshold = value
+            gazeDetector?.headUpThreshold = value
         }
 
-    var dwellTimeMs: Long = 1_000L
+    var headDownThreshold: Float = 0.90f
+        set(value) {
+            field = value
+            gazeDetector?.headDownThreshold = value
+        }
+
+    var dwellTimeMs: Long = 0L
         set(value) {
             field = value
             gazeDetector?.dwellTimeMs = value
@@ -167,16 +173,20 @@ class EyeTrackingService : LifecycleService() {
                 _gazeState.value = state
             }
 
-            override fun onScrollTriggered() {
-                Log.d(TAG, "Scroll triggered by gaze")
-                EyeScrollAccessibilityService.scrollToNext()
+            override fun onScrollTriggered(direction: GazeDetector.ScrollDirection) {
+                Log.d(TAG, "Scroll triggered: $direction")
+                when (direction) {
+                    GazeDetector.ScrollDirection.NEXT -> EyeScrollAccessibilityService.scrollToNext()
+                    GazeDetector.ScrollDirection.PREV -> EyeScrollAccessibilityService.scrollToPrev()
+                }
             }
 
             override fun onError(message: String) {
                 Log.e(TAG, "GazeDetector error: $message")
             }
         }).also {
-            it.lookUpThreshold = lookUpThreshold
+            it.headUpThreshold = headUpThreshold
+            it.headDownThreshold = headDownThreshold
             it.dwellTimeMs = dwellTimeMs
         }
 

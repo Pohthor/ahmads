@@ -12,9 +12,8 @@ class EyeScrollAccessibilityService : AccessibilityService() {
         var instance: EyeScrollAccessibilityService? = null
             private set
 
-        fun scrollToNext() {
-            instance?.performSwipeUp()
-        }
+        fun scrollToNext() { instance?.performSwipeUp() }
+        fun scrollToPrev() { instance?.performSwipeDown() }
     }
 
     override fun onServiceConnected() {
@@ -51,6 +50,25 @@ class EyeScrollAccessibilityService : AccessibilityService() {
         } catch (e: Exception) {
             // Ignore gesture failures silently
         }
+    }
+
+    fun performSwipeDown() {
+        try {
+            val metrics = resources.displayMetrics
+            val cx = metrics.widthPixels / 2f
+            val startY = metrics.heightPixels * 0.28f
+            val endY = metrics.heightPixels * 0.72f
+            val path = Path().apply {
+                moveTo(cx, startY)
+                lineTo(cx, endY)
+            }
+            dispatchGesture(
+                GestureDescription.Builder()
+                    .addStroke(GestureDescription.StrokeDescription(path, 0L, 350L))
+                    .build(),
+                null, null
+            )
+        } catch (e: Exception) {}
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {}

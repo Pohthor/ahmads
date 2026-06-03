@@ -55,8 +55,11 @@ class EyeGazeView @JvmOverloads constructor(
             return
         }
 
-        // Iris moves up (negative fraction) when looking up, down when looking down
-        val targetY = (state.lookDownScore - state.lookUpScore).coerceIn(-0.6f, 0.6f)
+        val targetY = when {
+            state.isLookingUp   -> -0.6f
+            state.isLookingDown ->  0.6f
+            else                ->  0f
+        }
         animateIrisTo(targetY)
 
         val targetColor = when {

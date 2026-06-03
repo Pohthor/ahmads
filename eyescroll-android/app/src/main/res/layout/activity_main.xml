@@ -50,6 +50,36 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="28dp" />
 
+        <!-- Face preview (shown when not tracking) -->
+        <FrameLayout
+            android:id="@+id/previewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="20dp"
+            android:background="@color/surface"
+            android:visibility="gone">
+
+            <androidx.camera.view.PreviewView
+                android:id="@+id/previewView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:implementationMode="compatible"
+                app:scaleType="fillCenter" />
+
+            <TextView
+                android:id="@+id/labelFaceStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:background="#99000000"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="5dp"
+                android:text="Detecting face..."
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+        </FrameLayout>
+
         <!-- Enable toggle -->
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/toggleTracking"
