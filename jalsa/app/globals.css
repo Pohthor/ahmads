@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-jalsa-bg: #12082a;
+  --color-jalsa-coral: #ff6b6b;
+  --color-jalsa-amber: #f59e0b;
+  --color-jalsa-mint: #10b981;
+  --color-jalsa-surface: #1e1040;
+  --color-jalsa-border: #2d1a5e;
+  --font-lalezar: 'Lalezar', serif;
+  --font-tajawal: 'Tajawal', sans-serif;
+}
+
+@keyframes pulse-crown {
+  0%, 100% { transform: scale(1) rotate(-5deg); }
+  50%       { transform: scale(1.15) rotate(5deg); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes pulse-opacity {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+@keyframes fade-slide-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-crown        { animation: pulse-crown 1.5s ease-in-out infinite; }
+.animate-spin-slow    { animation: spin-slow 3s linear infinite; }
+.animate-pulse-opacity { animation: pulse-opacity 1.5s ease-in-out infinite; }
+.animate-fade-in      { animation: fade-slide-in 0.35s ease-out forwards; }
+
+button, [role="button"] { min-height: 48px; }
+
+textarea {
+  direction: rtl;
+  text-align: right;
+}
