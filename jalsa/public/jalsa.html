@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>جَلسة - المحكمة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #12082a;
+      --coral:   #ff6b6b;
+      --amber:   #f59e0b;
+      --mint:    #10b981;
+      --surface: #1e1040;
+      --border:  #2d1a5e;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: white;
+      font-family: 'Tajawal', sans-serif;
+      min-height: 100vh;
+      direction: rtl;
+      overflow-x: hidden;
+    }
+
+    #app {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .screen {
+      width: 100%;
+      max-width: 420px;
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes crownPulse {
+      0%, 100% { transform: scale(1) rotate(-5deg); }
+      50%       { transform: scale(1.15) rotate(5deg); }
+    }
+    @keyframes pulseFade {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      font-family: 'Lalezar', serif;
+      font-size: 1.4rem;
+      border-radius: 1rem;
+      padding: 0.9rem 1rem;
+      min-height: 56px;
+      color: white;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .btn:active:not(:disabled) { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .btn-coral   { background: var(--coral); box-shadow: 0 4px 20px rgba(255,107,107,.25); }
+    .btn-mint    { background: var(--mint);  box-shadow: 0 4px 20px rgba(16,185,129,.25); }
+    .btn-outline { background: transparent; border: 2px solid var(--amber); color: var(--amber); }
+
+    .card {
+      width: 100%;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 0.875rem;
+      padding: 0.875rem 1rem;
+      color: white;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1.1rem;
+      direction: rtl;
+      text-align: right;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus { border-color: var(--coral); }
+    input::placeholder, textarea::placeholder { color: rgba(255,255,255,.35); }
+    textarea { min-height: 160px; resize: none; }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.95rem;
+    }
+    .chip-x {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,.4);
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      padding: 0;
+      min-height: 0;
+      transition: color .15s;
+    }
+    .chip-x:hover { color: var(--coral); }
+
+    .score-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-radius: 1rem;
+      padding: 0.875rem 1.25rem;
+    }
+    .score-row.first {
+      background: rgba(245,158,11,.15);
+      border: 2px solid var(--amber);
+    }
+    .score-row.other {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+    }
+
+    .spinner-ring {
+      position: absolute; inset: 0;
+      border: 4px solid rgba(245,158,11,.2);
+      border-top-color: var(--amber);
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+    }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ════════════════════════════════════════════════
+//  البيانات
+// ════════════════════════════════════════════════
+const CHALLENGES = [
+  'دافع عن نومك في الشمس وكأنه إنجاز علمي يستحق جائزة',
+  'أقنع الجلسة بأن الأكل وقوفاً يجعلك أذكى وأقوى',
+  'اختلق عذراً مقنعاً لتأخرك عشر سنوات كاملة',
+  'ناظِر ضد استخدام الملاعق في الأكل بشكل عام',
+  'دافع عن قرارك بإلغاء المصافحة من حياتك للأبد',
+  'أقنع الجلسة بأن النوم في العمل ميزة إنتاجية وليست عيباً',
+  'اختلق أكثر كذبة مقنعة عن سبب انقطاع الكهرباء عندكم',
+  'ناظِر بشراسة: القهوة بدون سكر أفضل بكثير من القهوة بسكر',
+  'دافع عن قرارك بأكل البطيخ في عز الشتاء',
+  'أقنع الجلسة بأن التأخر دائماً هو الخيار الأكثر حكمة',
+  'اختلق أفضل عذر مضحك لعدم الرد على الرسائل لأسبوع كامل',
+  'دافع عن فكرة أن الفوضى في الغرفة علامة على العبقرية',
+  'أقنع الجلسة أن نسيان المواعيد تأمل روحي وليس إهمالاً',
+  'اختلق قصة مقنعة لتبرير أكلك وجبة الغداء قبل العاشرة صباحاً',
+  'دافع عن إلغاء الأعياد والمناسبات بشكل نهائي',
+  'أقنع الجلسة بأن النوم اثنتي عشرة ساعة يومياً هو سر النجاح',
+  'اختلق سبباً علمياً مقنعاً لكرهك الكامل للرياضة',
+  'ناظِر: عيشة الريف أفضل من المدينة أم العكس؟ دافع بشراسة',
+  'دافع عن قرارك بالأكل والمشي في نفس الوقت دائماً',
+  'أقنع الجلسة أن المشاجرة مع أهل البيت رياضة ذهنية مفيدة',
+  'اختلق تفسيراً علمياً لسبب نسيانك كل ما تذاكره قبل الامتحان',
+  'دافع عن قرارك بارتداء نفس الملابس كل يوم لأسبوع كامل',
+];
+
+const RULINGS = [
+  'بعد تمحيص دقيق وتفكير عميق، يرى القاضي أن هذا الرأي رغم غرابته يحمل منطقاً لا يُرد. الحكم: فوز مستحق!',
+  'القاضي مقتنع رغم أنفه! الحجج كانت مقنعة بشكل مريب ومزعج. الحكم: فائز بالإقناع القسري.',
+  'لم يتوقع القاضي أن يجد نفسه موافقاً، لكن المنطق المعوج أثّر فيه تأثيراً عميقاً. الحكم: فوز بالإرباك!',
+  'القاضي يُعلن: هذه الإجابة كانت الأكثر إمتاعاً وإقناعاً في نفس الوقت. تاج الجلسة لك!',
+  'بعد مداولات مضنية وتأمل عميق، قرر القاضي أن هذا المتسابق هو الأجدر بالفوز اليوم.',
+  'الحجة كانت أقوى من أن تُرد. والقاضي يعترف بخسارته في هذا الجدال. الفوز لك!',
+  'القاضي يهزّ رأسه إعجاباً! ما سمعه اليوم غيّر قناعاته بشكل لا رجعة فيه. مبروك الفوز!',
+  'القاضي في حيرة من أمره، لكن الإجابة كانت بالغة الذكاء بشكل مخيف. الحكم: فوز رغم الإزعاج!',
+];
+
+// ════════════════════════════════════════════════
+//  الحالة
+// ════════════════════════════════════════════════
+let S = {
+  phase: 'setup',
+  players: [],       // [{id, name, score}]
+  idx: 0,            // اللاعب الحالي
+  round: 1,
+  challenge: '',
+  answers: [],       // [{name, text}]
+  winner: '',
+  ruling: '',
+  recent: [],        // آخر 5 تحديات
+};
+
+function rand(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function pickChallenge() {
+  const pool = CHALLENGES.filter(c => !S.recent.includes(c));
+  const c = rand(pool.length ? pool : CHALLENGES);
+  S.recent = [...S.recent, c].slice(-5);
+  return c;
+}
+
+// ════════════════════════════════════════════════
+//  الشاشات
+// ════════════════════════════════════════════════
+const A = document.getElementById('app');
+
+function go(phase) {
+  S.phase = phase;
+  render();
+}
+
+// ─── الإعداد ──────────────────────────────────
+function renderSetup() {
+  A.innerHTML = `
+    <div class="screen">
+      <div style="text-align:center">
+        <div style="font-family:'Lalezar',serif;font-size:3.75rem;color:var(--coral);line-height:1">جَلسة</div>
+        <div style="font-family:'Lalezar',serif;font-size:1.5rem;color:var(--amber)">المحكمة</div>
+        <div style="color:rgba(255,255,255,.45);font-size:.875rem;margin-top:.4rem">لعبة الحفلات العربية</div>
+      </div>
+
+      <div style="width:100%;display:flex;gap:.5rem">
+        <input id="ni" type="text" placeholder="اسم اللاعب..." maxlength="20"
+          autocomplete="off" autocorrect="off" spellcheck="false">
+        <button class="btn btn-coral" id="ab"
+          style="width:auto;padding:0 1.25rem;font-size:1rem;min-height:48px">أضف</button>
+      </div>
+
+      <div id="chips" style="width:100%;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end"></div>
+      <p id="cnt" style="color:rgba(255,255,255,.4);font-size:.875rem"></p>
+      <button class="btn btn-coral" id="sb" disabled>ابدأ اللعبة</button>
+    </div>`;
+
+  const ni = document.getElementById('ni');
+  const ab = document.getElementById('ab');
+  const sb = document.getElementById('sb');
+
+  function refresh() {
+    document.getElementById('chips').innerHTML = S.players.map(p =>
+      `<div class="chip">
+        <button class="chip-x" onclick="rmP('${p.id}')">×</button>
+        <span>${p.name}</span>
+      </div>`).join('');
+    document.getElementById('cnt').textContent =
+      `اللاعبون: ${S.players.length} / 6${S.players.length < 2 ? ' — أدخل لاعبَين على الأقل' : ''}`;
+    sb.disabled = S.players.length < 2;
+    ab.disabled = !ni.value.trim() || S.players.length >= 6;
+  }
+
+  function add() {
+    const name = ni.value.trim();
+    if (!name || S.players.length >= 6 || S.players.some(p => p.name === name)) return;
+    S.players.push({ id: Date.now() + Math.random(), name, score: 0 });
+    ni.value = '';
+    refresh();
+    ni.focus();
+  }
+
+  window.rmP = id => { S.players = S.players.filter(p => p.id != id); refresh(); };
+  ab.onclick = add;
+  ni.onkeydown = e => e.key === 'Enter' && add();
+  ni.oninput = refresh;
+  sb.onclick = () => {
+    S.round = 1; S.recent = []; S.answers = []; S.idx = 0;
+    S.challenge = pickChallenge();
+    go('challenge');
+  };
+  refresh();
+}
+
+// ─── التحدي ───────────────────────────────────
+function renderChallenge() {
+  A.innerHTML = `
+    <div class="screen">
+      <p style="color:rgba(255,255,255,.4);font-size:.875rem">الجولة ${S.round}</p>
+      <p style="color:var(--amber);font-size:.875rem;font-weight:500">تحدّي الجولة</p>
+      <div class="card">
+        <p style="font-family:'Lalezar',serif;font-size:1.8rem;color:var(--coral);line-height:1.5">
+          «${S.challenge}»
+        </p>
+      </div>
+      <button class="btn btn-coral" onclick="startPass()">جاهز! ابدأ الإجابات</button>
+    </div>`;
+  window.startPass = () => { S.idx = 0; S.answers = []; go('pass'); };
+}
+
+// ─── تمرير الجهاز ─────────────────────────────
+function renderPass() {
+  const p = S.players[S.idx];
+  A.innerHTML = `
+    <div class="screen">
+      <div style="font-size:4.5rem;user-select:none">📱</div>
+      <div style="text-align:center">
+        <p style="color:rgba(255,255,255,.6);font-size:1.2rem;margin-bottom:.75rem">مرّر الجهاز إلى</p>
+        <p style="font-family:'Lalezar',serif;font-size:3rem;color:var(--coral)">${p.name}</p>
+      </div>
+      <button class="btn btn-mint" onclick="go('answer')">✓ تم التسليم</button>
+    </div>`;
+}
+
+// ─── الإجابة ──────────────────────────────────
+function renderAnswer() {
+  const p = S.players[S.idx];
+  A.innerHTML = `
+    <div class="screen">
+      <p style="font-family:'Lalezar',serif;font-size:1.9rem;color:var(--coral);text-align:center">
+        ${p.name}، دورك!
+      </p>
+      <div class="card" style="padding:1rem">
+        <p style="color:var(--amber);font-size:.75rem;margin-bottom:.5rem">التحدي</p>
+        <p style="color:rgba(255,255,255,.9);line-height:1.6">«${S.challenge}»</p>
+      </div>
+      <textarea id="ta" placeholder="اكتب إجابتك هنا..."
+        autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
+      <p id="cc" style="color:rgba(255,255,255,.3);font-size:.75rem;align-self:flex-start">0 / 300</p>
+      <button class="btn btn-coral" id="sb2" disabled onclick="submitAns()">أرسل جوابي</button>
+    </div>`;
+
+  const ta = document.getElementById('ta');
+  const sb2 = document.getElementById('sb2');
+  const cc = document.getElementById('cc');
+
+  ta.oninput = () => {
+    if (ta.value.length > 300) ta.value = ta.value.slice(0, 300);
+    cc.textContent = `${ta.value.length} / 300`;
+    sb2.disabled = !ta.value.trim();
+  };
+
+  window.submitAns = () => {
+    const text = ta.value.trim();
+    if (!text) return;
+    S.answers.push({ name: p.name, text });
+    if (S.idx + 1 < S.players.length) { S.idx++; go('pass'); }
+    else go('judging');
+  };
+}
+
+// ─── القاضي يفكّر ──────────────────────────────
+function renderJudging() {
+  A.innerHTML = `
+    <div class="screen">
+      <div style="position:relative;width:7rem;height:7rem;display:flex;align-items:center;justify-content:center">
+        <div class="spinner-ring"></div>
+        <span style="font-size:3.2rem">⚖️</span>
+      </div>
+      <div style="text-align:center">
+        <p style="font-family:'Lalezar',serif;font-size:2.1rem;color:var(--amber);animation:pulseFade 1.5s ease-in-out infinite">
+          القاضي يفكّر...
+        </p>
+        <p style="color:rgba(255,255,255,.4);font-size:.875rem;margin-top:.5rem">انتظر الحُكم</p>
+      </div>
+    </div>`;
+
+  setTimeout(() => {
+    const winner = rand(S.answers);
+    S.winner = winner.name;
+    S.ruling = rand(RULINGS);
+    const pl = S.players.find(x => x.name === S.winner);
+    if (pl) pl.score++;
+    go('verdict');
+  }, 2400);
+}
+
+// ─── الحُكم ────────────────────────────────────
+function renderVerdict() {
+  A.innerHTML = `
+    <div class="screen">
+      <div style="text-align:center">
+        <div style="font-size:4.5rem;animation:crownPulse 1.5s ease-in-out infinite;display:inline-block;margin-bottom:1rem">👑</div>
+        <p style="color:rgba(255,255,255,.6);font-size:1.1rem;margin-bottom:.5rem">فاز بهذه الجولة</p>
+        <p style="font-family:'Lalezar',serif;font-size:3rem;color:var(--amber)">${S.winner}</p>
+      </div>
+      <div class="card">
+        <p style="color:var(--coral);font-size:.75rem;font-weight:500;margin-bottom:.75rem;letter-spacing:.05em">
+          ⚖️ حُكم القاضي
+        </p>
+        <p style="color:rgba(255,255,255,.9);line-height:1.7">«${S.ruling}»</p>
+      </div>
+      <div style="width:100%;display:flex;gap:.75rem">
+        <button class="btn btn-coral" onclick="newRound()">جولة جديدة</button>
+        <button class="btn btn-outline" onclick="go('scores')">النقاط</button>
+      </div>
+    </div>`;
+
+  window.newRound = () => {
+    S.round++;
+    S.challenge = pickChallenge();
+    S.answers = [];
+    S.idx = 0;
+    go('challenge');
+  };
+}
+
+// ─── النقاط ────────────────────────────────────
+function renderScores() {
+  const sorted = [...S.players].sort((a, b) => b.score - a.score);
+  A.innerHTML = `
+    <div class="screen">
+      <p style="font-family:'Lalezar',serif;font-size:2.5rem;color:white">لوحة النقاط</p>
+      <div style="width:100%;display:flex;flex-direction:column;gap:.75rem">
+        ${sorted.map((p, i) => `
+          <div class="score-row ${i === 0 ? 'first' : 'other'}">
+            <span style="font-family:'Lalezar',serif;font-size:1.5rem;width:2rem;text-align:center;
+              color:${i === 0 ? 'var(--amber)' : 'rgba(255,255,255,.35)'}">
+              ${i === 0 ? '👑' : i + 1}
+            </span>
+            <span style="flex:1;font-family:'Lalezar',serif;font-size:1.2rem;
+              color:${i === 0 ? 'var(--amber)' : 'white'}">${p.name}</span>
+            <span style="font-family:'Lalezar',serif;font-size:2rem;
+              color:${i === 0 ? 'var(--amber)' : 'var(--coral)'}">
+              ${p.score}
+            </span>
+            <span style="color:rgba(255,255,255,.4);font-size:.75rem">نقطة</span>
+          </div>`).join('')}
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:.75rem">
+        <button class="btn btn-coral" onclick="newRound()">جولة جديدة</button>
+        <button class="btn btn-outline" onclick="newGame()">جلسة جديدة</button>
+      </div>
+    </div>`;
+
+  window.newRound = () => {
+    S.round++;
+    S.challenge = pickChallenge();
+    S.answers = [];
+    S.idx = 0;
+    go('challenge');
+  };
+
+  window.newGame = () => {
+    S = { phase:'setup', players:[], idx:0, round:1, challenge:'', answers:[], winner:'', ruling:'', recent:[] };
+    render();
+  };
+}
+
+// ════════════════════════════════════════════════
+//  الراندر الرئيسي
+// ════════════════════════════════════════════════
+function render() {
+  const screens = {
+    setup: renderSetup, challenge: renderChallenge, pass: renderPass,
+    answer: renderAnswer, judging: renderJudging, verdict: renderVerdict, scores: renderScores,
+  };
+  screens[S.phase]?.();
+}
+
+render();
+</script>
+</body>
+</html>
