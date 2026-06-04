@@ -14,10 +14,15 @@ import java.io.File
 import java.nio.ByteBuffer
 import kotlin.math.abs
 
+enum class GestureMode { PITCH, ROLL, YAW }
+
 data class GazeState(
     val faceDetected: Boolean = false,
-    val isMovingRight: Boolean = false,
-    val isMovingLeft: Boolean = false
+    val isLookingNext: Boolean = false,
+    val isLookingPrev: Boolean = false,
+    val isCalibrating: Boolean = false,
+    val calibrationProgress: Float = 0f,
+    val dwellProgress: Float = 0f
 )
 
 class GazeDetector(
@@ -29,41 +34,40 @@ class GazeDetector(
     interface Listener {
         fun onGazeUpdate(state: GazeState)
         fun onScrollTriggered(direction: ScrollDirection)
+        fun onCalibrationDone(neutralValue: Float)
         fun onDoubleTap()
         fun onError(message: String)
     }
 
-    // Velocity threshold: yaw change needed within the window to trigger
-    var velocityThreshold: Float = 0.30f
+    var gestureMode: GestureMode = GestureMode.PITCH
+    var calibratedNeutral: Float = Float.NaN  // NaN = not yet calibrated, uses default
+    var sensitivityOffset: Float = 0.14f      // how far from neutral to trigger
+    var dwellTimeMs: Long = 0L
     var scrollCooldownMs: Long = 1_500L
-    private val historyWindowMs = 250L  // short window = only quick flicks trigger, not slow drifts
+
+    private val calibrationDurationMs = 3_000L
+    private var calibrating = false
+    private var calibrationStartTime = 0L
+    private val calibrationSamples = mutableListOf<Float>()
 
     private var faceLandmarker: FaceLandmarker? = null
     private val imageProcessingOptions = ImageProcessingOptions.builder().build()
 
-    // Ring buffer of (yaw, timestamp) for velocity calculation
-    private val yawHistory = ArrayDeque<Pair<Float, Long>>()
+    private var smoothed = Float.NaN
+    private var lookNextStartTime = 0L
+    private var lookPrevStartTime = 0L
     private var lastScrollTime = 0L
 
     fun initialize(modelFile: File) {
         val bytes = modelFile.readBytes()
-        val modelBuffer = ByteBuffer.allocateDirect(bytes.size).apply {
-            put(bytes)
-            rewind()
-        }
+        val modelBuffer = ByteBuffer.allocateDirect(bytes.size).apply { put(bytes); rewind() }
 
         val options = FaceLandmarker.FaceLandmarkerOptions.builder()
-            .setBaseOptions(
-                BaseOptions.builder()
-                    .setModelAssetBuffer(modelBuffer)
-                    .build()
-            )
+            .setBaseOptions(BaseOptions.builder().setModelAssetBuffer(modelBuffer).build())
             .setRunningMode(RunningMode.LIVE_STREAM)
             .setNumFaces(1)
             .setOutputFaceBlendshapes(false)
-            .setResultListener { result: FaceLandmarkerResult, _: MPImage ->
-                onResult(result)
-            }
+            .setResultListener { result: FaceLandmarkerResult, _: MPImage -> onResult(result) }
             .setErrorListener { error: RuntimeException ->
                 listener.onError(error.message ?: "MediaPipe error")
             }
@@ -77,66 +81,126 @@ class GazeDetector(
         faceLandmarker?.detectAsync(mpImage, imageProcessingOptions, SystemClock.uptimeMillis())
     }
 
+    /** Call to begin 3-second auto-calibration. User should look straight at phone. */
+    fun startCalibration() {
+        calibrating = true
+        calibrationStartTime = System.currentTimeMillis()
+        calibrationSamples.clear()
+        smoothed = Float.NaN
+        lookNextStartTime = 0L
+        lookPrevStartTime = 0L
+    }
+
     private fun onResult(result: FaceLandmarkerResult) {
         val landmarksList = result.faceLandmarks()
         if (landmarksList.isEmpty()) {
-            yawHistory.clear()
+            smoothed = Float.NaN
+            lookNextStartTime = 0L
+            lookPrevStartTime = 0L
             listener.onGazeUpdate(GazeState(faceDetected = false))
             return
         }
 
         val lm = landmarksList[0]
-
-        // Yaw proxy: (noseX - eyeMidX) / IOD
-        // Stable, proven formula — neutral ≈ 0, turns left/right change the sign
-        val leftEye  = lm[33]
-        val rightEye = lm[263]
-        val noseTip  = lm[1]
-
-        val eyeMidX = (leftEye.x() + rightEye.x()) / 2f
-        val iod = abs(leftEye.x() - rightEye.x())
-
-        if (iod < 0.01f) {
+        val raw = computeMetric(lm) ?: run {
             listener.onGazeUpdate(GazeState(faceDetected = true))
             return
         }
 
-        val rawYaw = (noseTip.x() - eyeMidX) / iod
+        // Exponential smoothing
+        smoothed = if (smoothed.isNaN()) raw else smoothed * 0.65f + raw * 0.35f
+
         val now = System.currentTimeMillis()
 
-        // Add to history and trim old entries
-        yawHistory.addLast(Pair(rawYaw, now))
-        while (yawHistory.size > 1 && now - yawHistory.first().second > historyWindowMs) {
-            yawHistory.removeFirst()
+        // ── Calibration mode ────────────────────────────────────────────────────────
+        if (calibrating) {
+            calibrationSamples.add(smoothed)
+            val elapsed = now - calibrationStartTime
+            val progress = (elapsed.toFloat() / calibrationDurationMs).coerceIn(0f, 1f)
+            listener.onGazeUpdate(GazeState(
+                faceDetected = true,
+                isCalibrating = true,
+                calibrationProgress = progress
+            ))
+            if (elapsed >= calibrationDurationMs) {
+                calibrating = false
+                if (calibrationSamples.isNotEmpty()) {
+                    val neutral = calibrationSamples.average().toFloat()
+                    calibratedNeutral = neutral
+                    listener.onCalibrationDone(neutral)
+                }
+            }
+            return
         }
 
-        // Velocity = change in yaw over the history window
-        val velocity = if (yawHistory.size >= 2) rawYaw - yawHistory.first().first else 0f
+        // ── Detection mode ───────────────────────────────────────────────────────────
+        val neutral = if (calibratedNeutral.isNaN()) defaultNeutral() else calibratedNeutral
 
-        val cooldownOk = (now - lastScrollTime) >= scrollCooldownMs
+        val lookingNext = smoothed < neutral - sensitivityOffset
+        val lookingPrev = smoothed > neutral + sensitivityOffset * 1.2f
 
         when {
-            velocity > velocityThreshold && cooldownOk -> {
-                lastScrollTime = now
-                yawHistory.clear()
-                listener.onScrollTriggered(ScrollDirection.PREV)
-                listener.onGazeUpdate(GazeState(faceDetected = true, isMovingLeft = true))
+            lookingNext -> {
+                lookPrevStartTime = 0L
+                if (lookNextStartTime == 0L) lookNextStartTime = now
+                val elapsed = now - lookNextStartTime
+                val progress = if (dwellTimeMs == 0L) 1f
+                               else (elapsed.toFloat() / dwellTimeMs).coerceIn(0f, 1f)
+                listener.onGazeUpdate(GazeState(
+                    faceDetected = true, isLookingNext = true,
+                    dwellProgress = progress
+                ))
+                if (elapsed >= dwellTimeMs && (now - lastScrollTime) >= scrollCooldownMs) {
+                    lastScrollTime = now
+                    lookNextStartTime = 0L
+                    listener.onScrollTriggered(ScrollDirection.NEXT)
+                }
             }
-            velocity < -velocityThreshold && cooldownOk -> {
-                lastScrollTime = now
-                yawHistory.clear()
-                listener.onScrollTriggered(ScrollDirection.NEXT)
-                listener.onGazeUpdate(GazeState(faceDetected = true, isMovingRight = true))
+            lookingPrev -> {
+                lookNextStartTime = 0L
+                if (lookPrevStartTime == 0L) lookPrevStartTime = now
+                val elapsed = now - lookPrevStartTime
+                val progress = if (dwellTimeMs == 0L) 1f
+                               else (elapsed.toFloat() / dwellTimeMs).coerceIn(0f, 1f)
+                listener.onGazeUpdate(GazeState(
+                    faceDetected = true, isLookingPrev = true,
+                    dwellProgress = progress
+                ))
+                if (elapsed >= dwellTimeMs && (now - lastScrollTime) >= scrollCooldownMs) {
+                    lastScrollTime = now
+                    lookPrevStartTime = 0L
+                    listener.onScrollTriggered(ScrollDirection.PREV)
+                }
             }
             else -> {
-                val moving = abs(velocity) > velocityThreshold * 0.5f
-                listener.onGazeUpdate(GazeState(
-                    faceDetected = true,
-                    isMovingRight = velocity < -velocityThreshold * 0.5f,
-                    isMovingLeft  = velocity >  velocityThreshold * 0.5f
-                ))
+                lookNextStartTime = 0L
+                lookPrevStartTime = 0L
+                listener.onGazeUpdate(GazeState(faceDetected = true))
             }
         }
+    }
+
+    private fun computeMetric(lm: List<com.google.mediapipe.tasks.components.containers.NormalizedLandmark>): Float? {
+        val leftEye  = lm[33]   // person's right eye outer corner
+        val rightEye = lm[263]  // person's left eye outer corner
+        val nose     = lm[1]    // nose tip
+        val iod = abs(leftEye.x() - rightEye.x())
+        if (iod < 0.01f) return null
+
+        return when (gestureMode) {
+            // Low = head up/back → NEXT  |  High = head down/forward → PREV
+            GestureMode.PITCH -> (nose.y() - (leftEye.y() + rightEye.y()) / 2f) / iod
+            // Low = head turns right → NEXT  |  High = head turns left → PREV
+            GestureMode.YAW   -> (nose.x() - (leftEye.x() + rightEye.x()) / 2f) / iod
+            // Low = tilt right (right ear down) → NEXT  |  High = tilt left → PREV
+            GestureMode.ROLL  -> (rightEye.y() - leftEye.y()) / iod
+        }
+    }
+
+    private fun defaultNeutral() = when (gestureMode) {
+        GestureMode.PITCH -> 0.70f
+        GestureMode.YAW   -> 0.0f
+        GestureMode.ROLL  -> 0.0f
     }
 
     fun close() {

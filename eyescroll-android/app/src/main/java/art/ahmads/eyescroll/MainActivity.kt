@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Size
 import android.view.accessibility.AccessibilityManager
+import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,7 +36,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var serviceIntent: Intent? = null
 
-    // Face preview (active only when not tracking)
     private var previewFaceLandmarker: FaceLandmarker? = null
     private var previewCameraProvider: ProcessCameraProvider? = null
     private val previewExecutor = Executors.newSingleThreadExecutor()
@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setupUI()
         observeServiceState()
         refreshSetupSteps()
@@ -77,6 +76,7 @@ class MainActivity : AppCompatActivity() {
                 startPreviewSession()
             }
         }
+        refreshCalibStatus()
     }
 
     override fun onPause() {
@@ -85,18 +85,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        binding.btnGrantCamera.setOnClickListener {
-            cameraPermLauncher.launch(Manifest.permission.CAMERA)
-        }
+        val prefs = getSharedPreferences("eyescroll", MODE_PRIVATE)
 
-        binding.btnGrantAccessibility.setOnClickListener {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-        }
+        binding.btnGrantCamera.setOnClickListener { cameraPermLauncher.launch(Manifest.permission.CAMERA) }
+        binding.btnGrantAccessibility.setOnClickListener { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
+        binding.btnDownloadModel.setOnClickListener { downloadModel() }
 
-        binding.btnDownloadModel.setOnClickListener {
-            downloadModel()
-        }
-
+        // ── Toggle tracking ────────────────────────────────────────────────────────
         binding.toggleTracking.setOnCheckedChangeListener { _, enabled ->
             if (!canStartTracking()) {
                 binding.toggleTracking.isChecked = false
@@ -106,12 +101,47 @@ class MainActivity : AppCompatActivity() {
             if (enabled) {
                 stopPreviewSession()
                 startTracking()
+                binding.btnCalibrate.isEnabled = true
             } else {
                 stopTracking()
+                binding.btnCalibrate.isEnabled = false
             }
         }
 
-        // Sensitivity slider: higher = more sensitive (less head movement needed)
+        // ── Gesture mode selector ──────────────────────────────────────────────────
+        val savedMode = GestureMode.valueOf(prefs.getString("gesture_mode", GestureMode.PITCH.name)!!)
+        when (savedMode) {
+            GestureMode.PITCH -> binding.radioPitch.isChecked = true
+            GestureMode.ROLL  -> binding.radioRoll.isChecked  = true
+            GestureMode.YAW   -> binding.radioYaw.isChecked   = true
+        }
+
+        binding.radioGestureMode.setOnCheckedChangeListener { _, checkedId ->
+            val mode = when (checkedId) {
+                R.id.radioPitch -> GestureMode.PITCH
+                R.id.radioRoll  -> GestureMode.ROLL
+                else            -> GestureMode.YAW
+            }
+            prefs.edit().putString("gesture_mode", mode.name).apply()
+            refreshCalibStatus()
+            // Restart service if running so it picks up new mode
+            if (EyeTrackingService.isTracking.value) {
+                stopTracking()
+                stopPreviewSession()
+                startTracking()
+            }
+        }
+
+        // ── Calibration ────────────────────────────────────────────────────────────
+        binding.btnCalibrate.setOnClickListener {
+            binding.btnCalibrate.isEnabled = false
+            binding.btnCalibrate.text = "Look straight at phone…"
+            binding.progressCalib.visibility = android.view.View.VISIBLE
+            binding.progressCalib.progress = 0
+            EyeTrackingService.startCalibration()
+        }
+
+        // ── Sensitivity ────────────────────────────────────────────────────────────
         binding.seekSensitivity.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 binding.labelSensitivity.text = "Sensitivity: ${progress}%"
@@ -132,7 +162,6 @@ class MainActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
 
-        val prefs = getSharedPreferences("eyescroll", MODE_PRIVATE)
         binding.seekSensitivity.progress = prefs.getInt("sensitivity", 60)
         binding.seekDwell.progress = prefs.getInt("dwell", 0)
     }
@@ -143,12 +172,19 @@ class MainActivity : AppCompatActivity() {
                 launch {
                     EyeTrackingService.gazeState.collect { state ->
                         binding.eyeView.updateState(state)
+
+                        // Calibration progress bar
+                        if (state.isCalibrating) {
+                            binding.progressCalib.progress = (state.calibrationProgress * 100).toInt()
+                        }
+
                         if (EyeTrackingService.isTracking.value) {
                             binding.labelStatus.text = when {
-                                !state.faceDetected  -> "Looking for face..."
-                                state.isMovingRight  -> "→ Turning right — next"
-                                state.isMovingLeft   -> "← Turning left — prev"
-                                else                 -> "Face detected — turn head to scroll"
+                                state.isCalibrating  -> "Calibrating… ${(state.calibrationProgress * 100).toInt()}%"
+                                !state.faceDetected  -> "Looking for face…"
+                                state.isLookingNext  -> "→ Gesture detected — next"
+                                state.isLookingPrev  -> "← Gesture detected — prev"
+                                else                 -> "Face detected — move to scroll"
                             }
                         }
                     }
@@ -156,22 +192,31 @@ class MainActivity : AppCompatActivity() {
                 launch {
                     EyeTrackingService.isTracking.collect { tracking ->
                         binding.toggleTracking.isChecked = tracking
+                        binding.btnCalibrate.isEnabled = tracking
                         if (!tracking) {
                             binding.labelStatus.text = "Tracking off"
-                            // Restart preview when service stops
-                            if (hasCameraPermission() && canStartTracking()) {
-                                startPreviewSession()
-                            }
+                            binding.progressCalib.visibility = android.view.View.GONE
+                            if (hasCameraPermission() && canStartTracking()) startPreviewSession()
                         }
                     }
                 }
                 launch {
                     EyeTrackingService.modelStatus.collect { status ->
                         refreshSetupSteps(status)
-                        // Start preview when model becomes ready
                         if (status == EyeTrackingService.Companion.ModelStatus.READY &&
                             hasCameraPermission() && !EyeTrackingService.isTracking.value) {
                             startPreviewSession()
+                        }
+                    }
+                }
+                launch {
+                    EyeTrackingService.calibrationSaved.collect { saved ->
+                        if (saved) {
+                            binding.progressCalib.visibility = android.view.View.GONE
+                            binding.btnCalibrate.isEnabled = EyeTrackingService.isTracking.value
+                            binding.btnCalibrate.text = "Calibrate (hold head neutral 3s)"
+                            refreshCalibStatus()
+                            Toast.makeText(this@MainActivity, "✓ Calibrated!", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -179,29 +224,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ── Face preview ──────────────────────────────────────────────────────────────
+    // ── Face preview ───────────────────────────────────────────────────────────────
 
     private fun startPreviewSession() {
-        if (previewCameraProvider != null) return  // already running
+        if (previewCameraProvider != null) return
         val modelFile = java.io.File(filesDir, EyeTrackingService.MODEL_FILENAME)
         if (!modelFile.exists() || modelFile.length() < 100_000) return
-
         binding.previewContainer.visibility = android.view.View.VISIBLE
-
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 if (previewFaceLandmarker == null) {
                     val bytes = modelFile.readBytes()
                     val buf = ByteBuffer.allocateDirect(bytes.size).apply { put(bytes); rewind() }
-                    val opts = FaceLandmarker.FaceLandmarkerOptions.builder()
-                        .setBaseOptions(BaseOptions.builder().setModelAssetBuffer(buf).build())
-                        .setRunningMode(RunningMode.IMAGE)
-                        .setNumFaces(1)
-                        .build()
-                    previewFaceLandmarker = FaceLandmarker.createFromOptions(this@MainActivity, opts)
+                    previewFaceLandmarker = FaceLandmarker.createFromOptions(this@MainActivity,
+                        FaceLandmarker.FaceLandmarkerOptions.builder()
+                            .setBaseOptions(BaseOptions.builder().setModelAssetBuffer(buf).build())
+                            .setRunningMode(RunningMode.IMAGE).setNumFaces(1).build()
+                    )
                 }
             } catch (e: Exception) { return@launch }
-
             runOnUiThread { bindPreviewCamera() }
         }
     }
@@ -219,27 +260,25 @@ class MainActivity : AppCompatActivity() {
                 .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                 .build()
             analysis.setAnalyzer(previewExecutor) { proxy ->
-                val bitmap = proxy.toBitmap()
-                val mp = BitmapImageBuilder(bitmap).build()
+                val mp = BitmapImageBuilder(proxy.toBitmap()).build()
                 val result = try { previewFaceLandmarker?.detect(mp) } catch (e: Exception) { null }
                 val detected = result?.faceLandmarks()?.isNotEmpty() == true
                 runOnUiThread {
-                    binding.labelFaceStatus.text = if (detected)
-                        "Face detected — wink right=next  left=prev  double=like"
-                    else
-                        "Position your face in frame"
-                    binding.labelFaceStatus.setTextColor(Color.parseColor(
-                        if (detected) "#C4A97A" else "#6E6E68"
-                    ))
+                    val modeHint = when (savedGestureMode()) {
+                        GestureMode.PITCH -> "Nod head up/down"
+                        GestureMode.ROLL  -> "Tilt head left/right"
+                        GestureMode.YAW   -> "Turn head left/right"
+                    }
+                    binding.labelFaceStatus.text = if (detected) "Face detected — $modeHint"
+                                                   else "Position your face in frame"
+                    binding.labelFaceStatus.setTextColor(Color.parseColor(if (detected) "#C4A97A" else "#6E6E68"))
                 }
                 proxy.close()
             }
             try {
                 previewCameraProvider?.unbindAll()
-                previewCameraProvider?.bindToLifecycle(
-                    this, CameraSelector.DEFAULT_FRONT_CAMERA, preview, analysis
-                )
-            } catch (e: Exception) { /* camera unavailable */ }
+                previewCameraProvider?.bindToLifecycle(this, CameraSelector.DEFAULT_FRONT_CAMERA, preview, analysis)
+            } catch (e: Exception) {}
         }, ContextCompat.getMainExecutor(this))
     }
 
@@ -251,7 +290,7 @@ class MainActivity : AppCompatActivity() {
         binding.previewContainer.visibility = android.view.View.GONE
     }
 
-    // ── Setup steps ───────────────────────────────────────────────────────────────
+    // ── Setup steps ────────────────────────────────────────────────────────────────
 
     private fun refreshSetupSteps(
         modelStatus: EyeTrackingService.Companion.ModelStatus = EyeTrackingService.modelStatus.value
@@ -275,47 +314,57 @@ class MainActivity : AppCompatActivity() {
         binding.btnDownloadModel.isEnabled = !modelOk && modelStatus != EyeTrackingService.Companion.ModelStatus.DOWNLOADING
         binding.btnDownloadModel.text = when {
             modelOk -> "✓  Model ready"
-            modelStatus == EyeTrackingService.Companion.ModelStatus.DOWNLOADING -> "Downloading..."
+            modelStatus == EyeTrackingService.Companion.ModelStatus.DOWNLOADING -> "Downloading…"
             modelStatus == EyeTrackingService.Companion.ModelStatus.ERROR -> "Retry download"
             else -> "Download AI model (~5MB)"
         }
-        binding.progressModel.visibility = if (modelStatus == EyeTrackingService.Companion.ModelStatus.DOWNLOADING)
-            android.view.View.VISIBLE else android.view.View.GONE
-
+        binding.progressModel.visibility =
+            if (modelStatus == EyeTrackingService.Companion.ModelStatus.DOWNLOADING)
+                android.view.View.VISIBLE else android.view.View.GONE
         binding.toggleTracking.isEnabled = cameraOk && accessOk && modelOk
     }
+
+    private fun refreshCalibStatus() {
+        val mode = savedGestureMode()
+        val neutral = getSharedPreferences("eyescroll", MODE_PRIVATE)
+            .getFloat("neutral_${mode.name}", Float.NaN)
+        binding.labelCalibStatus.text = if (neutral.isNaN())
+            "Not calibrated — using defaults"
+        else
+            "✓ Calibrated for ${mode.name.lowercase()} mode  (neutral=${"%.2f".format(neutral)})"
+    }
+
+    private fun savedGestureMode(): GestureMode {
+        val s = getSharedPreferences("eyescroll", MODE_PRIVATE)
+            .getString("gesture_mode", GestureMode.PITCH.name)!!
+        return GestureMode.valueOf(s)
+    }
+
+    // ── Download model ─────────────────────────────────────────────────────────────
 
     private fun downloadModel() {
         val modelFile = java.io.File(filesDir, EyeTrackingService.MODEL_FILENAME)
         if (modelFile.exists() && modelFile.length() > 100_000) {
             refreshSetupSteps(EyeTrackingService.Companion.ModelStatus.READY)
-            startPreviewSession()
-            return
+            startPreviewSession(); return
         }
-
         refreshSetupSteps(EyeTrackingService.Companion.ModelStatus.DOWNLOADING)
-
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val url = java.net.URL(EyeTrackingService.MODEL_URL)
-                val connection = url.openConnection()
-                connection.connect()
-                val total = connection.contentLengthLong.toFloat()
+                val conn = url.openConnection().also { it.connect() }
+                val total = conn.contentLengthLong.toFloat()
                 var downloaded = 0L
-
-                connection.getInputStream().use { input ->
+                conn.getInputStream().use { input ->
                     modelFile.outputStream().use { output ->
-                        val buf = ByteArray(8192)
-                        var n: Int
+                        val buf = ByteArray(8192); var n: Int
                         while (input.read(buf).also { n = it } != -1) {
-                            output.write(buf, 0, n)
-                            downloaded += n
-                            val progress = if (total > 0) (downloaded * 100 / total).toInt() else 0
-                            runOnUiThread { binding.progressModel.progress = progress }
+                            output.write(buf, 0, n); downloaded += n
+                            val p = if (total > 0) (downloaded * 100 / total).toInt() else 0
+                            runOnUiThread { binding.progressModel.progress = p }
                         }
                     }
                 }
-
                 runOnUiThread {
                     refreshSetupSteps(EyeTrackingService.Companion.ModelStatus.READY)
                     Toast.makeText(this@MainActivity, "Model ready!", Toast.LENGTH_SHORT).show()
@@ -353,14 +402,11 @@ class MainActivity : AppCompatActivity() {
     private fun isAccessibilityEnabled(): Boolean {
         val pkg = packageName
         val am = getSystemService(ACCESSIBILITY_SERVICE) as AccessibilityManager
-        val viaManager = am.getEnabledAccessibilityServiceList(
-            android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_ALL_MASK
-        ).any { it.resolveInfo.serviceInfo.packageName == pkg }
-        if (viaManager) return true
-        val enabled = Settings.Secure.getString(
-            contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-        ) ?: return false
-        return enabled.contains(pkg, ignoreCase = true)
+        if (am.getEnabledAccessibilityServiceList(
+                android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_ALL_MASK
+            ).any { it.resolveInfo.serviceInfo.packageName == pkg }) return true
+        return Settings.Secure.getString(contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
+            ?.contains(pkg, ignoreCase = true) == true
     }
 
     private fun savePrefs() {
@@ -370,7 +416,5 @@ class MainActivity : AppCompatActivity() {
             .apply()
     }
 
-    private fun android.view.View.setStepDone(done: Boolean) {
-        alpha = if (done) 1f else 0.45f
-    }
+    private fun android.view.View.setStepDone(done: Boolean) { alpha = if (done) 1f else 0.45f }
 }

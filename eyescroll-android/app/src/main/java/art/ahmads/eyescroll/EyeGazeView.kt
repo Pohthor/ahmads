@@ -15,18 +15,17 @@ class EyeGazeView @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : View(context, attrs) {
 
-    private val colorSclera   = Color.parseColor("#2A2A27")
-    private val colorIrisIdle = Color.parseColor("#6E6E68")
-    private val colorIrisWink = Color.parseColor("#C4A97A")
-    private val colorIrisFlash = Color.parseColor("#F0EFE8")
-    private val colorProgress = Color.parseColor("#C4A97A")
-    private val colorNoFace   = Color.parseColor("#1A1A17")
+    private val colorSclera    = Color.parseColor("#2A2A27")
+    private val colorIrisIdle  = Color.parseColor("#6E6E68")
+    private val colorIrisActive = Color.parseColor("#C4A97A")
+    private val colorIrisFlash  = Color.parseColor("#F0EFE8")
+    private val colorNoFace    = Color.parseColor("#1A1A17")
+    private val colorCalib     = Color.parseColor("#4A90D9")
 
-    private val scleraPaint  = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = colorSclera }
-    private val irisPaint    = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = colorIrisIdle }
-    private val pupilPaint   = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#0E0E0D") }
+    private val scleraPaint   = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = colorSclera }
+    private val irisPaint     = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = colorIrisIdle }
+    private val pupilPaint    = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#0E0E0D") }
     private val progressPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = colorProgress
         style = Paint.Style.STROKE
         strokeCap = Paint.Cap.ROUND
     }
@@ -35,7 +34,9 @@ class EyeGazeView @JvmOverloads constructor(
     private val arcRect    = RectF()
 
     private var displayIrisX = 0f
-    private var irisXAnimator: ValueAnimator? = null
+    private var displayIrisY = 0f
+    private var irisAnimX: ValueAnimator? = null
+    private var irisAnimY: ValueAnimator? = null
 
     var faceDetected = false
         private set
@@ -44,71 +45,74 @@ class EyeGazeView @JvmOverloads constructor(
         faceDetected = state.faceDetected
 
         if (!state.faceDetected) {
-            animateIrisTo(0f)
+            animateTo(0f, 0f)
             irisPaint.color = colorIrisIdle
+            progressPaint.color = colorIrisActive
             invalidate()
             return
         }
 
         val targetX = when {
-            state.isMovingRight -> 0.6f
-            state.isMovingLeft  -> -0.6f
-            else                -> 0f
+            state.isLookingNext -> 0.6f   // iris drifts in gesture direction
+            state.isLookingPrev -> -0.6f
+            else -> 0f
         }
-        animateIrisTo(targetX)
-        irisPaint.color = if (state.isMovingRight || state.isMovingLeft) colorIrisWink else colorIrisIdle
+        val targetY = 0f
+        animateTo(targetX, targetY)
+
+        progressPaint.color = if (state.isCalibrating) colorCalib else colorIrisActive
+        irisPaint.color = when {
+            state.isCalibrating  -> colorCalib
+            state.isLookingNext || state.isLookingPrev -> colorIrisActive
+            else -> colorIrisIdle
+        }
         invalidate()
     }
 
-    fun flashDoubleTap() {
+    fun flashAction() {
         irisPaint.color = colorIrisFlash
         invalidate()
-        postDelayed({
-            irisPaint.color = colorIrisIdle
-            invalidate()
-        }, 400)
+        postDelayed({ irisPaint.color = colorIrisIdle; invalidate() }, 300)
     }
 
-    private fun animateIrisTo(target: Float) {
-        irisXAnimator?.cancel()
-        irisXAnimator = ValueAnimator.ofFloat(displayIrisX, target).apply {
-            duration = 120
-            interpolator = DecelerateInterpolator()
-            addUpdateListener {
-                displayIrisX = it.animatedValue as Float
-                invalidate()
-            }
+    private fun animateTo(tx: Float, ty: Float) {
+        irisAnimX?.cancel()
+        irisAnimX = ValueAnimator.ofFloat(displayIrisX, tx).apply {
+            duration = 120; interpolator = DecelerateInterpolator()
+            addUpdateListener { displayIrisX = it.animatedValue as Float; invalidate() }
+            start()
+        }
+        irisAnimY?.cancel()
+        irisAnimY = ValueAnimator.ofFloat(displayIrisY, ty).apply {
+            duration = 120; interpolator = DecelerateInterpolator()
+            addUpdateListener { displayIrisY = it.animatedValue as Float; invalidate() }
             start()
         }
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        val cx = w / 2f
-        val cy = h / 2f
-        val rx = w * 0.42f
-        val ry = h * 0.28f
+        val cx = w / 2f; val cy = h / 2f
+        val rx = w * 0.42f; val ry = h * 0.28f
         scleraRect.set(cx - rx, cy - ry, cx + rx, cy + ry)
-        val arcPad = w * 0.06f
-        arcRect.set(arcPad, arcPad, w - arcPad, h - arcPad)
+        val pad = w * 0.06f
+        arcRect.set(pad, pad, w - pad, h - pad)
         progressPaint.strokeWidth = w * 0.045f
     }
 
     override fun onDraw(canvas: Canvas) {
-        val cx = width / 2f
-        val cy = height / 2f
-        val rx = scleraRect.width() / 2f
-        val ry = scleraRect.height() / 2f
-        val irisR = ry * 0.58f
-        val pupilR = irisR * 0.42f
+        val cx = width / 2f; val cy = height / 2f
+        val rx = scleraRect.width() / 2f; val ry = scleraRect.height() / 2f
+        val irisR = ry * 0.58f; val pupilR = irisR * 0.42f
 
         scleraPaint.color = if (faceDetected) colorSclera else colorNoFace
         canvas.drawOval(scleraRect, scleraPaint)
 
         if (faceDetected) {
-            val irisX = cx + displayIrisX * rx * 0.55f
-            canvas.drawCircle(irisX, cy, irisR, irisPaint)
-            canvas.drawCircle(irisX, cy, pupilR, pupilPaint)
+            val ix = cx + displayIrisX * rx * 0.55f
+            val iy = cy + displayIrisY * ry * 0.55f
+            canvas.drawCircle(ix, iy, irisR, irisPaint)
+            canvas.drawCircle(ix, iy, pupilR, pupilPaint)
         }
     }
 }

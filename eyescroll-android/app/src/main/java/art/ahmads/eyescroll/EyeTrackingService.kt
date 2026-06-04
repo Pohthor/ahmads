@@ -33,8 +33,16 @@ class EyeTrackingService : LifecycleService() {
         private val _modelStatus = MutableStateFlow(ModelStatus.CHECKING)
         val modelStatus: StateFlow<ModelStatus> = _modelStatus.asStateFlow()
 
+        private val _calibrationSaved = MutableStateFlow(false)
+        val calibrationSaved: StateFlow<Boolean> = _calibrationSaved.asStateFlow()
+
         const val MODEL_URL = "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task"
         const val MODEL_FILENAME = "face_landmarker.task"
+
+        @Volatile var instance: EyeTrackingService? = null
+            private set
+
+        fun startCalibration() { instance?.detector?.startCalibration() }
 
         enum class ModelStatus { CHECKING, DOWNLOADING, READY, ERROR }
     }
@@ -43,12 +51,14 @@ class EyeTrackingService : LifecycleService() {
     private val CHANNEL_ID = "eyescroll_tracking"
     private val NOTIFICATION_ID = 1
 
-    private var gazeDetector: GazeDetector? = null
+    private var detector: GazeDetector? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private val analysisExecutor = Executors.newSingleThreadExecutor()
+    private var lastProcessedFrameTime = 0L
 
     override fun onCreate() {
         super.onCreate()
+        instance = this
         createNotificationChannel()
         val model = File(filesDir, MODEL_FILENAME)
         _modelStatus.value = if (model.exists() && model.length() > 100_000) ModelStatus.READY else ModelStatus.CHECKING
@@ -57,17 +67,22 @@ class EyeTrackingService : LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
+        val prefs = getSharedPreferences("eyescroll", MODE_PRIVATE)
+        val mode = GestureMode.valueOf(prefs.getString("gesture_mode", GestureMode.PITCH.name)!!)
+        val modeLabel = when (mode) {
+            GestureMode.PITCH -> "Nod up/down"
+            GestureMode.ROLL  -> "Tilt left/right"
+            GestureMode.YAW   -> "Turn left/right"
+        }
+
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("EyeScroll")
-            .setContentText("Wink right → next  |  Wink left → prev  |  Double wink → like")
+            .setContentTitle("EyeScroll active")
+            .setContentText(modeLabel)
             .setSmallIcon(android.R.drawable.ic_menu_camera)
             .setOngoing(true)
             .setContentIntent(
-                PendingIntent.getActivity(
-                    this, 0,
-                    Intent(this, MainActivity::class.java),
-                    PendingIntent.FLAG_IMMUTABLE
-                )
+                PendingIntent.getActivity(this, 0,
+                    Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
             )
             .build()
 
@@ -81,12 +96,10 @@ class EyeTrackingService : LifecycleService() {
         return START_STICKY
     }
 
-    override fun onBind(intent: Intent): IBinder? {
-        super.onBind(intent)
-        return null
-    }
+    override fun onBind(intent: Intent): IBinder? { super.onBind(intent); return null }
 
     override fun onDestroy() {
+        instance = null
         stopTracking()
         analysisExecutor.shutdown()
         _isTracking.value = false
@@ -96,58 +109,62 @@ class EyeTrackingService : LifecycleService() {
 
     private fun startTracking() {
         val modelFile = File(filesDir, MODEL_FILENAME)
-        if (!modelFile.exists()) {
-            Log.w(TAG, "Model not available, cannot start tracking")
-            return
-        }
+        if (!modelFile.exists()) return
 
-        // Map sensitivity (0-100%) → velocity threshold (0.28 → 0.10)
-        // Higher sensitivity = smaller threshold = less head movement needed
-        val sensitivity = getSharedPreferences("eyescroll", MODE_PRIVATE).getInt("sensitivity", 60)
+        val prefs = getSharedPreferences("eyescroll", MODE_PRIVATE)
+        val mode = GestureMode.valueOf(prefs.getString("gesture_mode", GestureMode.PITCH.name)!!)
+        val sensitivity = prefs.getInt("sensitivity", 60)
+        val savedNeutral = prefs.getFloat("neutral_${mode.name}", Float.NaN)
 
-        val detector = GazeDetector(this, object : GazeDetector.Listener {
-            override fun onGazeUpdate(state: GazeState) {
-                _gazeState.value = state
-            }
+        // sensitivity 0%=0.20 (large movement)  60%=0.14 (medium)  100%=0.08 (small)
+        val offset = 0.20f - (sensitivity / 100f) * 0.12f
+
+        val det = GazeDetector(this, object : GazeDetector.Listener {
+            override fun onGazeUpdate(state: GazeState) { _gazeState.value = state }
+
             override fun onScrollTriggered(direction: GazeDetector.ScrollDirection) {
-                Log.d(TAG, "Scroll: $direction")
                 when (direction) {
                     GazeDetector.ScrollDirection.NEXT -> EyeScrollAccessibilityService.scrollToNext()
                     GazeDetector.ScrollDirection.PREV -> EyeScrollAccessibilityService.scrollToPrev()
                 }
             }
-            override fun onDoubleTap() {
-                Log.d(TAG, "Double tap (like)")
-                EyeScrollAccessibilityService.doubleTap()
+
+            override fun onCalibrationDone(neutralValue: Float) {
+                prefs.edit().putFloat("neutral_${mode.name}", neutralValue).apply()
+                _calibrationSaved.value = true
+                // Reset so the signal can be sent again next time
+                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                    _calibrationSaved.value = false
+                }, 100)
+                Log.d(TAG, "Calibration done: neutral=$neutralValue mode=$mode")
             }
-            override fun onError(message: String) {
-                Log.e(TAG, "GazeDetector error: $message")
-            }
+
+            override fun onDoubleTap() { EyeScrollAccessibilityService.doubleTap() }
+            override fun onError(message: String) { Log.e(TAG, "Detector error: $message") }
         }).also {
-            // sensitivity 0%=0.45 (needs big flick)  60%=0.30 (default)  100%=0.20 (easy)
-            it.velocityThreshold = 0.45f - (sensitivity / 100f) * 0.25f
+            it.gestureMode = mode
+            it.sensitivityOffset = offset
+            if (!savedNeutral.isNaN()) it.calibratedNeutral = savedNeutral
         }
 
         try {
-            detector.initialize(modelFile)
+            det.initialize(modelFile)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to initialize GazeDetector", e)
             return
         }
 
-        gazeDetector = detector
+        detector = det
 
         val providerFuture = ProcessCameraProvider.getInstance(this)
         providerFuture.addListener({
             cameraProvider = providerFuture.get()
-            bindCamera(detector)
+            bindCamera(det)
             _isTracking.value = true
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private var lastProcessedFrameTime = 0L
-
-    private fun bindCamera(detector: GazeDetector) {
+    private fun bindCamera(det: GazeDetector) {
         val imageAnalysis = ImageAnalysis.Builder()
             .setTargetResolution(android.util.Size(320, 240))
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
@@ -156,12 +173,13 @@ class EyeTrackingService : LifecycleService() {
 
         imageAnalysis.setAnalyzer(analysisExecutor) { proxy ->
             val now = System.currentTimeMillis()
-            if (now - lastProcessedFrameTime >= 67L) {  // ~15fps max
+            if (now - lastProcessedFrameTime >= 67L) {
                 lastProcessedFrameTime = now
-                detector.processFrame(proxy.toBitmap())
+                det.processFrame(proxy.toBitmap())
             }
             proxy.close()
         }
+
         try {
             cameraProvider?.unbindAll()
             cameraProvider?.bindToLifecycle(this, CameraSelector.DEFAULT_FRONT_CAMERA, imageAnalysis)
@@ -172,13 +190,13 @@ class EyeTrackingService : LifecycleService() {
 
     private fun stopTracking() {
         cameraProvider?.unbindAll()
-        gazeDetector?.close()
-        gazeDetector = null
+        detector?.close()
+        detector = null
     }
 
     private fun createNotificationChannel() {
-        val channel = NotificationChannel(CHANNEL_ID, "Eye Tracking", NotificationManager.IMPORTANCE_LOW).apply {
-            description = "EyeScroll background tracking"
+        val channel = NotificationChannel(CHANNEL_ID, "EyeScroll", NotificationManager.IMPORTANCE_LOW).apply {
+            description = "Head tracking active"
             setShowBadge(false)
         }
         getSystemService(NotificationManager::class.java).createNotificationChannel(channel)

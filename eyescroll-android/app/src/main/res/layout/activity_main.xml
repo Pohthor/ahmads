@@ -220,6 +220,107 @@
             android:letterSpacing="0.1"
             android:layout_marginBottom="12dp" />
 
+        <!-- Gesture mode -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/surface"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Gesture type"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                android:layout_marginBottom="10dp" />
+
+            <RadioGroup
+                android:id="@+id/radioGestureMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/radioPitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Head nod — up=next  down=prev"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    android:buttonTint="@color/accent"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/radioRoll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Head tilt — right=next  left=prev"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    android:buttonTint="@color/accent" />
+
+                <RadioButton
+                    android:id="@+id/radioYaw"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Head turn — right=next  left=prev"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    android:buttonTint="@color/accent" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <!-- Calibration -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/surface"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Calibration"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/labelCalibStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Not calibrated — using defaults"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp" />
+
+            <Button
+                android:id="@+id/btnCalibrate"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Calibrate (hold head neutral 3s)"
+                android:textColor="@color/accent"
+                android:enabled="false"
+                android:layout_marginTop="8dp" />
+
+            <ProgressBar
+                android:id="@+id/progressCalib"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="0"
+                android:progressTint="@color/accent"
+                android:visibility="gone"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <!-- Sensitivity & dwell -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
