@@ -329,6 +329,9 @@ footer a{color:var(--gold);text-decoration:none}
 .j-card h3{font-size:17px;font-weight:600;margin-bottom:4px}
 .j-card .app{font-size:11px;color:var(--gold);font-weight:600;letter-spacing:.05em;margin-bottom:10px}
 .j-card p{font-size:13px;color:var(--dim);line-height:1.9;margin-bottom:16px}
+.j-sect{font-size:13px;font-weight:700;color:var(--ink);margin:24px 0 12px;display:flex;align-items:center;gap:8px}
+.j-sect:first-of-type{margin-top:6px}
+.j-card a.btn{text-decoration:none;display:inline-block;text-align:center}
 
 /* ============ لوحتي — الورشة المشتركة ============ */
 .ws-strip{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:color-mix(in srgb,var(--raise2) 70%,transparent);border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin-bottom:14px}
@@ -466,7 +469,7 @@ footer a{color:var(--gold);text-decoration:none}
 
 <!-- ============ نمط ============ -->
 <section class="tool" id="t-pattern">
-  <div class="thead"><div class="tic">✴️</div><div><h2>نَمَط<i>.</i></h2><p>مولّد أنماط هندسية عربية بارامترية — ٦ أنماط: نجمة ثمانية، شبّاك، سدو، زليج، مثلثات، وخاتم — SVG قابل للتكرار اللانهائي.</p></div></div>
+  <div class="thead"><div class="tic">✴️</div><div><h2>نَمَط<i>.</i></h2><p>مولّد أنماط هندسية عربية بارامترية — ١٠ أنماط: نجمة ثمانية، شبّاك، سدو، زليج، مثلثات، خاتم، موج، ضفيرة، عقود، وحِراشف — SVG قابل للتكرار اللانهائي.</p></div></div>
   <div class="ws-strip" data-tool="pattern"></div>
   <div class="p-wrap">
     <div class="panel b-panel">
@@ -477,6 +480,10 @@ footer a{color:var(--gold);text-decoration:none}
         <button data-s="zellij">زليج</button>
         <button data-s="chevron">مثلثات</button>
         <button data-s="khatam">خاتم</button>
+        <button data-s="mawj">موج</button>
+        <button data-s="dafira">ضفيرة</button>
+        <button data-s="aqd">عقود</button>
+        <button data-s="hirfish">حِراشف</button>
       </div>
       <div class="crow"><span>حجم الوحدة</span><input type="range" id="patSize" min="30" max="130" value="70"></div>
       <div class="crow"><span>سماكة الخط</span><input type="range" id="patStroke" min="1" max="10" value="3"></div>
@@ -646,7 +653,6 @@ footer a{color:var(--gold);text-decoration:none}
         <button data-ep="rounded" title="مدوّر">▢</button>
         <button data-ep="circle" title="دائرة">●</button>
         <button data-ep="diamond" title="معيّن">◆</button>
-        <button data-ep="heart" title="قلب">♥</button>
       </div>
 
       <div class="q-sect">المقاس والإطار</div>
@@ -695,7 +701,9 @@ footer a{color:var(--gold);text-decoration:none}
 
 <!-- ============ سكربتات ============ -->
 <section class="tool" id="t-jsx">
-  <div class="thead"><div class="tic">⚙️</div><div><h2>سكربتات أدوبي<i>.</i></h2><p>أتمتة تشتغل جوّا برامجك. نزّل وشغّل من File ‹ Scripts. جرّبها أول على نسخة من ملفك.</p></div></div>
+  <div class="thead"><div class="tic">⚙️</div><div><h2>سكربتات أدوبي<i>.</i></h2><p>أتمتة تشتغل جوّا برامجك. نزّل وشغّل من File ‹ Scripts ‹ Other Script. جرّبها أول على نسخة من ملفك.</p></div></div>
+
+  <div class="j-sect">⚡ من عُدّة — تُولّد فورًا</div>
   <div class="j-grid">
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>مُصدّر الهوية</h3>
@@ -718,7 +726,104 @@ footer a{color:var(--gold);text-decoration:none}
       <button class="btn gold" onclick="dlJsx('aiColor')">تنزيل ‎.jsx</button>
     </div>
   </div>
-  <p class="note">السكربتات v1 بتعليقات عربية — تقدر تطلب نسخة معدّلة على سير عملك بالضبط.</p>
+
+  <div class="j-sect">📄 ترقيم وتجهيز الملفات</div>
+  <div class="j-grid">
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>أرقام الصفحات Pro</h3>
+      <p>ترقيم احترافي للـArtboards: شبكة ٩ مواضع، بادئة/لاحقة، خط ولون، ودعم الصفحات المتقابلة (spreads) مع معاينة.</p>
+      <a class="btn gold" href="scripts/page-numbers-pro.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>اسم وتاريخ الصفحات</h3>
+      <p>يضيف اسم الملف وتاريخ الإنشاء ورقم الصفحة على كل Artboard — مثالي لبروفات العميل.</p>
+      <a class="btn gold" href="scripts/pages-date-name.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>تسمية الـArtboards بالمقاس</h3>
+      <p>يعيد تسمية كل لوح رسم باسم أبعاده تلقائيًا (مثلاً 1080×1080) — تنظيم فوري لملفات السوشال.</p>
+      <a class="btn gold" href="scripts/rename-artboard-as-size.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>تسمية الـArtboards بالعنصر</h3>
+      <p>يسمّي كل لوح رسم باسم أول عنصر مرئي عليه — يربط أسماء الألواح بمحتواها بضغطة.</p>
+      <a class="btn gold" href="scripts/rename-artboard-as-object.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+  </div>
+
+  <div class="j-sect">🎨 الألوان والمظهر</div>
+  <div class="j-grid">
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>متوسّط الألوان</h3>
+      <p>يحسب متوسّط ألوان العناصر المختارة (أو داخل التدرّجات) ويوحّدها بلون واحد — أداة Sergey Osokin الشهيرة.</p>
+      <a class="btn gold" href="scripts/average-colors.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>تفعيل قص قناع الشفافية</h3>
+      <p>يفعّل خانة Clip لأقنعة الشفافية المختارة دفعة واحدة من لوحة Transparency.</p>
+      <a class="btn gold" href="scripts/opacity-mask-clip.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+  </div>
+
+  <div class="j-sect">📦 تصدير ومعالجة دفعات</div>
+  <div class="j-grid">
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>حفظ الكل PDF</h3>
+      <p>يحفظ كل الملفات المفتوحة كـPDF في مجلد تختاره — تسليم دفعة بضغطة.</p>
+      <a class="btn gold" href="scripts/save-all-as-pdf.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>حفظ الكل SVG</h3>
+      <p>يصدّر كل الملفات المفتوحة كـSVG في مجلد واحد — للويب والأيقونات.</p>
+      <a class="btn gold" href="scripts/save-all-as-svg.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>تتبّع صور دفعة</h3>
+      <p>يحوّل مجلد صور كامل (PNG/JPG…) إلى ملفات AI متجهة عبر Image Trace تلقائيًا.</p>
+      <a class="btn gold" href="scripts/batch-image-trace.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+  </div>
+
+  <div class="j-sect">✦ النصوص والأشكال المتقدّمة</div>
+  <div class="j-grid">
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>كتلة نصّية</h3>
+      <p>يحوّل عدّة مربّعات نص نقطية إلى كتلة نصية مرتّبة بعرض وتباعد تحدّدهما — مع إبقاء النص قابلًا للتحرير.</p>
+      <a class="btn gold" href="scripts/text-block.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>تكرار عند النقاط</h3>
+      <p>يكرّر العنصر الأمامي عند كل نقطة إرساء مختارة — لتوزيع عنصر على مسار بدقة.</p>
+      <a class="btn gold" href="scripts/dup-at-anchors.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>جاذب نقطي</h3>
+      <p>يدوّر ويُحجّم العناصر المختارة باتجاه نقطة هدف حسب بُعدها — تأثيرات بصرية بارامترية.</p>
+      <a class="btn gold" href="scripts/point-attractor.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>اختيار النقاط بالنوع</h3>
+      <p>يختار نقاط الإرساء حسب نوعها (حادّة، ناعمة، نهايات…) — تحكّم جراحي بالمسارات المعقّدة.</p>
+      <a class="btn gold" href="scripts/select-points-by-type.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>وضع الرموز</h3>
+      <p>يوزّع رموز (Symbols) على نقاط أو مسارات مختارة — لبناء أنماط ومشاهد بسرعة.</p>
+      <a class="btn gold" href="scripts/place-symbols.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>تبديل رموز عشوائي</h3>
+      <p>يستبدل العناصر المختارة برموز عشوائية من لوحة الرموز بنفس الحجم والموضع.</p>
+      <a class="btn gold" href="scripts/random-swap-symbols.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>عيون عشوائية</h3>
+      <p>يولّد أعينًا كرتونية عشوائية بألوان من لوحتك — أداة طريفة لشخصيات سريعة.</p>
+      <a class="btn gold" href="scripts/random-eyes.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+  </div>
+
+  <p class="note">السكربتات المُولّدة من عُدّة بتعليقات عربية. السكربتات المجمّعة من مطوّري المجتمع (Sergey Osokin، Hiroyuki Sato، Adobe وغيرهم) تحت رخص حرّة — شغّلها دائمًا على نسخة من ملفك أول مرة.</p>
 </section>
 
 </main>
@@ -857,7 +962,7 @@ const TOOLS=[
 ["comp","🗜","ضاغِط","ضغط وتحويل الصور WebP محليًا","","compress webp ضغط"],
 ["qr","🔳","رَمز QR","تحكّم كامل: أشكال نقاط وعيون ولوغو وألوان","جديد","qr باركود رابط لوغو شكل قلب نجمة عيون"],
 ["price","💰","تَسعيرة","حاسبة تسعير الفريلانسر الصادقة","","price سعر فريلانس"],
-["jsx","⚙️","سكربتات أدوبي","أتمتة إليستريتور وفوتوشوب","","photoshop illustrator script اتمتة"]
+["jsx","⚙️","سكربتات أدوبي","٢٠ سكربت أتمتة لإليستريتور وفوتوشوب","جديد","photoshop illustrator script اتمتة سكربت"]
 ];
 
 /* الناف */
@@ -1228,7 +1333,37 @@ function patTile(t,sw,ink){
     return `<polygon points="${pts1}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
       <polygon points="${pts2}" fill="none" stroke="${ink}" stroke-width="${sw}"/>`;
   }
+  if(patS==="mawj"){
+    // موج — أمواج منحنية متتابعة
+    const h=t/2,q=t/4;
+    return `<path d="M0 ${h} Q ${q} 0 ${h} ${h} T ${t} ${h}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <path d="M0 ${t} Q ${q} ${h} ${h} ${t} T ${t} ${t}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <path d="M0 0 Q ${q} ${-h} ${h} 0 T ${t} 0" fill="none" stroke="${ink}" stroke-width="${sw}"/>`;
+  }
+  if(patS==="dafira"){
+    // ضفيرة — تشابك قطري متبادل
+    const h=t/2;
+    return `<path d="M0 0 Q ${h} ${h} ${t} 0 M0 ${t} Q ${h} ${h} ${t} ${t}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <path d="M0 0 Q ${h} ${h} 0 ${t} M${t} 0 Q ${h} ${h} ${t} ${t}" fill="none" stroke="${ink}" stroke-width="${sw*0.6}"/>`;
+  }
+  if(patS==="aqd"){
+    // عقود — أقواس مدبّبة (طراز إسلامي)
+    const h=t/2;
+    return `<path d="M0 ${t} L0 ${h} Q ${h} ${-h*0.3} ${t} ${h} L${t} ${t}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <path d="M${h} ${t} L${h} ${h*1.2} Q ${h} ${h} ${h} ${h}" fill="none" stroke="${ink}" stroke-width="${sw*0.5}"/>`;
+  }
+  if(patS==="hirfish"){
+    // حِراشف — قشور السمك المتداخلة
+    const h=t/2;
+    return `<path d="M${-h} ${h} A ${h} ${h} 0 0 1 ${h} ${h} A ${h} ${h} 0 0 1 ${t+h} ${h}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <path d="M0 ${t+h} A ${h} ${h} 0 0 1 ${t} ${t+h}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <path d="M0 ${-h} A ${h} ${h} 0 0 1 ${t} ${-h}" fill="none" stroke="${ink}" stroke-width="${sw}"/>`;
+  }
+  // سدو (الافتراضي) — مثلثات متقابلة بنقطة وسطى
   const h=t/2;
+  return `<path d="M0 ${h} L${t/2} 0 L${t} ${h} Z" fill="${ink}"/>
+    <path d="M0 ${h} L${t/2} ${t} L${t} ${h} Z" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+    <rect x="${t/2-sw}" y="${h-sw}" width="${sw*2}" height="${sw*2}" fill="${ink}"/>`;
 }
 function patSVG(big){
   const t=+$("patSize").value,sw=+$("patStroke").value;
@@ -1703,7 +1838,6 @@ function drawEye(x,r0,c0,pad,cell,frameShape,pipShape,color){
   if(pipShape==="circle"){x.beginPath();x.arc(px+ps/2,py+ps/2,ps/2,0,7);x.fill();}
   else if(pipShape==="rounded"){roundRect(x,px,py,ps,ps,ps*0.3);x.fill();}
   else if(pipShape==="diamond"){x.beginPath();x.moveTo(px+ps/2,py);x.lineTo(px+ps,py+ps/2);x.lineTo(px+ps/2,py+ps);x.lineTo(px,py+ps/2);x.closePath();x.fill();}
-  else if(pipShape==="heart"){drawCell(x,"heart",px,py,ps);}
   else x.fillRect(px,py,ps,ps);
   x.restore();
 }
@@ -1811,7 +1945,6 @@ $("qDlSvg").onclick=()=>{
     if(qEyePip==="circle")pip=`<circle cx="${px+ps/2}" cy="${py+ps/2}" r="${ps/2}" fill="${eyeColor}"/>`;
     else if(qEyePip==="rounded")pip=`<rect x="${px}" y="${py}" width="${ps}" height="${ps}" rx="${ps*0.3}" fill="${eyeColor}"/>`;
     else if(qEyePip==="diamond")pip=`<polygon points="${px+ps/2},${py} ${px+ps},${py+ps/2} ${px+ps/2},${py+ps} ${px},${py+ps/2}" fill="${eyeColor}"/>`;
-    else if(qEyePip==="heart")pip=cellSVG("heart",px,py,ps,eyeColor);
     else pip=`<rect x="${px}" y="${py}" width="${ps}" height="${ps}" fill="${eyeColor}"/>`;
     return frame+pip;
   };
