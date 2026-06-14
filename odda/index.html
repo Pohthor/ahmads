@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عُدّة — ١٥ أداة للمصمم العربي | ahmads.art</title>
+<meta name="description" content="صندوق عدّة المصمم العربي: ألوان تراثية، كوفي مربّع، مقاسات سوشال، ضغط صور، أنماط هندسية، نص شكلي عربي، وأكثر — كله محليًا بمتصفحك.">
+<meta name="keywords" content="أدوات المصمم العربي, ألوان تراثية, كوفي مربع, مقاسات سوشال ميديا, ضغط صور, نص شكلي عربي, أدوات تصميم مجانية, ahmads.art">
+<meta name="author" content="Ahmad Sattof — أحمد صطوف">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://ahmads.art/odda/">
+
+<!-- ===== Open Graph (واتساب / فيسبوك / لينكدإن) ===== -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ahmad Sattof — أحمد صطوف">
+<meta property="og:title" content="عُدّة — ١٥ أداة مجانية للمصمم العربي">
+<meta property="og:description" content="ألوان تراثية، كوفي مربّع، مقاسات سوشال، ضغط صور، نص شكلي عربي وأكثر — كله بمتصفحك ومجاناً.">
+<meta property="og:url" content="https://ahmads.art/odda/">
+<meta property="og:locale" content="ar_SA">
+<!-- ارفع صورة مشاركة 1200×630 باسم share-cover.jpg داخل مجلد odda -->
+<meta property="og:image" content="https://ahmads.art/odda/share-cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="عُدّة — أدوات المصمم العربي">
+
+<!-- ===== Twitter / X Card ===== -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="عُدّة — ١٥ أداة مجانية للمصمم العربي">
+<meta name="twitter:description" content="ألوان تراثية، كوفي مربّع، مقاسات سوشال، ضغط صور وأكثر — كله بمتصفحك.">
+<meta name="twitter:image" content="https://ahmads.art/odda/share-cover.jpg">
+
+<!-- ===== Favicon ===== -->
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#0e0e0d">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Cairo:wght@400;700&family=Tajawal:wght@400;700&family=Almarai:wght@400;700&family=Reem+Kufi:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=El+Messiri:wght@400;700&family=Changa:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Markazi+Text:wght@400;700&family=Lalezar&family=Rakkas&family=Jomhuria&family=Harmattan:wght@400;700&family=Mada:wght@400;700&family=Scheherazade+New:wght@400;700&family=Lateef&family=Vibes&family=Gulzar&family=Qahiri&family=Noto+Kufi+Arabic:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --bg:#100E0B;--raise:#181511;--raise2:#1F1B15;--line:#2B261D;
+  --ink:#EDE4D2;--dim:#998F7C;--gold:#D9A441;--teal:#2FA8A0;--ember:#C4452F;
+  --shadow:rgba(0,0,0,.5);--r:14px;
+}
+[data-theme="light"]{
+  --bg:#F2EBDC;--raise:#FBF6EA;--raise2:#FFFFFF;--line:#DDD2B8;
+  --ink:#2A2317;--dim:#82775E;--gold:#B07E1F;--teal:#1F7A72;--ember:#B23A24;
+  --shadow:rgba(42,35,23,.18);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  font-weight:300;min-height:100vh;
+  transition:background .3s,color .3s;
+}
+/* وهج + حبيبات فيلم */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(950px 460px at 82% -140px,rgba(217,164,65,.10),transparent 60%);
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+}
+::selection{background:var(--gold);color:var(--bg)}
+button{font-family:inherit}
+
+/* ================= الهيدر والناف ================= */
+header{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:34px 22px 4px;display:flex;align-items:center;gap:14px}
+.brand{font-family:"Amiri",serif;font-size:clamp(38px,6vw,52px);font-weight:700;line-height:1;cursor:pointer;user-select:none}
+.brand span{color:var(--gold)}
+.brand:hover span{text-shadow:0 0 22px var(--gold)}
+.hdr-tag{color:var(--dim);font-size:12.5px;margin-top:6px}
+
+nav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);margin-top:14px;transition:background .3s}
+.nav-in{max-width:1180px;margin:0 auto;padding:10px 22px;display:flex;gap:7px;align-items:center}
+.nav-scroll{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav-scroll::-webkit-scrollbar{display:none}
+.npill{flex-shrink:0;background:none;border:1px solid var(--line);color:var(--dim);font-size:12.5px;padding:7px 14px;border-radius:999px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.npill:hover{color:var(--ink);border-color:var(--dim)}
+.npill.on{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:600}
+.nav-acts{display:flex;gap:7px;flex-shrink:0}
+.iconbtn{
+  width:36px;height:36px;border-radius:10px;border:1px solid var(--line);
+  background:var(--raise);color:var(--ink);cursor:pointer;font-size:15px;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.iconbtn:hover{border-color:var(--gold);color:var(--gold)}
+.kbd{font-size:9.5px;border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--dim);margin-right:5px}
+
+main{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:26px 22px 70px}
+.tool{display:none}
+.tool.on{display:block;animation:rise .35s cubic-bezier(.2,.7,.3,1)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ================= رأس كل أداة ================= */
+.thead{display:flex;align-items:center;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+.thead .tic{
+  width:54px;height:54px;border-radius:15px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--raise2),var(--raise));
+  border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:25px;
+  box-shadow:0 8px 20px -10px var(--shadow);
+}
+.thead h2{font-family:"Amiri",serif;font-size:32px;font-weight:700;line-height:1.2}
+.thead h2 i{font-style:normal;color:var(--gold)}
+.thead p{color:var(--dim);font-size:13px;margin-top:2px;line-height:1.8;max-width:620px}
+.thead .tnav{margin-right:auto;display:flex;gap:7px}
+
+.panel{background:var(--raise);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.btn{background:none;border:1.5px solid var(--ink);color:var(--ink);font-size:13px;font-weight:600;padding:10px 18px;border-radius:10px;cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--ink);color:var(--bg)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#14110C}
+.btn.gold:hover{filter:brightness(1.08);box-shadow:0 6px 18px -8px var(--gold)}
+.btn.sm{padding:7px 13px;font-size:12px}
+input[type=range]{accent-color:var(--gold)}
+input[type=color]{width:36px;height:32px;border:1px solid var(--line);border-radius:8px;background:none;cursor:pointer;padding:2px}
+input[type=checkbox]{accent-color:var(--gold);width:16px;height:16px;cursor:pointer}
+.field label{display:block;font-size:12px;color:var(--dim);margin-bottom:6px;font-weight:500}
+.tin{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--ink);font-size:15px;padding:11px 13px;outline:none;font-family:inherit;transition:border-color .15s}
+.tin:focus{border-color:var(--gold)}
+textarea.tin{resize:vertical;min-height:110px;line-height:1.9}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{flex:1;background:none;border:none;cursor:pointer;font-size:13px;color:var(--dim);padding:9px 6px;transition:all .15s}
+.seg button.on{background:var(--ink);color:var(--bg);font-weight:600}
+.crow{display:flex;align-items:center;gap:10px;font-size:13px;flex-wrap:wrap}
+.crow input[type=range]{flex:1;min-width:90px}
+.drop{
+  border:2px dashed var(--line);border-radius:var(--r);
+  padding:36px 20px;text-align:center;color:var(--dim);font-size:14px;cursor:pointer;
+  transition:all .2s;line-height:2;background:color-mix(in srgb,var(--raise) 40%,transparent);
+}
+.drop:hover,.drop.over{border-color:var(--gold);color:var(--ink);background:color-mix(in srgb,var(--gold) 6%,transparent)}
+.drop .di{font-size:26px;display:block;margin-bottom:4px}
+.note{font-size:12px;color:var(--dim);line-height:1.9;margin-top:14px}
+
+.toast{
+  position:fixed;bottom:26px;right:50%;transform:translate(50%,18px) scale(.97);
+  background:var(--ink);color:var(--bg);font-size:13.5px;font-weight:500;
+  padding:11px 22px;border-radius:999px;opacity:0;pointer-events:none;
+  transition:all .3s cubic-bezier(.2,.7,.3,1);z-index:120;
+  box-shadow:0 14px 34px -12px var(--shadow);
+}
+.toast.show{opacity:1;transform:translate(50%,0) scale(1)}
+
+footer{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:22px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--dim);font-size:12.5px}
+footer a{color:var(--gold);text-decoration:none}
+
+/* ================= الرئيسية ================= */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:30px;align-items:center;padding:24px 0 36px}
+@media(max-width:860px){.hero{grid-template-columns:1fr}}
+.kicker{color:var(--gold);font-size:12.5px;font-weight:600;letter-spacing:.08em}
+.hero h2{font-family:"Amiri",serif;font-size:clamp(34px,5.6vw,52px);font-weight:700;line-height:1.55;margin-top:10px}
+.hero h2 b{color:var(--gold)}
+.hero .hp{color:var(--dim);font-size:14px;margin-top:12px;line-height:2}
+.herosearch{
+  margin-top:24px;display:flex;align-items:center;gap:10px;
+  background:var(--raise);border:1.5px solid var(--line);border-radius:14px;
+  padding:13px 16px;cursor:text;transition:border-color .2s;
+  box-shadow:0 16px 40px -22px var(--shadow);
+}
+.herosearch:focus-within{border-color:var(--gold)}
+.herosearch input{flex:1;background:none;border:none;outline:none;color:var(--ink);font-family:inherit;font-size:15px}
+.herosearch .kbd{margin:0}
+.heroPanel{
+  background:var(--raise);border:1px solid var(--line);border-radius:18px;
+  padding:22px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 24px 60px -30px var(--shadow);
+}
+#heroCv{image-rendering:pixelated;width:100%;max-width:300px;height:auto;border-radius:6px}
+.hsec{display:flex;align-items:baseline;gap:12px;margin:8px 0 16px}
+.hsec h3{font-family:"Amiri",serif;font-size:24px;font-weight:700}
+.hsec span{color:var(--dim);font-size:12px}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:13px}
+.hcard{
+  background:var(--raise);border:1px solid var(--line);border-radius:var(--r);
+  padding:19px 17px;cursor:pointer;transition:all .2s cubic-bezier(.2,.7,.3,1);
+  position:relative;overflow:hidden;
+  animation:rise .5s cubic-bezier(.2,.7,.3,1) both;
+}
+.hcard::after{content:"";position:absolute;inset:0;background:radial-gradient(230px 130px at 85% 0%,color-mix(in srgb,var(--gold) 12%,transparent),transparent 70%);opacity:0;transition:opacity .2s}
+.hcard:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--gold) 50%,var(--line));box-shadow:0 18px 40px -22px var(--shadow)}
+.hcard:hover::after{opacity:1}
+.hcard .top{display:flex;align-items:center;justify-content:space-between}
+.hcard .ic{font-size:25px}
+.hcard .arr{color:var(--dim);font-size:15px;transform:translateX(0);transition:all .2s;opacity:0}
+.hcard:hover .arr{opacity:1;transform:translateX(-4px);color:var(--gold)}
+.hcard h3{font-family:"Amiri",serif;font-size:22px;font-weight:700;margin-top:9px}
+.hcard p{font-size:11.5px;color:var(--dim);margin-top:3px;line-height:1.8}
+.hcard .new{position:absolute;top:11px;left:11px;background:var(--teal);color:#fff;font-size:9px;font-weight:600;padding:3px 8px;border-radius:99px}
+.noRes{color:var(--dim);font-size:14px;text-align:center;padding:40px 0;display:none}
+
+/* ================= لوحة الأوامر ================= */
+.cmd{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;padding:14vh 18px 18px}
+.cmd.open{display:flex}
+.cmd-box{
+  width:min(560px,100%);background:var(--raise);border:1px solid var(--line);
+  border-radius:18px;overflow:hidden;box-shadow:0 40px 90px -30px rgba(0,0,0,.7);
+  animation:rise .22s cubic-bezier(.2,.7,.3,1);
+}
+.cmd-in{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--line)}
+.cmd-in input{flex:1;background:none;border:none;outline:none;color:var(--ink);font-family:inherit;font-size:16px}
+.cmd-list{max-height:330px;overflow-y:auto;padding:7px}
+.cmd-item{
+  display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:11px;cursor:pointer;
+}
+.cmd-item .ci{font-size:19px;width:26px;text-align:center}
+.cmd-item .cn{font-weight:500;font-size:14px}
+.cmd-item .cd{font-size:11.5px;color:var(--dim)}
+.cmd-item.sel,.cmd-item:hover{background:color-mix(in srgb,var(--gold) 12%,transparent)}
+.cmd-foot{padding:9px 16px;border-top:1px solid var(--line);color:var(--dim);font-size:10.5px;display:flex;gap:14px}
+
+/* ================= شريط الموبايل ================= */
+.mbar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:90;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);border-top:1px solid var(--line)}
+.mbar-in{display:flex}
+.mbar button{flex:1;background:none;border:none;color:var(--dim);font-size:12px;padding:11px 0 max(11px,env(safe-area-inset-bottom));cursor:pointer}
+.mbar button b{display:block;font-size:18px;margin-bottom:2px}
+@media(max-width:720px){.mbar{display:block}body{padding-bottom:64px}.toast{bottom:84px}}
+
+/* ============ صبغة ============ */
+.s-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:15px}
+.s-tab{background:none;border:1px solid var(--line);color:var(--dim);font-size:12.5px;padding:6px 13px;border-radius:999px;cursor:pointer}
+.s-tab.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.s-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:11px}
+.s-card{background:var(--raise);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.s-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px -18px var(--shadow)}
+.s-sw{height:82px;position:relative}
+.s-add{position:absolute;top:7px;left:7px;width:25px;height:25px;border-radius:50%;border:none;cursor:pointer;background:rgba(16,14,11,.55);color:#fff;font-size:15px;opacity:0;transition:opacity .15s}
+.s-card:hover .s-add{opacity:1}
+.s-meta{padding:9px 12px}
+.s-nm{font-family:"Amiri",serif;font-size:18px;font-weight:700}
+.s-hx{color:var(--dim);font-size:11px;direction:ltr;text-align:right}
+.s-story{font-size:11.5px;color:var(--dim);padding:0 12px 10px;line-height:1.7;display:none}
+.s-card.open .s-story{display:block}
+.s-pal{position:sticky;bottom:14px;margin-top:18px;background:color-mix(in srgb,var(--raise) 97%,transparent);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:var(--r);padding:13px 16px;display:none;align-items:center;gap:12px;flex-wrap:wrap;z-index:5;box-shadow:0 18px 40px -20px var(--shadow)}
+.s-pal.show{display:flex}
+.s-chips{display:flex;gap:7px;flex:1;flex-wrap:wrap}
+.s-chip{display:flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px 6px 4px 11px;font-size:12px}
+.s-chip i{width:17px;height:17px;border-radius:50%}
+.s-chip button{background:none;border:none;color:var(--dim);cursor:pointer;font-size:13px}
+
+/* ============ لقّاط ============ */
+.l-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:760px){.l-wrap{grid-template-columns:1fr}}
+#lPrev{width:100%;border-radius:var(--r);display:none;border:1px solid var(--line)}
+.l-out{display:flex;flex-direction:column;gap:9px}
+.l-sw{display:flex;align-items:center;gap:12px;background:var(--raise);border:1px solid var(--line);border-radius:12px;padding:9px 12px}
+.l-sw i{width:46px;height:46px;border-radius:10px;flex-shrink:0}
+.l-sw .lx{flex:1}
+.l-sw .lh{direction:ltr;text-align:right;font-size:13px;cursor:pointer}
+.l-sw .ln{color:var(--gold);font-family:"Amiri",serif;font-size:15px}
+
+/* ============ تدرّج ============ */
+.g-prev{height:230px;border-radius:var(--r);border:1px solid var(--line);margin-bottom:16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
+.g-stops{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.g-quick{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.g-q{height:34px;width:64px;border-radius:8px;border:1px solid var(--line);cursor:pointer;transition:transform .15s}
+.g-q:hover{transform:scale(1.06)}
+
+/* ============ تباين ============ */
+.k-wrap{display:grid;grid-template-columns:300px 1fr;gap:16px}
+@media(max-width:760px){.k-wrap{grid-template-columns:1fr}}
+.k-prev{border-radius:var(--r);border:1px solid var(--line);padding:34px 26px;text-align:center;transition:all .2s}
+.k-prev .big{font-size:30px;font-weight:600}
+.k-prev .small{font-size:14px;margin-top:8px}
+.k-ratio{font-family:"Amiri",serif;font-size:52px;font-weight:700;text-align:center;color:var(--gold)}
+.k-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.k-b{font-size:11.5px;padding:5px 12px;border-radius:99px;font-weight:600}
+.k-b.ok{background:color-mix(in srgb,var(--teal) 15%,transparent);color:var(--teal);border:1px solid var(--teal)}
+.k-b.no{background:color-mix(in srgb,var(--ember) 12%,transparent);color:var(--ember);border:1px solid var(--ember)}
+
+/* ============ نمط ============ */
+.p-wrap{display:grid;grid-template-columns:290px 1fr;gap:16px;align-items:start}
+@media(max-width:820px){.p-wrap{grid-template-columns:1fr}}
+#patImg{width:100%;border-radius:var(--r);border:1px solid var(--line);display:block;background:#fff}
+
+/* ============ بنّاء ============ */
+.b-wrap{display:grid;grid-template-columns:290px 1fr;gap:16px;align-items:start}
+@media(max-width:820px){.b-wrap{grid-template-columns:1fr}}
+.b-panel{display:flex;flex-direction:column;gap:14px}
+.b-txt{width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;font-family:"Amiri",serif;font-size:24px;font-weight:700;color:var(--ink);padding:9px 13px;text-align:center;outline:none}
+.b-txt:focus{border-color:var(--gold)}
+.b-presets{display:flex;gap:7px;flex-wrap:wrap}
+.b-pre{width:36px;height:36px;border-radius:9px;border:1px solid var(--line);cursor:pointer;font-family:"Amiri",serif;font-weight:700;font-size:15px;transition:transform .15s}
+.b-pre:hover{transform:scale(1.08)}
+.b-stage{background:repeating-linear-gradient(0deg,transparent,transparent 21px,color-mix(in srgb,var(--ink) 4%,transparent) 21px,color-mix(in srgb,var(--ink) 4%,transparent) 22px),repeating-linear-gradient(90deg,transparent,transparent 21px,color-mix(in srgb,var(--ink) 4%,transparent) 21px,color-mix(in srgb,var(--ink) 4%,transparent) 22px),var(--raise);border:1px solid var(--line);border-radius:var(--r);min-height:420px;display:flex;align-items:center;justify-content:center;padding:26px;overflow:auto}
+#bcv{image-rendering:pixelated;max-width:100%;height:auto;border-radius:4px;box-shadow:0 18px 44px -22px var(--shadow)}
+#bcv.edit{cursor:crosshair;outline:2px dashed var(--teal);outline-offset:5px}
+.b-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* ============ حروف ============ */
+.f-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px;margin-top:16px}
+.f-card{background:var(--raise);border:1px solid var(--line);border-radius:var(--r);padding:16px;transition:transform .15s}
+.f-card:hover{transform:translateY(-3px)}
+.f-card .fn{font-size:11px;color:var(--gold);font-weight:600;letter-spacing:.04em;direction:ltr;text-align:right}
+.f-card .fs{margin-top:9px;line-height:1.8;word-break:break-word}
+.f-card .fc{margin-top:11px;background:none;border:1px solid var(--line);color:var(--dim);font-size:11px;padding:6px 11px;border-radius:8px;cursor:pointer}
+.f-card .fc:hover{color:var(--gold);border-color:var(--gold)}
+
+/* ============ عدّاد ============ */
+.w-stats{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0;font-size:13.5px}
+.w-stats b{color:var(--gold);font-size:19px;font-weight:600}
+.w-plat{display:flex;flex-direction:column;gap:11px}
+.w-row{display:flex;align-items:center;gap:12px;font-size:12.5px}
+.w-row .wn{width:130px;color:var(--dim)}
+.w-bar{flex:1;height:7px;background:var(--bg);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.w-bar i{display:block;height:100%;background:var(--teal);border-radius:99px;transition:width .2s}
+.w-bar i.over{background:var(--ember)}
+.w-row .wv{width:90px;direction:ltr;text-align:left;color:var(--dim)}
+
+/* ============ مقاسات + ضاغط ============ */
+.m-sizes{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:12px}
+.m-card{background:var(--raise);border:1px solid var(--line);border-radius:12px;padding:12px}
+.m-card.off{opacity:.4}
+.m-top{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.m-top b{font-size:13px;font-weight:600;flex:1}
+.m-top span{font-size:10.5px;color:var(--dim);direction:ltr}
+.m-card canvas{width:100%;border-radius:7px;display:block;background:#000}
+.m-dl{margin-top:9px;width:100%;background:none;border:1px solid var(--line);color:var(--dim);font-size:11.5px;padding:7px;border-radius:8px;cursor:pointer}
+.m-dl:hover{color:var(--gold);border-color:var(--gold)}
+.m-ctrl{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:16px 0;font-size:13px}
+.m-ctrl .crow{flex:1;min-width:190px}
+.c-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:16px}
+.c-table th{color:var(--dim);font-weight:500;text-align:right;padding:9px 8px;border-bottom:1px solid var(--line);font-size:12px}
+.c-table td{padding:10px 8px;border-bottom:1px solid var(--line)}
+.c-save{color:var(--teal);font-weight:600}
+
+/* ============ QR ============ */
+.q-wrap{display:grid;grid-template-columns:290px 1fr;gap:16px;align-items:start}
+@media(max-width:700px){.q-wrap{grid-template-columns:1fr}}
+.q-out{display:flex;align-items:center;justify-content:center;background:var(--raise);border:1px solid var(--line);border-radius:var(--r);min-height:330px;padding:24px}
+#qrBox{border-radius:10px;overflow:hidden;padding:0;background:transparent;box-shadow:0 18px 40px -22px var(--shadow);line-height:0}
+#qrBox img{border-radius:10px}
+.q-sect{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.04em;margin:16px 0 9px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+.q-shapes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.q-shapes button{aspect-ratio:1;background:var(--raise2);border:1px solid var(--line);border-radius:9px;color:var(--dim);font-size:17px;cursor:pointer;transition:all .14s;display:flex;align-items:center;justify-content:center}
+.q-shapes button:hover{border-color:var(--gold);color:var(--ink);transform:translateY(-1px)}
+.q-shapes button.on{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.q-chk{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--dim);cursor:pointer;flex:1}
+.q-chk input{width:15px;height:15px;accent-color:var(--gold);cursor:pointer}
+
+/* ============ تسعيرة ============ */
+.pr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:13px}
+.pr-out{margin-top:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px}
+.pr-card{background:var(--raise2);border:1px solid var(--line);border-radius:var(--r);padding:20px 16px;text-align:center}
+.pr-card .v{font-family:"Amiri",serif;font-size:33px;font-weight:700;color:var(--gold)}
+.pr-card.danger .v{color:var(--ember)}
+.pr-card.comfy .v{color:var(--teal)}
+.pr-card .l{font-size:12px;color:var(--dim);margin-top:5px;line-height:1.7}
+
+/* ============ سكربتات ============ */
+.j-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+.j-card{background:var(--raise);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.j-card h3{font-size:17px;font-weight:600;margin-bottom:4px}
+.j-card .app{font-size:11px;color:var(--gold);font-weight:600;letter-spacing:.05em;margin-bottom:10px}
+.j-card p{font-size:13px;color:var(--dim);line-height:1.9;margin-bottom:16px}
+.j-sect{font-size:13px;font-weight:700;color:var(--ink);margin:24px 0 12px;display:flex;align-items:center;gap:8px}
+.j-sect:first-of-type{margin-top:6px}
+.j-card a.btn{text-decoration:none;display:inline-block;text-align:center}
+
+/* ============ لوحتي — الورشة المشتركة ============ */
+.ws-strip{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:color-mix(in srgb,var(--raise2) 70%,transparent);border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin-bottom:14px}
+.ws-strip .ws-lab{font-size:11.5px;color:var(--dim);font-weight:600;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.ws-strip .ws-lab b{color:var(--gold);font-family:"Amiri",serif;font-size:14px;font-weight:700}
+.ws-sws{display:flex;gap:6px;flex:1;flex-wrap:wrap;min-width:60px}
+.ws-sw{width:24px;height:24px;border-radius:7px;border:1px solid color-mix(in srgb,var(--ink) 18%,transparent);cursor:pointer;padding:0;transition:transform .12s,box-shadow .12s}
+.ws-sw:hover{transform:translateY(-2px) scale(1.08);box-shadow:0 6px 14px -6px var(--shadow)}
+.ws-tg{display:flex;gap:4px}
+.ws-tg button{background:none;border:1px solid var(--line);color:var(--dim);font-size:11px;font-family:inherit;padding:5px 11px;border-radius:8px;cursor:pointer;transition:all .12s}
+.ws-tg button.on{background:var(--gold);border-color:var(--gold);color:#14110C;font-weight:600}
+.ws-empty{font-size:11.5px;color:var(--dim);flex:1;line-height:1.7}
+.ws-empty a{color:var(--gold);cursor:pointer;text-decoration:underline}
+/* رفوف الرئيسية: آخر استخدام + المثبّتة */
+.qrail{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.qchip{display:flex;align-items:center;gap:8px;background:var(--raise);border:1px solid var(--line);border-radius:11px;padding:8px 13px;cursor:pointer;transition:all .18s cubic-bezier(.2,.7,.3,1)}
+.qchip:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--gold) 50%,var(--line));box-shadow:0 12px 26px -16px var(--shadow)}
+.qchip .qi{font-size:17px}
+.qchip .qn{font-size:13px;font-weight:600}
+.hcard .fav{position:absolute;top:10px;right:11px;width:26px;height:26px;border-radius:8px;border:none;background:color-mix(in srgb,var(--bg) 35%,transparent);color:var(--dim);cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;opacity:0;transition:all .15s;z-index:3}
+.hcard:hover .fav,.hcard .fav.on{opacity:1}
+.hcard .fav:hover,.hcard .fav.on{color:var(--gold)}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1 class="brand" onclick="goTool('home')">عُدّة<span>.</span></h1>
+    <p class="hdr-tag">صندوق عدّة المصمم العربي — ahmads.art</p>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-in">
+    <div class="nav-scroll" id="nav"></div>
+    <div class="nav-acts">
+      <a class="iconbtn udda-home" href="../index.html" title="الموقع الرئيسي — ahmads.art" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;width:auto;padding:0 12px;font-size:13px;white-space:nowrap">← ahmads.art</a>
+      <button class="iconbtn" id="cmdBtn" title="بحث سريع (Ctrl+K)">⌕</button>
+      <button class="iconbtn" id="themeBtn" title="فاتح / داكن">☾</button>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============ الرئيسية ============ -->
+<section class="tool on" id="t-home">
+  <div class="hero">
+    <div>
+      <span class="kicker">١٥ أداة · ملف واحد · كل المعالجة محلية</span>
+      <h2>كل اللي يحتاجه المصمم العربي يوميًا —<br><b>بدون اشتراكات، بدون رفع ملفات.</b></h2>
+      <p class="hp">ألوان من التراث، كوفي مربّع يُبنى بضغطة، مقاسات سوشال، ضغط صور، أنماط هندسية، نص شكلي عربي… وكل أداة تشتغل عندك، لعندك.</p>
+      <div class="herosearch" onclick="document.getElementById('homeSearch').focus()">
+        <span>⌕</span>
+        <input id="homeSearch" placeholder="دوّر على أداة… (مثلاً: ألوان، QR، ضغط)">
+        <span class="kbd">Ctrl K</span>
+      </div>
+    </div>
+    <div class="heroPanel"><canvas id="heroCv" width="300" height="300" aria-label="كلمة عُدّة تُبنى بالخط الكوفي المربع"></canvas></div>
+  </div>
+
+  <div id="recWrap" style="display:none"><div class="hsec"><h3>آخر استخدام</h3><span>رجوع سريع لآخر أدواتك</span></div><div class="qrail" id="recRail"></div></div>
+  <div id="favWrap" style="display:none"><div class="hsec"><h3>المثبّتة ★</h3><span>أدواتك المفضّلة</span></div><div class="qrail" id="favRail"></div></div>
+  <div class="hsec"><h3>كل الأدوات</h3><span id="homeCount"></span></div>
+  <div class="home-grid" id="homeGrid"></div>
+  <p class="noRes" id="noRes">ما في أداة بهالاسم… جرّب كلمة ثانية أو افتح البحث.</p>
+</section>
+
+<!-- ============ صبغة ============ -->
+<section class="tool" id="t-sibgha">
+  <div class="thead"><div class="tic">🎨</div><div><h2>صِبغة<i>.</i></h2><p>٨٠ لونًا من الثقافة المادية العربية بحكاياتها. اضغط البطاقة للحكاية، الـ HEX للنسخ، و + للوحتك.</p></div></div>
+  <div class="s-tabs" id="sTabs"></div>
+  <div class="s-grid" id="sGrid"></div>
+  <div class="s-pal" id="sPal">
+    <span style="font-size:12.5px;color:var(--dim)">اللوحة</span>
+    <div class="s-chips" id="sChips"></div>
+    <button class="btn sm" id="sCssBtn">نسخ CSS</button>
+    <button class="btn sm" id="sHexBtn">نسخ HEX</button>
+    <button class="btn sm" id="sClr">مسح</button>
+  </div>
+</section>
+
+<!-- ============ لقّاط ============ -->
+<section class="tool" id="t-laqqat">
+  <div class="thead"><div class="tic">💧</div><div><h2>لَقّاط<i>.</i></h2><p>ارفع أي صورة — يستخرج أهم ٦ ألوان، ويقول لك أقرب لون تراثي لكل واحد من مكتبة صِبغة.</p></div></div>
+  <div class="drop" id="lDrop"><span class="di">🖼</span>اضغط، اسحب، أو الصق صورة (Ctrl+V)<br><span style="font-size:11.5px">موودبورد، صورة عميل، لقطة من فيلم… أي إلهام</span></div>
+  <input type="file" id="lFile" accept="image/*" hidden>
+  <div class="l-wrap" style="margin-top:16px">
+    <img id="lPrev" alt="">
+    <div class="l-out" id="lOut"></div>
+  </div>
+</section>
+
+<!-- ============ تدرّج ============ -->
+<section class="tool" id="t-grad">
+  <div class="thead"><div class="tic">🌅</div><div><h2>تَدرّج<i>.</i></h2><p>ابنِ تدرّجات من الألوان التراثية أو ألوانك، وانسخها CSS أو نزّلها خلفية 4K.</p></div></div>
+  <div class="g-prev" id="gPrev"></div>
+  <div class="ws-strip" data-tool="grad"></div>
+  <div class="panel">
+    <div class="g-stops">
+      <span class="crow">من <input type="color" id="g1" value="#1B3358"></span>
+      <span class="crow">إلى <input type="color" id="g2" value="#C9603F"></span>
+      <span class="crow" style="flex:1;min-width:170px">الزاوية <input type="range" id="gAng" min="0" max="360" value="135"><b id="gAngV" style="font-weight:500">135°</b></span>
+      <button class="btn sm" id="gRand">🎲 اقتراح تراثي</button>
+    </div>
+    <div class="g-quick" id="gQuick"></div>
+    <div class="crow" style="margin-top:16px;gap:8px">
+      <button class="btn gold sm" id="gCss">نسخ CSS</button>
+      <button class="btn gold sm" id="gPng">تنزيل PNG (4K)</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ تباين ============ -->
+<section class="tool" id="t-contrast">
+  <div class="thead"><div class="tic">👁</div><div><h2>تَباين<i>.</i></h2><p>افحص مقروئية لون النص على الخلفية حسب WCAG — قبل ما يرجّعلك العميل التصميم.</p></div></div>
+  <div class="ws-strip" data-tool="contrast"></div>
+  <div class="k-wrap">
+    <div class="panel" style="display:flex;flex-direction:column;gap:14px">
+      <span class="crow">لون النص <input type="color" id="kFg" value="#EDE4D2"></span>
+      <span class="crow">لون الخلفية <input type="color" id="kBg" value="#1B3358"></span>
+      <button class="btn sm" id="kSwap">⇄ اعكس</button>
+      <div class="k-ratio" id="kRatio">—</div>
+      <div class="k-badges" id="kBadges"></div>
+    </div>
+    <div class="k-prev" id="kPrev">
+      <div class="big">العنوان الرئيسي هنا</div>
+      <div class="small">وهذا نص فقرة عادي بحجم القراءة المعتاد، لو تقدر تقراه بدون ما تغمّض عينك فأنت بخير.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ نمط ============ -->
+<section class="tool" id="t-pattern">
+  <div class="thead"><div class="tic">✴️</div><div><h2>نَمَط<i>.</i></h2><p>مولّد أنماط هندسية عربية بارامترية — ١٠ أنماط: نجمة ثمانية، شبّاك، سدو، زليج، مثلثات، خاتم، موج، ضفيرة، عقود، وحِراشف — SVG قابل للتكرار اللانهائي.</p></div></div>
+  <div class="ws-strip" data-tool="pattern"></div>
+  <div class="p-wrap">
+    <div class="panel b-panel">
+      <div class="seg" id="patStyle">
+        <button data-s="star" class="on">نجمة ثمانية</button>
+        <button data-s="lattice">شبّاك</button>
+        <button data-s="sadu">سدو</button>
+        <button data-s="zellij">زليج</button>
+        <button data-s="chevron">مثلثات</button>
+        <button data-s="khatam">خاتم</button>
+        <button data-s="mawj">موج</button>
+        <button data-s="dafira">ضفيرة</button>
+        <button data-s="aqd">عقود</button>
+        <button data-s="hirfish">حِراشف</button>
+      </div>
+      <div class="crow"><span>حجم الوحدة</span><input type="range" id="patSize" min="30" max="130" value="70"></div>
+      <div class="crow"><span>سماكة الخط</span><input type="range" id="patStroke" min="1" max="10" value="3"></div>
+      <div class="crow">
+        <span style="font-size:12px;color:var(--dim)">نقش</span><input type="color" id="patInk" value="#D9A441">
+        <span style="font-size:12px;color:var(--dim)">أرضية</span><input type="color" id="patBg" value="#161D2E">
+      </div>
+      <div class="b-acts">
+        <button class="btn gold" id="patSvg">تنزيل SVG</button>
+        <button class="btn gold" id="patPng">تنزيل PNG</button>
+      </div>
+      <p class="note">الـ SVG يجي كنمط مكرَّر — افتحه بالإليستريتور أو استخدمه خلفية ويب مباشرة.</p>
+    </div>
+    <img id="patImg" alt="معاينة النمط">
+  </div>
+</section>
+
+<!-- ============ بنّاء ============ -->
+<section class="tool" id="t-banna">
+  <div class="thead"><div class="tic">🧱</div><div><h2>بَنّاء<i>.</i></h2><p>اكتب كلمة — تنبني خطًّا كوفيًّا مربّعًا. شريط أو مربّع دوّار، وتحرير طوبة طوبة، وتصدير SVG.</p></div></div>
+  <div class="ws-strip" data-tool="banna"></div>
+  <div class="b-wrap">
+    <div class="b-panel panel">
+      <input class="b-txt" id="bTxt" value="أحمد" maxlength="40" spellcheck="false">
+      <div class="seg" id="bMode"><button data-m="band" class="on">شريط</button><button data-m="square">مربّع دوّار</button></div>
+      <div class="crow"><label>إطار</label><input type="checkbox" id="bFrame"></div>
+      <div class="crow"><span>الحجم</span><input type="range" id="bCell" min="6" max="24" value="13"></div>
+      <div class="field"><label>صبغات جاهزة</label><div class="b-presets" id="bPre"></div></div>
+      <div class="crow">
+        <span style="font-size:12px;color:var(--dim)">نقش</span><input type="color" id="bInk" value="#2FA8A0">
+        <span style="font-size:12px;color:var(--dim)">أرضية</span><input type="color" id="bBg" value="#EDE4D2">
+        <button class="btn sm" id="bInv" style="margin-right:auto">اعكس</button>
+      </div>
+      <button class="btn" id="bEdit">تحرير يدوي</button>
+      <div class="b-acts"><button class="btn gold" id="bSvg">تنزيل SVG</button><button class="btn gold" id="bPng">تنزيل PNG</button></div>
+    </div>
+    <div class="b-stage"><canvas id="bcv"></canvas></div>
+  </div>
+</section>
+
+<!-- ============ حروف ============ -->
+<section class="tool" id="t-fonts">
+  <div class="thead"><div class="tic">✍️</div><div><h2>حُروف<i>.</i></h2><p>جرّب نصك بـ ١٢ خط عربي مجاني جنب بعض — وانسخ رابط الاستيراد للي يعجبك.</p></div></div>
+  <div class="panel">
+    <input class="tin" id="fTxt" value="الخط العربي بيت تسكنه الكلمات" style="font-size:17px">
+    <div class="crow" style="margin-top:13px">
+      <span>الحجم</span><input type="range" id="fSize" min="16" max="60" value="28">
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px"><input type="checkbox" id="fBold"> عريض</label>
+    </div>
+  </div>
+  <div class="f-grid" id="fGrid"></div>
+</section>
+
+<!-- ============ نص شكلي ============ -->
+<section class="tool" id="t-lorem">
+  <div class="thead"><div class="tic">📜</div><div><h2>نَصّ شكلي<i>.</i></h2><p>بديل عربي حقيقي للـ Lorem Ipsum — نص طبيعي الإيقاع لتعبئة التصاميم.</p></div></div>
+  <div class="panel">
+    <div class="crow">
+      <span>عدد الفقرات</span><input type="range" id="loN" min="1" max="8" value="3"><b id="loNv" style="font-weight:500">3</b>
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px"><input type="checkbox" id="loTitle" checked> مع عناوين</label>
+      <button class="btn gold sm" id="loGen">ولّد</button>
+      <button class="btn sm" id="loCopy">نسخ</button>
+    </div>
+    <div id="loOut" style="margin-top:18px;line-height:2.1;font-size:15px"></div>
+  </div>
+</section>
+
+<!-- ============ منظّف ============ -->
+<section class="tool" id="t-clean">
+  <div class="thead"><div class="tic">🧹</div><div><h2>مُنظِّف<i>.</i></h2><p>نظّف نصوص العملاء قبل التصميم: أرقام، تطويل، تشكيل، مسافات، وترقيم عربي صحيح.</p></div></div>
+  <div class="panel" style="display:flex;flex-direction:column;gap:14px">
+    <textarea class="tin" id="clIn" placeholder="الصق النص هنا… مثلاً: العرض ينتهي يوم 15 , لا تتاخر  !!"></textarea>
+    <div class="crow" style="gap:16px">
+      <label style="display:flex;gap:7px;align-items:center;font-size:12.5px"><input type="checkbox" id="clNum" checked> أرقام هندية (١٢٣)</label>
+      <label style="display:flex;gap:7px;align-items:center;font-size:12.5px"><input type="checkbox" id="clTat" checked> إزالة التطويل</label>
+      <label style="display:flex;gap:7px;align-items:center;font-size:12.5px"><input type="checkbox" id="clTash"> إزالة التشكيل</label>
+      <label style="display:flex;gap:7px;align-items:center;font-size:12.5px"><input type="checkbox" id="clPunc" checked> ترقيم عربي (؟ ؛ ،)</label>
+      <label style="display:flex;gap:7px;align-items:center;font-size:12.5px"><input type="checkbox" id="clSp" checked> توحيد المسافات</label>
+    </div>
+    <div class="crow"><button class="btn gold" id="clGo">نظّف</button><button class="btn" id="clCopy">نسخ الناتج</button></div>
+    <textarea class="tin" id="clOut" readonly placeholder="الناتج النظيف يطلع هنا"></textarea>
+  </div>
+</section>
+
+<!-- ============ عدّاد ============ -->
+<section class="tool" id="t-counter">
+  <div class="thead"><div class="tic">🔢</div><div><h2>عَدّاد<i>.</i></h2><p>اكتب النص الإعلاني وشوف وين يقف من حدود كل منصة — قبل ما يقصّه الانستغرام.</p></div></div>
+  <div class="panel" style="display:flex;flex-direction:column;gap:14px">
+    <textarea class="tin" id="wTxt" placeholder="اكتب أو الصق نصك التسويقي هنا…"></textarea>
+    <div class="w-stats"><span>حروف <b id="wCh">0</b></span><span>بدون مسافات <b id="wChNs">0</b></span><span>كلمات <b id="wWd">0</b></span></div>
+    <div class="w-plat" id="wPlat"></div>
+  </div>
+</section>
+
+<!-- ============ مقاسات ============ -->
+<section class="tool" id="t-sizes">
+  <div class="thead"><div class="tic">📐</div><div><h2>مَقاسات<i>.</i></h2><p>صورة وحدة → ٢٠ مقاس سوشال. حرّك نقطة التركيز ليبقى العنصر المهم داخل كل كادر.</p></div></div>
+  <div class="drop" id="mDrop"><span class="di">⬆</span>اضغط، اسحب، أو الصق صورتك (Ctrl+V)<br><span style="font-size:11.5px">يفضَّل أكبر مقاس — كل المعالجة محلية</span></div>
+  <input type="file" id="mFile" accept="image/*" hidden>
+  <div id="mWork" style="display:none">
+    <div class="m-ctrl">
+      <div class="crow"><span>التركيز أفقي</span><input type="range" id="mFx" min="0" max="100" value="50"></div>
+      <div class="crow"><span>التركيز عمودي</span><input type="range" id="mFy" min="0" max="100" value="50"></div>
+      <button class="btn gold" id="mZip">تحميل الكل ZIP</button>
+    </div>
+    <div class="m-sizes" id="mSizes"></div>
+  </div>
+</section>
+
+<!-- ============ ضاغط ============ -->
+<section class="tool" id="t-comp">
+  <div class="thead"><div class="tic">🗜</div><div><h2>ضاغِط<i>.</i></h2><p>حوّل وضغط صورك إلى WebP أو JPEG للويب — صور عملائك ما تطلع من جهازك.</p></div></div>
+  <div class="drop" id="cDrop"><span class="di">🗂</span>اضغط، اسحب، أو الصق صور (متعددة)</div>
+  <input type="file" id="cFile" accept="image/*" multiple hidden>
+  <div class="m-ctrl" id="cCtrl" style="display:none">
+    <div class="crow"><span>الجودة</span><input type="range" id="cQ" min="40" max="95" value="78"><b id="cQv" style="font-weight:500">78</b></div>
+    <div class="seg" style="width:160px"><button data-f="webp" class="on">WebP</button><button data-f="jpeg">JPEG</button></div>
+    <button class="btn gold" id="cZip">تحميل الكل ZIP</button>
+  </div>
+  <table class="c-table" id="cTable" style="display:none">
+    <thead><tr><th>الملف</th><th>قبل</th><th>بعد</th><th>التوفير</th><th></th></tr></thead>
+    <tbody id="cBody"></tbody>
+  </table>
+</section>
+
+<!-- ============ QR ============ -->
+<section class="tool" id="t-qr">
+  <div class="thead"><div class="tic">🔳</div><div><h2>رَمز QR<i>.</i></h2><p>تحكّم كامل برمز QR: ٨ أشكال للنقاط (دوائر، قلوب، نجوم، معيّنات…)، شكل ولون مستقل لعيون الزوايا، ولوغوك بالنص — لمنيو، كرت، أو بورتفوليو.</p></div></div>
+  <div class="ws-strip" data-tool="qr"></div>
+  <div class="q-wrap">
+    <div class="panel b-panel">
+      <div class="field"><label>الرابط أو النص</label><input class="tin" id="qTxt" value="https://www.behance.net/ahmetsattof" style="direction:ltr;text-align:left"></div>
+
+      <div class="q-sect">الألوان</div>
+      <div class="crow">
+        <span style="font-size:12px;color:var(--dim)">النقاط</span><input type="color" id="qDark" value="#100E0B">
+        <span style="font-size:12px;color:var(--dim)">الأرضية</span><input type="color" id="qLight" value="#EDE4D2">
+      </div>
+      <div class="crow">
+        <label class="q-chk"><input type="checkbox" id="qEyeOn"> لون مختلف للعيون</label>
+        <input type="color" id="qEyeColor" value="#B07E1F" disabled>
+      </div>
+
+      <div class="q-sect">شكل النقاط (الجسم)</div>
+      <div class="q-shapes" id="qBody">
+        <button data-sh="square" class="on" title="مربّع">■</button>
+        <button data-sh="rounded" title="مربّع مدوّر">▢</button>
+        <button data-sh="dots" title="دائري">●</button>
+        <button data-sh="diamond" title="معيّن">◆</button>
+        <button data-sh="heart" title="قلب">♥</button>
+        <button data-sh="star" title="نجمة">★</button>
+        <button data-sh="plus" title="زائد">✚</button>
+        <button data-sh="hex" title="سداسي">⬡</button>
+      </div>
+
+      <div class="q-sect">إطار العيون (الزوايا)</div>
+      <div class="q-shapes" id="qEyeFrame">
+        <button data-ef="square" class="on" title="مربّع">▢</button>
+        <button data-ef="rounded" title="مدوّر">▢</button>
+        <button data-ef="circle" title="دائرة">◯</button>
+        <button data-ef="leaf" title="ورقة">❧</button>
+      </div>
+
+      <div class="q-sect">قلب العيون (المركز)</div>
+      <div class="q-shapes" id="qEyePip">
+        <button data-ep="square" class="on" title="مربّع">■</button>
+        <button data-ep="rounded" title="مدوّر">▢</button>
+        <button data-ep="circle" title="دائرة">●</button>
+        <button data-ep="diamond" title="معيّن">◆</button>
+      </div>
+
+      <div class="q-sect">المقاس والإطار</div>
+      <div class="crow"><span>الحجم</span><input type="range" id="qSize" min="160" max="400" value="280"></div>
+      <div class="crow"><span>سماكة الهامش</span><input type="range" id="qPad" min="0" max="60" value="24"></div>
+
+      <div class="q-sect">لوغو بالنص (اختياري)</div>
+      <div class="field">
+        <div class="crow" style="gap:8px">
+          <input type="file" id="qLogo" accept="image/*" style="display:none">
+          <button class="btn sm" id="qLogoBtn" style="flex:1">⬆ ارفع لوغو</button>
+          <button class="btn sm" id="qLogoClr" style="display:none">✕ احذف</button>
+        </div>
+        <div class="crow" id="qLogoSizeRow" style="display:none;margin-top:8px"><span style="font-size:12px;color:var(--dim)">حجم اللوغو</span><input type="range" id="qLogoSize" min="14" max="32" value="22"></div>
+      </div>
+
+      <div class="b-acts" style="margin-top:16px">
+        <button class="btn gold" id="qDl">تنزيل PNG</button>
+        <button class="btn sm" id="qDlSvg">تنزيل SVG</button>
+      </div>
+      <p class="note" id="qNote">جرّب مسحه بكاميرتك قبل الطباعة. مع اللوغو يرفع تصحيح الأخطاء تلقائيًا — وإذا ما انقرأ، صغّر اللوغو أو بسّط أشكال العيون.</p>
+    </div>
+    <div class="q-out"><div id="qrBox"></div><canvas id="qrCv" style="display:none"></canvas></div>
+  </div>
+</section>
+
+<!-- ============ تسعيرة ============ -->
+<section class="tool" id="t-price">
+  <div class="thead"><div class="tic">💰</div><div><h2>تَسعيرة<i>.</i></h2><p>حاسبة تسعير صادقة للفريلانسر — ثلاثة أرقام، ولا تنزل تحت الأول مهما صار.</p></div></div>
+  <div class="panel">
+    <div class="pr-grid">
+      <div class="field"><label>ساعات العمل المتوقعة</label><input class="tin" id="pH" type="number" value="20" min="1"></div>
+      <div class="field"><label>سعر ساعتك (ر.س)</label><input class="tin" id="pR" type="number" value="120" min="1"></div>
+      <div class="field"><label>مصاريف المشروع</label><input class="tin" id="pE" type="number" value="100" min="0"></div>
+      <div class="field"><label>جولات التعديل المتوقعة</label><input class="tin" id="pRev" type="number" value="2" min="0"></div>
+      <div class="field"><label>عامل المتاعب (١ — ٢)</label><input class="tin" id="pPain" type="number" value="1.2" step="0.1" min="1" max="2"></div>
+    </div>
+    <div class="pr-out">
+      <div class="pr-card danger"><div class="v" id="pMin">—</div><div class="l">سعر الندم<br>تحته أنت تخسر — ارفض</div></div>
+      <div class="pr-card"><div class="v" id="pFair">—</div><div class="l">السعر العادل<br>هذا اللي تقدّمه</div></div>
+      <div class="pr-card comfy"><div class="v" id="pComfy">—</div><div class="l">السعر المريح<br>للمستعجل والكبير</div></div>
+    </div>
+    <p class="note">المعادلة: (الساعات × سعرك × عامل المتاعب) + المصاريف + ١٥٪ لكل جولة تعديل فوق جولتين.</p>
+  </div>
+</section>
+
+<!-- ============ سكربتات ============ -->
+<section class="tool" id="t-jsx">
+  <div class="thead"><div class="tic">⚙️</div><div><h2>سكربتات أدوبي<i>.</i></h2><p>أتمتة تشتغل جوّا برامجك. نزّل وشغّل من File ‹ Scripts ‹ Other Script. جرّبها أول على نسخة من ملفك.</p></div></div>
+
+  <div class="j-sect">⚡ من عُدّة — تُولّد فورًا</div>
+  <div class="j-grid">
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>مُصدّر الهوية</h3>
+      <p>يصدّر كل Artboard إلى PNG بدقتين (×١ و×٢) داخل مجلد تختاره — تسليم لوغو كامل بدل نص ساعة يدوي.</p>
+      <button class="btn gold" onclick="dlJsx('ai')">تنزيل ‎.jsx</button>
+    </div>
+    <div class="j-card">
+      <div class="app">PHOTOSHOP</div><h3>مقاسات السوشال</h3>
+      <p>يأخذ ملفك المفتوح ويولّد منه ٧ مقاسات سوشال كملفات PNG بمجلد واحد.</p>
+      <button class="btn gold" onclick="dlJsx('ps')">تنزيل ‎.jsx</button>
+    </div>
+    <div class="j-card">
+      <div class="app">PHOTOSHOP</div><h3>مُرقِّم الطبقات</h3>
+      <p>يعيد تسمية كل طبقات الملف بترتيب نظيف ومرقّم (01، 02، 03…) ببادئة تختارها — نهاية فوضى «Layer copy 7».</p>
+      <button class="btn gold" onclick="dlJsx('psRename')">تنزيل ‎.jsx</button>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>مولّد البدائل اللونية</h3>
+      <p>ينسخ تصميمك ٣ مرات ويزيح صبغة الألوان لكل نسخة — تعرض الهوية بأربع توليفات لونية على العميل بضغطة.</p>
+      <button class="btn gold" onclick="dlJsx('aiColor')">تنزيل ‎.jsx</button>
+    </div>
+  </div>
+
+  <div class="j-sect">📄 ترقيم وتجهيز الملفات</div>
+  <div class="j-grid">
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>أرقام الصفحات Pro</h3>
+      <p>ترقيم احترافي للـArtboards: شبكة ٩ مواضع، بادئة/لاحقة، خط ولون، ودعم الصفحات المتقابلة (spreads) مع معاينة.</p>
+      <a class="btn gold" href="scripts/page-numbers-pro.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>اسم وتاريخ الصفحات</h3>
+      <p>يضيف اسم الملف وتاريخ الإنشاء ورقم الصفحة على كل Artboard — مثالي لبروفات العميل.</p>
+      <a class="btn gold" href="scripts/pages-date-name.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>تسمية الـArtboards بالمقاس</h3>
+      <p>يعيد تسمية كل لوح رسم باسم أبعاده تلقائيًا (مثلاً 1080×1080) — تنظيم فوري لملفات السوشال.</p>
+      <a class="btn gold" href="scripts/rename-artboard-as-size.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>تسمية الـArtboards بالعنصر</h3>
+      <p>يسمّي كل لوح رسم باسم أول عنصر مرئي عليه — يربط أسماء الألواح بمحتواها بضغطة.</p>
+      <a class="btn gold" href="scripts/rename-artboard-as-object.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+  </div>
+
+  <div class="j-sect">🎨 الألوان والمظهر</div>
+  <div class="j-grid">
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>متوسّط الألوان</h3>
+      <p>يحسب متوسّط ألوان العناصر المختارة (أو داخل التدرّجات) ويوحّدها بلون واحد — أداة Sergey Osokin الشهيرة.</p>
+      <a class="btn gold" href="scripts/average-colors.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>تفعيل قص قناع الشفافية</h3>
+      <p>يفعّل خانة Clip لأقنعة الشفافية المختارة دفعة واحدة من لوحة Transparency.</p>
+      <a class="btn gold" href="scripts/opacity-mask-clip.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+  </div>
+
+  <div class="j-sect">📦 تصدير ومعالجة دفعات</div>
+  <div class="j-grid">
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>حفظ الكل PDF</h3>
+      <p>يحفظ كل الملفات المفتوحة كـPDF في مجلد تختاره — تسليم دفعة بضغطة.</p>
+      <a class="btn gold" href="scripts/save-all-as-pdf.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>حفظ الكل SVG</h3>
+      <p>يصدّر كل الملفات المفتوحة كـSVG في مجلد واحد — للويب والأيقونات.</p>
+      <a class="btn gold" href="scripts/save-all-as-svg.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>تتبّع صور دفعة</h3>
+      <p>يحوّل مجلد صور كامل (PNG/JPG…) إلى ملفات AI متجهة عبر Image Trace تلقائيًا.</p>
+      <a class="btn gold" href="scripts/batch-image-trace.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+  </div>
+
+  <div class="j-sect">✦ النصوص والأشكال المتقدّمة</div>
+  <div class="j-grid">
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>كتلة نصّية</h3>
+      <p>يحوّل عدّة مربّعات نص نقطية إلى كتلة نصية مرتّبة بعرض وتباعد تحدّدهما — مع إبقاء النص قابلًا للتحرير.</p>
+      <a class="btn gold" href="scripts/text-block.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>تكرار عند النقاط</h3>
+      <p>يكرّر العنصر الأمامي عند كل نقطة إرساء مختارة — لتوزيع عنصر على مسار بدقة.</p>
+      <a class="btn gold" href="scripts/dup-at-anchors.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>جاذب نقطي</h3>
+      <p>يدوّر ويُحجّم العناصر المختارة باتجاه نقطة هدف حسب بُعدها — تأثيرات بصرية بارامترية.</p>
+      <a class="btn gold" href="scripts/point-attractor.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>اختيار النقاط بالنوع</h3>
+      <p>يختار نقاط الإرساء حسب نوعها (حادّة، ناعمة، نهايات…) — تحكّم جراحي بالمسارات المعقّدة.</p>
+      <a class="btn gold" href="scripts/select-points-by-type.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>وضع الرموز</h3>
+      <p>يوزّع رموز (Symbols) على نقاط أو مسارات مختارة — لبناء أنماط ومشاهد بسرعة.</p>
+      <a class="btn gold" href="scripts/place-symbols.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>تبديل رموز عشوائي</h3>
+      <p>يستبدل العناصر المختارة برموز عشوائية من لوحة الرموز بنفس الحجم والموضع.</p>
+      <a class="btn gold" href="scripts/random-swap-symbols.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+    <div class="j-card">
+      <div class="app">ILLUSTRATOR</div><h3>عيون عشوائية</h3>
+      <p>يولّد أعينًا كرتونية عشوائية بألوان من لوحتك — أداة طريفة لشخصيات سريعة.</p>
+      <a class="btn gold" href="scripts/random-eyes.jsx" download>تنزيل ‎.jsx</a>
+    </div>
+  </div>
+
+  <p class="note">السكربتات المُولّدة من عُدّة بتعليقات عربية. السكربتات المجمّعة من مطوّري المجتمع (Sergey Osokin، Hiroyuki Sato، Adobe وغيرهم) تحت رخص حرّة — شغّلها دائمًا على نسخة من ملفك أول مرة.</p>
+</section>
+
+</main>
+
+<footer>
+  <span>عُدّة v3 — كل المعالجة محلية بمتصفحك · <span style="color:var(--gold)">Ctrl+K</span> للبحث السريع</span>
+  <span>صنعها <a href="https://www.behance.net/ahmetsattof" target="_blank" rel="noopener">أحمد صطوف — ahmads.art</a></span>
+</footer>
+
+<!-- لوحة الأوامر -->
+<div class="cmd" id="cmd">
+  <div class="cmd-box">
+    <div class="cmd-in"><span>⌕</span><input id="cmdInput" placeholder="اكتب اسم الأداة أو وظيفتها…"></div>
+    <div class="cmd-list" id="cmdList"></div>
+    <div class="cmd-foot"><span>↑↓ تنقّل</span><span>Enter فتح</span><span>Esc إغلاق</span></div>
+  </div>
+</div>
+
+<!-- شريط الموبايل -->
+<div class="mbar"><div class="mbar-in">
+  <button onclick="goTool('home')"><b>🏠</b>الرئيسية</button>
+  <button onclick="openCmd()"><b>⌕</b>بحث</button>
+  <button id="themeBtnM"><b>☾</b>المظهر</button>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= مشترك ================= */
+const $=id=>document.getElementById(id);
+const toastEl=$("toast");
+function toast(m){toastEl.textContent="✓ "+m;toastEl.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>toastEl.classList.remove("show"),1900)}
+function copy(t,m){(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast(m)).catch(()=>{const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();document.execCommand("copy");a.remove();toast(m)})}
+function dlBlob(name,blob){const a=document.createElement("a");a.download=name;a.href=URL.createObjectURL(blob);a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+function dlURI(name,uri){const a=document.createElement("a");a.download=name;a.href=uri;a.click()}
+
+/* ================= تخزين آمن + لوحتي المشتركة ================= */
+const LS={get(k,d){try{const v=localStorage.getItem("odda:"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("odda:"+k,JSON.stringify(v))}catch(e){}}};
+let WS=LS.get("ws",[]);      /* ألوان لوحتي: [{n,h}] */
+let FAV=LS.get("fav",[]);    /* أدوات مثبّتة */
+let REC=LS.get("rec",[]);    /* آخر الأدوات */
+const WS_MAX=8;
+const WS_TARGETS={
+  grad:[["من","g1"],["إلى","g2"]],
+  contrast:[["نص","kFg"],["خلفية","kBg"]],
+  pattern:[["نقش","patInk"],["أرضية","patBg"]],
+  banna:[["نقش","bInk"],["أرضية","bBg"]],
+  qr:[["داكن","qDark"],["فاتح","qLight"]]
+};
+function applyColor(inputId,hex){const el=$(inputId);if(!el)return;el.value=hex;el.dispatchEvent(new Event("input",{bubbles:true}))}
+function addWS(c){
+  if(WS.find(x=>x.h.toUpperCase()===c.h.toUpperCase()))return toast(c.n+" موجود بلوحتي");
+  if(WS.length>=WS_MAX)return toast("لوحتي ممتلئة ("+WS_MAX+" ألوان)");
+  WS.push({n:c.n,h:c.h});LS.set("ws",WS);renderWS();toast("انضاف للوحتي: "+c.n);
+}
+function removeWS(i){WS.splice(i,1);LS.set("ws",WS);renderWS()}
+function clearWS(){WS=[];LS.set("ws",WS);renderWS()}
+function renderWS(){
+  /* لوحة صبغة */
+  if($("sPal")){
+    $("sPal").classList.toggle("show",WS.length>0);
+    $("sChips").innerHTML="";
+    WS.forEach((c,i)=>{
+      const ch=document.createElement("span");ch.className="s-chip";
+      ch.innerHTML=`<i style="background:${c.h}"></i>${c.n}<button aria-label="حذف">✕</button>`;
+      ch.querySelector("button").onclick=()=>removeWS(i);
+      $("sChips").appendChild(ch);
+    });
+  }
+  /* أشرطة لوحتي بكل أداة لون */
+  document.querySelectorAll(".ws-strip").forEach(strip=>{
+    const tool=strip.dataset.tool,targets=WS_TARGETS[tool]||[];
+    if(strip.dataset.tgi==null)strip.dataset.tgi="0";
+    if(!WS.length){
+      strip.innerHTML=`<span class="ws-lab">🎨 <b>لوحتي</b></span><span class="ws-empty">فاضية — أضِف ألوانًا من <a onclick="goTool('sibgha')">صِبغة</a> أو <a onclick="goTool('laqqat')">لقّاط</a> وتطلعلك هون بكل الأدوات بضغطة.</span>`;
+      return;
+    }
+    const tgi=+strip.dataset.tgi;
+    const sws=WS.map(c=>`<button class="ws-sw" style="background:${c.h}" title="${c.n} — ${c.h}" data-h="${c.h}"></button>`).join("");
+    const tg=targets.map((t,i)=>`<button class="${i===tgi?"on":""}" data-i="${i}">${t[0]}</button>`).join("");
+    strip.innerHTML=`<span class="ws-lab">🎨 <b>لوحتي</b></span><div class="ws-sws">${sws}</div>`+(targets.length?`<div class="ws-tg">${tg}</div>`:"");
+    strip.querySelectorAll(".ws-sw").forEach(b=>b.onclick=()=>{
+      const tgt=targets[+strip.dataset.tgi];
+      if(tgt){applyColor(tgt[1],b.dataset.h);toast(tgt[0]+" ← "+b.dataset.h)}
+    });
+    strip.querySelectorAll(".ws-tg button").forEach(b=>b.onclick=()=>{
+      strip.dataset.tgi=b.dataset.i;
+      strip.querySelectorAll(".ws-tg button").forEach(x=>x.classList.toggle("on",x===b));
+    });
+  });
+}
+/* رفوف الرئيسية + المفضّلة */
+function toolMeta(id){return TOOLS.find(t=>t[0]===id)}
+function renderRails(){
+  const fill=(railId,wrapId,ids)=>{
+    const wrap=$(wrapId),rail=$(railId);if(!wrap||!rail)return;
+    wrap.style.display=ids.length?"block":"none";
+    rail.innerHTML="";
+    ids.forEach(id=>{const m=toolMeta(id);if(!m)return;const c=document.createElement("div");c.className="qchip";
+      c.innerHTML=`<span class="qi">${m[1]}</span><span class="qn">${m[2]}</span>`;
+      c.onclick=()=>goTool(id);rail.appendChild(c)});
+  };
+  fill("recRail","recWrap",REC.filter(id=>toolMeta(id)).slice(0,6));
+  fill("favRail","favWrap",FAV.filter(id=>toolMeta(id)));
+}
+function toggleFav(id,ev){
+  if(ev)ev.stopPropagation();
+  const i=FAV.indexOf(id);if(i<0)FAV.push(id);else FAV.splice(i,1);
+  LS.set("fav",FAV);buildHome(($("homeSearch")||{}).value?$("homeSearch").value.trim():"");renderRails();
+}
+function pushRecent(id){
+  if(id==="home"||!toolMeta(id))return;
+  REC=[id,...REC.filter(x=>x!==id)].slice(0,6);LS.set("rec",REC);renderRails();
+}
+function applyTheme(){
+  const t=LS.get("theme","");
+  document.documentElement.dataset.theme=t==="light"?"light":"";
+  const g=t==="light"?"☀":"☾";
+  if($("themeBtn"))$("themeBtn").textContent=g;
+  const m=$("themeBtnM");if(m&&m.querySelector("b"))m.querySelector("b").textContent=g;
+}
+
+const TOOLS=[
+["home","🏠","الرئيسية","","",""],
+["sibgha","🎨","صِبغة","٨٠ لون من الثقافة العربية بحكاياتها","","colors الوان لوحة hex"],
+["laqqat","💧","لَقّاط","استخراج ألوان أي صورة + أقرب لون تراثي","جديد","palette extract صورة الوان"],
+["grad","🌅","تَدرّج","تدرّجات تراثية مع CSS وخلفيات 4K","جديد","gradient خلفية css"],
+["contrast","👁","تَباين","فحص مقروئية الألوان WCAG","جديد","contrast accessibility وضوح"],
+["pattern","✴️","نَمَط","أنماط هندسية عربية بارامترية SVG","جديد","pattern زخرفة اسلامية سدو"],
+["banna","🧱","بَنّاء","مولّد الخط الكوفي المربّع","","kufic كوفي شعار لوغو"],
+["fonts","✍️","حُروف","جرّب نصك بـ ٢٢ خط عربي جنب بعض","جديد","fonts خطوط تايبوغرافي"],
+["lorem","📜","نَصّ شكلي","Lorem Ipsum عربي طبيعي الإيقاع","جديد","lorem ipsum نص تجريبي"],
+["clean","🧹","مُنظِّف","تنظيف نصوص العملاء قبل التصميم","جديد","clean ترقيم ارقام تشكيل"],
+["counter","🔢","عَدّاد","حدود الحروف لكل منصة تواصل","جديد","counter حروف تويتر انستغرام"],
+["sizes","📐","مَقاسات","صورة وحدة → ٢٠ مقاس سوشال","","resize crop سوشال مقاس"],
+["comp","🗜","ضاغِط","ضغط وتحويل الصور WebP محليًا","","compress webp ضغط"],
+["qr","🔳","رَمز QR","تحكّم كامل: أشكال نقاط وعيون ولوغو وألوان","جديد","qr باركود رابط لوغو شكل قلب نجمة عيون"],
+["price","💰","تَسعيرة","حاسبة تسعير الفريلانسر الصادقة","","price سعر فريلانس"],
+["jsx","⚙️","سكربتات أدوبي","٢٠ سكربت أتمتة لإليستريتور وفوتوشوب","جديد","photoshop illustrator script اتمتة سكربت"]
+];
+
+/* الناف */
+TOOLS.forEach(([id,ic,nm],i)=>{
+  const b=document.createElement("button");
+  b.className="npill"+(i===0?" on":"");b.textContent=nm;b.dataset.t=id;
+  b.onclick=()=>goTool(id);
+  $("nav").appendChild(b);
+});
+/* كروت الرئيسية */
+function buildHome(filter=""){
+  $("homeGrid").innerHTML="";
+  let n=0;
+  TOOLS.slice(1).forEach(([id,ic,nm,ds,badge,kw],i)=>{
+    if(filter&&!(nm+ds+kw).includes(filter))return;
+    n++;
+    const c=document.createElement("div");
+    c.className="hcard";c.style.animationDelay=(i*0.03)+"s";
+    c.innerHTML=(badge?`<span class="new">${badge}</span>`:"")+
+      `<button class="fav${FAV.includes(id)?" on":""}" title="تثبيت">${FAV.includes(id)?"★":"☆"}</button>`+
+      `<div class="top"><span class="ic">${ic}</span><span class="arr">←</span></div><h3>${nm}</h3><p>${ds}</p>`;
+    c.onclick=()=>goTool(id);
+    c.querySelector(".fav").onclick=ev=>toggleFav(id,ev);
+    $("homeGrid").appendChild(c);
+  });
+  $("homeCount").textContent=n+" أداة";
+  $("noRes").style.display=n?"none":"block";
+}
+buildHome();
+$("homeSearch").oninput=e=>buildHome(e.target.value.trim());
+
+/* التنقل + الراوتر */
+let suppressHash=false;
+function goTool(id){
+  if(!TOOLS.find(t=>t[0]===id))id="home";
+  document.querySelectorAll(".npill").forEach(x=>{
+    const on=x.dataset.t===id;
+    x.classList.toggle("on",on);
+    if(on)x.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});
+  });
+  document.querySelectorAll(".tool").forEach(t=>t.classList.toggle("on",t.id==="t-"+id));
+  const t=TOOLS.find(t=>t[0]===id);
+  document.title=(id==="home"?"عُدّة — ١٥ أداة للمصمم العربي":t[2]+" — عُدّة")+" | ahmads.art";
+  suppressHash=true;
+  location.hash=id==="home"?"":id;
+  setTimeout(()=>suppressHash=false,50);
+  window.scrollTo({top:0,behavior:"smooth"});
+  pushRecent(id);
+}
+window.addEventListener("hashchange",()=>{if(!suppressHash)goTool(location.hash.replace("#","")||"home")});
+if(location.hash)goTool(location.hash.replace("#",""));
+
+/* الثيم */
+function flipTheme(){
+  const light=document.documentElement.dataset.theme==="light";
+  document.documentElement.dataset.theme=light?"":"light";
+  LS.set("theme",light?"":"light");
+  const g=light?"☾":"☀";
+  $("themeBtn").textContent=g;
+  const m=$("themeBtnM");if(m&&m.querySelector("b"))m.querySelector("b").textContent=g;
+  toast(light?"رجعنا لليل":"صباح الجصّ");
+}
+$("themeBtn").onclick=flipTheme;
+$("themeBtnM").onclick=flipTheme;
+
+/* لوحة الأوامر */
+let cmdSel=0,cmdItems=[];
+function openCmd(){$("cmd").classList.add("open");$("cmdInput").value="";cmdFilter("");setTimeout(()=>$("cmdInput").focus(),30)}
+function closeCmd(){$("cmd").classList.remove("open")}
+$("cmdBtn").onclick=openCmd;
+$("cmd").onclick=e=>{if(e.target.id==="cmd")closeCmd()};
+function cmdFilter(q){
+  cmdItems=TOOLS.slice(1).filter(([id,ic,nm,ds,b,kw])=>!q||(nm+ds+kw).includes(q));
+  cmdSel=0;
+  $("cmdList").innerHTML=cmdItems.map(([id,ic,nm,ds],i)=>
+    `<div class="cmd-item${i===0?" sel":""}" data-i="${i}"><span class="ci">${ic}</span><div><div class="cn">${nm}</div><div class="cd">${ds}</div></div></div>`).join("")
+    ||`<div style="padding:22px;text-align:center;color:var(--dim);font-size:13px">ما في نتائج</div>`;
+  document.querySelectorAll(".cmd-item").forEach(el=>{
+    el.onclick=()=>{goTool(cmdItems[+el.dataset.i][0]);closeCmd()};
+    el.onmousemove=()=>{cmdSel=+el.dataset.i;cmdPaint()};
+  });
+}
+function cmdPaint(){document.querySelectorAll(".cmd-item").forEach((el,i)=>el.classList.toggle("sel",i===cmdSel))}
+$("cmdInput").oninput=e=>cmdFilter(e.target.value.trim());
+document.addEventListener("keydown",e=>{
+  const typing=/INPUT|TEXTAREA/.test(document.activeElement.tagName);
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();openCmd();return}
+  if(e.key==="/"&&!typing){e.preventDefault();openCmd();return}
+  if(!$("cmd").classList.contains("open"))return;
+  if(e.key==="Escape")closeCmd();
+  if(e.key==="ArrowDown"){e.preventDefault();cmdSel=Math.min(cmdItems.length-1,cmdSel+1);cmdPaint()}
+  if(e.key==="ArrowUp"){e.preventDefault();cmdSel=Math.max(0,cmdSel-1);cmdPaint()}
+  if(e.key==="Enter"&&cmdItems[cmdSel]){goTool(cmdItems[cmdSel][0]);closeCmd()}
+});
+
+/* لصق صورة من الحافظة */
+document.addEventListener("paste",e=>{
+  const item=[...(e.clipboardData?.items||[])].find(i=>i.type.startsWith("image/"));
+  if(!item)return;
+  const f=item.getAsFile();
+  const cur=document.querySelector(".tool.on")?.id;
+  if(cur==="t-sizes"){mLoad(f);toast("لصقت الصورة بمقاسات")}
+  else if(cur==="t-comp"){cAdd([f]);toast("لصقت الصورة بالضاغط")}
+  else{goTool("laqqat");lLoad(f);toast("لصقت الصورة باللقّاط")}
+});
+
+/* ================= صبغة ================= */
+const COLORS=[
+{n:"نِيلَة",h:"#1B3358",c:"الأصباغ",s:"صبغة أحواض النيل اليمنية في زبيد ونجران، لوّنت عباءات تهامة وثياب الطوارق."},
+{n:"حِنّاء",h:"#9C5333",c:"الأصباغ",s:"خِضاب الأفراح، يميل من البرتقالي إلى النحاسي بحسب التخمير."},
+{n:"زَعفَران",h:"#E8A33D",c:"الأصباغ",s:"أغلى الأصباغ، لوّن ثياب الخاصّة وعطّر القهوة."},
+{n:"كُركُم",h:"#D6A21E",c:"الأصباغ",s:"الأصفر اليومي في المطبخ والصباغة الشعبية."},
+{n:"عُصفُر",h:"#D9583B",c:"الأصباغ",s:"القرطم الذي صبغ به العرب ثيابهم قبل القرمز."},
+{n:"قِرمِز",h:"#861E33",c:"الأصباغ",s:"أحمر ملكي، ومنه أخذت أوروبا كلمة Crimson عن العربية."},
+{n:"فُوّة",h:"#A53A35",c:"الأصباغ",s:"جذور صبغت السجاد بحمرة ترابية لا تبهت."},
+{n:"وَرس",h:"#CE8F2C",c:"الأصباغ",s:"نبات يمني نادر، أصفر ضارب إلى الحمرة."},
+{n:"كَتَم",h:"#4F4138",c:"الأصباغ",s:"يُخلط مع الحناء لخضاب الشعر بسواد بنّي."},
+{n:"مِداد",h:"#1C1A17",c:"الأصباغ",s:"حبر الخطّاطين من السناج والصمغ العربي."},
+{n:"فَيروز",h:"#2FA8A0",c:"الأحجار",s:"حجر الزينة والحماية، أجوده النيسابوري."},
+{n:"لازَوَرد",h:"#2A5CAA",c:"الأحجار",s:"أزرق المخطوطات المذهّبة، كان يساوي وزنه ذهبًا."},
+{n:"عَقيق يَماني",h:"#7E2A2C",c:"الأحجار",s:"أشهر أحجار الجزيرة، حمرة كبدية في خواتم الرجال."},
+{n:"مَرجان",h:"#DD6E5A",c:"الأحجار",s:"من البحر الأحمر إلى العقود، ذُكر مقرونًا بالياقوت."},
+{n:"كَهرَمان",h:"#BF7E33",c:"الأحجار",s:"عسلي المسابح، يحبس داخله ضوءًا قديمًا."},
+{n:"ذَهَب",h:"#C8A24B",c:"الأحجار",s:"ذهب التذهيب، أصفر هادئ لا يصرخ."},
+{n:"لُؤلُؤ",h:"#EFE9DC",c:"الأحجار",s:"أبيض الغوص في الخليج، اقتصاد المنطقة قبل النفط."},
+{n:"زُمُرُّد",h:"#1F7A52",c:"الأحجار",s:"أخضر الملوك في التيجان والمقابض."},
+{n:"جَزع",h:"#3A3431",c:"الأحجار",s:"حجر يماني شُبّهت به عيون المها في الشعر."},
+{n:"طِين",h:"#99664A",c:"الأرض",s:"لبِن العمارة النجدية، يتنفّس حرارة الأرض."},
+{n:"جَصّ",h:"#E9E1CE",c:"الأرض",s:"بياض الزخارف النجدية المنحوتة حول النوافذ."},
+{n:"نَفود",h:"#C98E63",c:"الأرض",s:"رمال حمراء تشتعل عند الغروب شمال الجزيرة."},
+{n:"بَطحاء",h:"#D4B795",c:"الأرض",s:"رمل الوديان الناعم حيث تُوقد دلال القهوة."},
+{n:"حَرَّة",h:"#38332E",c:"الأرض",s:"بازلت الحرّات البركانية حول المدينة وخيبر."},
+{n:"نَخيل",h:"#4E6B3A",c:"الطبيعة",s:"أخضر السعف الذي ظلّل الواحات وأطعم الجزيرة."},
+{n:"سِدر",h:"#74804C",c:"الطبيعة",s:"شجرة الظل والعسل، تصمد في أقسى الأودية."},
+{n:"زَيتون",h:"#6E6A35",c:"الطبيعة",s:"شجرة الشام المباركة، أخضر يميل لذهب زيتها."},
+{n:"رَيحان",h:"#3F6B4F",c:"الطبيعة",s:"عطر المجالس، يوضع خلف الأذن في الحجاز."},
+{n:"خَليج",h:"#176775",c:"الطبيعة",s:"ماء الخليج عند العمق، طريق اللؤلؤ والتجارة."},
+{n:"لَيل البادية",h:"#161D2E",c:"الطبيعة",s:"سماء بلا ضوء مدينة، تُقرأ فيها النجوم."},
+{n:"شَفَق",h:"#C9603F",c:"الطبيعة",s:"حمرة الأفق بعد المغيب، لحظة توقف العين."},
+{n:"غَسَق",h:"#54456B",c:"الطبيعة",s:"بنفسجي العتمة الأولى بين المغرب والعشاء."},
+{n:"سَماء نَجد",h:"#7FA8C9",c:"الطبيعة",s:"زرقة الظهيرة فوق الهضبة، بخفّة الهواء الجاف."},
+{n:"وَرد الطائِف",h:"#C76E7E",c:"الطبيعة",s:"يُقطف فجرًا ويُقطّر عطرًا وماء ورد."},
+{n:"بُنّ",h:"#4C3527",c:"الضيافة",s:"بنّ اليمن المحمّص، بداية حكاية القهوة كلها."},
+{n:"قَهوة شَقراء",h:"#B98E5A",c:"الضيافة",s:"تحميص سعودي فاتح بهيل وزعفران، تُصبّ بلا استئذان."},
+{n:"هَيل",h:"#9AA876",c:"الضيافة",s:"أخضر الحبّات قبل الطحن، رائحة تسبق الفنجان."},
+{n:"تَمر سُكَّري",h:"#8F5A2B",c:"الضيافة",s:"كراميل القصيم، بجانب الفنجان دائمًا."},
+{n:"عُود",h:"#3B2B20",c:"الضيافة",s:"بنّي يقترب من السواد، آخر لحظات المجلس."},
+{n:"دُخان البَخور",h:"#8C857B",c:"الضيافة",s:"رمادي عابر يُختم به الاستقبال والوداع."},
+
+{n:"طِين نَجدي",h:"#B0764A",c:"المعمار",s:"طوب اللبِن المجفّف شمسًا، جدران الدرعية وحوطة بني تميم."},
+{n:"جَصّ",h:"#EDE6D6",c:"المعمار",s:"بياض النقوش النجدية المحفورة في الجبس حول النوافذ."},
+{n:"رَوشَن",h:"#6E4B2A",c:"المعمار",s:"خشب المشربيات الحجازية، بنّي تشرّب رطوبة البحر وملحه."},
+{n:"حَجَر مَرجاني",h:"#D8C4A0",c:"المعمار",s:"حجر البحر المسامي في بيوت جدّة القديمة، يتنفّس الحرّ."},
+{n:"بازَلت حَرّة",h:"#2C2A2B",c:"المعمار",s:"أسود الصخور البركانية في حرّات الحجاز ونجد."},
+{n:"آجُرّ",h:"#9E4B34",c:"المعمار",s:"الطوب المحروق الأحمر، عمارة العراق وأسوار المدن."},
+{n:"مِحراب",h:"#1C6B5A",c:"المعمار",s:"أخضر القاشاني حول محاريب المساجد المملوكية."},
+
+{n:"سَدو",h:"#8E2B2B",c:"النسيج",s:"أحمر نسيج البادية المنسوج على المِنسج الأرضي."},
+{n:"بِشت",h:"#1A1A18",c:"النسيج",s:"سواد العباءة الرجالية، تُطرّز حوافه بخيط الزري الذهبي."},
+{n:"زَري",h:"#C9A227",c:"النسيج",s:"خيط ذهبي يُطرّز به الثوب والبشت في المناسبات."},
+{n:"تَلّي",h:"#D6CFC2",c:"النسيج",s:"تطريز خليجي بخيوط فضّية على فساتين الأعراس."},
+{n:"كِسوة",h:"#0B0B0B",c:"النسيج",s:"سواد كسوة الكعبة الحريري، يُطرّز بآيات من ذهب وفضّة."},
+{n:"عَباءة",h:"#23201C",c:"النسيج",s:"بنّي مسودّ ناعم، صوف يقي حرّ النهار وبرد الليل."},
+{n:"قُطن مَحلوج",h:"#F1ECE0",c:"النسيج",s:"بياض القطن قبل الصباغة، أصل كل ثوب."},
+
+{n:"بَحر أحمَر",h:"#1C7C8C",c:"البحر",s:"فيروزي الشعاب المرجانية قبالة سواحل تهامة."},
+{n:"لُؤلُؤ",h:"#EDEAE0",c:"البحر",s:"دانة الخليج، رزق الغوّاصين قبل النفط بقرون."},
+{n:"صَدَف",h:"#D9C7B0",c:"البحر",s:"وردي باهت من بطن المحار، يُطعّم به الخشب والصناديق."},
+{n:"نُوخَذة",h:"#16384A",c:"البحر",s:"كحلي عميق، لون عمق الخليج الذي يعرفه ربّان السفينة."},
+{n:"شِراع",h:"#E8DCC4",c:"البحر",s:"قماش أشرعة السنبوك، يميل للعاج من الشمس والملح."},
+{n:"مَلح سَبخة",h:"#E2E6E4",c:"البحر",s:"أبيض رمادي لقشرة الملح على سواحل الخليج."},
+
+{n:"ذَهَب",h:"#C8A130",c:"المعادن",s:"معدن المهور والحليّ، أساس مجلس الذهب في كل مدينة."},
+{n:"فِضّة نَجران",h:"#B9BCC0",c:"المعادن",s:"حليّ نسائي مشغول، خلاخيل وأهلّة على الصدر."},
+{n:"نُحاس",h:"#A6562E",c:"المعادن",s:"دلال القهوة والصواني، يُطرَق ويُنقَش باليد."},
+{n:"صُفر",h:"#9C7A3C",c:"المعادن",s:"البرونز الأصفر، هاون الهيل ومباخر المجالس."},
+{n:"حَديد مَشغول",h:"#3A3A3C",c:"المعادن",s:"رمادي بوّابات البيوت ومسامير الأبواب الخشبية."},
+{n:"رَصاص",h:"#5E6066",c:"المعادن",s:"رمادي ثقيل، أوزان الميزان وأختام التجّار."},
+
+{n:"رَمل النُّفود",h:"#D9A86C",c:"الصحراء",s:"برتقالي كثبان النفود الكبير المائل للحمرة."},
+{n:"رَمل الرُّبع الخالي",h:"#E8B97F",c:"الصحراء",s:"ذهبي ناعم لأكبر صحراء رملية متّصلة في العالم."},
+{n:"سَراب",h:"#CFE0DA",c:"الصحراء",s:"أبيض مزرقّ يرتجف على الأفق وقت الظهيرة."},
+{n:"سَمُر",h:"#5C6B3C",c:"الصحراء",s:"أخضر زيتوني لشجر الطلح والسمر في الأودية."},
+{n:"ضُحى الصَّحراء",h:"#F0C892",c:"الصحراء",s:"ذهبية الضوء الأول حين يلمس الشمس وجه الكثبان."},
+{n:"وادٍ بعد المطر",h:"#7C8A4E",c:"الصحراء",s:"خضرة مفاجئة تكسو الوادي بعد سيل نادر."},
+
+{n:"دِبس",h:"#5A2E1F",c:"المائدة",s:"بنّي دبس التمر الكثيف، حلوى ما قبل السكّر."},
+{n:"سَمن بَلَدي",h:"#E0B548",c:"المائدة",s:"أصفر ذهبي يطفو فوق الجريش والقرصان."},
+{n:"زَعتَر",h:"#6F7B3D",c:"المائدة",s:"أخضر يابس يُخلط بزيت الزيتون وحبّ السمسم."},
+{n:"سُمّاق",h:"#7E2B22",c:"المائدة",s:"عنّابي حامض يُرشّ على الكبسة والسلطات."},
+{n:"كَركَديه",h:"#9A1F3A",c:"المائدة",s:"أحمر مشروب الورد المجفّف، يُشرب حارًّا وباردًا."},
+{n:"فُستُق حَلَبي",h:"#9CAE5A",c:"المائدة",s:"أخضر قلب الفستق في الحلويات الشامية."},
+{n:"عَسَل سِدر",h:"#A85D1B",c:"المائدة",s:"كهرماني داكن، أغلى عسل من شجر السدر الجبلي."},
+{n:"مِلبَن",h:"#D88FA0",c:"المائدة",s:"وردي راحة الحلقوم المرشوش بالسكر الناعم."}
+];
+const hex2rgb=h=>{const n=parseInt(h.slice(1),16);return[(n>>16)&255,(n>>8)&255,n&255]};
+const rgb2hex=(r,g,b)=>"#"+[r,g,b].map(v=>Math.round(v).toString(16).padStart(2,"0")).join("").toUpperCase();
+function nearestSibgha(hex){
+  const[r,g,b]=hex2rgb(hex);let best=null,bd=1e9;
+  COLORS.forEach(c=>{const[r2,g2,b2]=hex2rgb(c.h);const d=(r-r2)**2+(g-g2)**2+(b-b2)**2;if(d<bd){bd=d;best=c}});
+  return best;
+}
+let sCat="الكل";
+["الكل",...new Set(COLORS.map(c=>c.c))].forEach(c=>{
+  const b=document.createElement("button");
+  b.className="s-tab"+(c==="الكل"?" on":"");b.textContent=c;
+  b.onclick=()=>{sCat=c;document.querySelectorAll(".s-tab").forEach(t=>t.classList.toggle("on",t===b));sRender()};
+  $("sTabs").appendChild(b);
+});
+function sRender(){
+  $("sGrid").innerHTML="";
+  COLORS.filter(c=>sCat==="الكل"||c.c===sCat).forEach(c=>{
+    const el=document.createElement("div");
+    el.className="s-card";
+    el.innerHTML=`<div class="s-sw" style="background:${c.h}"><button class="s-add">+</button></div>
+      <div class="s-meta"><div class="s-nm">${c.n}</div><div class="s-hx">${c.h}</div></div>
+      <div class="s-story">${c.s}</div>`;
+    el.querySelector(".s-add").onclick=e=>{e.stopPropagation();sAdd(c)};
+    el.querySelector(".s-hx").onclick=e=>{e.stopPropagation();copy(c.h,"انتسخ "+c.h)};
+    el.onclick=()=>el.classList.toggle("open");
+    $("sGrid").appendChild(el);
+  });
+}
+function sAdd(c){addWS(c)}
+$("sClr").onclick=clearWS;
+$("sHexBtn").onclick=()=>{if(!WS.length)return toast("لوحتي فاضية");copy(WS.map(c=>c.h).join(", "),"انتسخت HEX")};
+$("sCssBtn").onclick=()=>{if(!WS.length)return toast("لوحتي فاضية");copy(":root {\n"+WS.map((c,i)=>`  --color-${i+1}: ${c.h}; /* ${c.n} */`).join("\n")+"\n}","انتسخت متغيرات CSS")};
+sRender();
+
+/* ================= لقّاط ================= */
+function bindDrop(el,fileInput,handler){
+  el.onclick=()=>fileInput.click();
+  el.ondragover=e=>{e.preventDefault();el.classList.add("over")};
+  el.ondragleave=()=>el.classList.remove("over");
+  el.ondrop=e=>{e.preventDefault();el.classList.remove("over");handler([...e.dataTransfer.files])};
+}
+bindDrop($("lDrop"),$("lFile"),f=>{if(f[0])lLoad(f[0])});
+$("lFile").onchange=e=>{if(e.target.files[0])lLoad(e.target.files[0])};
+function lLoad(f){
+  const img=new Image();
+  img.onload=()=>{$("lPrev").src=img.src;$("lPrev").style.display="block";lExtract(img)};
+  img.src=URL.createObjectURL(f);
+}
+function lExtract(img){
+  const cv=document.createElement("canvas");
+  const w=72,h=Math.max(1,Math.round(img.height/img.width*72));
+  cv.width=w;cv.height=h;
+  const x=cv.getContext("2d");x.drawImage(img,0,0,w,h);
+  const data=x.getImageData(0,0,w,h).data;
+  const buckets={};
+  for(let i=0;i<data.length;i+=4){
+    if(data[i+3]<120)continue;
+    const k=(data[i]>>4)+","+(data[i+1]>>4)+","+(data[i+2]>>4);
+    if(!buckets[k])buckets[k]={n:0,r:0,g:0,b:0};
+    const b=buckets[k];b.n++;b.r+=data[i];b.g+=data[i+1];b.b+=data[i+2];
+  }
+  const sorted=Object.values(buckets).sort((a,b)=>b.n-a.n);
+  const picked=[];
+  for(const b of sorted){
+    const r=b.r/b.n,g=b.g/b.n,bl=b.b/b.n;
+    if(picked.every(p=>((p.r-r)**2+(p.g-g)**2+(p.b-bl)**2)>2800)){
+      picked.push({r,g,b:bl});
+      if(picked.length===6)break;
+    }
+  }
+  $("lOut").innerHTML="";
+  picked.forEach(p=>{
+    const hx=rgb2hex(p.r,p.g,p.b);
+    const near=nearestSibgha(hx);
+    const row=document.createElement("div");
+    row.className="l-sw";
+    row.innerHTML=`<i style="background:${hx}"></i>
+      <div class="lx"><div class="lh">${hx}</div><div class="ln">أقرب لون تراثي: ${near.n}</div></div>
+      <button class="btn sm wsadd">+ لوحتي</button>
+      <button class="btn sm cpy">نسخ</button>`;
+    row.querySelector(".lh").onclick=()=>copy(hx,"انتسخ "+hx);
+    row.querySelector(".cpy").onclick=()=>copy(hx,"انتسخ "+hx);
+    row.querySelector(".wsadd").onclick=()=>addWS({n:near.n,h:hx});
+    $("lOut").appendChild(row);
+  });
+  toast("لقّطت ٦ ألوان");
+}
+
+/* ================= تدرّج ================= */
+function gUpd(){
+  const a=$("gAng").value;
+  $("gAngV").textContent=a+"°";
+  $("gPrev").style.background=`linear-gradient(${a}deg, ${$("g1").value}, ${$("g2").value})`;
+}
+["g1","g2","gAng"].forEach(id=>$(id).oninput=gUpd);
+gUpd();
+const GPAIRS=[["#1B3358","#C9603F","نيلة → شفق"],["#161D2E","#C8A24B","ليل → ذهب"],["#176775","#2FA8A0","خليج → فيروز"],["#7E2A2C","#DD6E5A","عقيق → مرجان"],["#54456B","#C76E7E","غسق → ورد الطائف"],["#38332E","#C98E63","حرّة → نفود"],["#1F7A52","#9AA876","زمرد → هيل"],["#4C3527","#B98E5A","بنّ → قهوة شقراء"],["#2A5CAA","#C9A227","لازورد → زري"],["#0B0B0B","#C8A130","كسوة → ذهب"],["#16384A","#E8DCC4","نوخذة → شراع"],["#861E33","#E8A33D","قرمز → زعفران"],["#1C1A17","#A6562E","مداد → نحاس"],["#E8B97F","#1C7C8C","ربع خالي → بحر أحمر"],["#5A2E1F","#E0B548","دبس → سمن بلدي"],["#3B2B20","#D88FA0","عود → ملبن"],["#1C6B5A","#EDE6D6","محراب → جصّ"],["#9A1F3A","#F0C892","كركديه → ضحى"],["#2C2A2B","#D9A86C","بازلت → رمل النفود"],["#6E4B2A","#D8C4A0","روشن → حجر مرجاني"],["#7FA8C9","#F1ECE0","سماء نجد → قطن"],["#9C5333","#E8A33D","حنّاء → زعفران"],["#54456B","#7FA8C9","غسق → سماء نجد"],["#A85D1B","#F0C892","عسل سدر → ضحى الصحراء"]];
+GPAIRS.forEach(([c1,c2,nm])=>{
+  const d=document.createElement("button");
+  d.className="g-q";d.title=nm;
+  d.style.background=`linear-gradient(135deg,${c1},${c2})`;
+  d.onclick=()=>{$("g1").value=c1;$("g2").value=c2;gUpd();toast(nm)};
+  $("gQuick").appendChild(d);
+});
+$("gRand").onclick=()=>{
+  const p=GPAIRS[Math.floor(Math.random()*GPAIRS.length)];
+  $("g1").value=p[0];$("g2").value=p[1];gUpd();toast(p[2]);
+};
+$("gCss").onclick=()=>copy(`background: linear-gradient(${$("gAng").value}deg, ${$("g1").value}, ${$("g2").value});`,"انتسخ الـ CSS");
+$("gPng").onclick=()=>{
+  const cv=document.createElement("canvas");cv.width=3840;cv.height=2160;
+  const x=cv.getContext("2d");
+  const ang=(+$("gAng").value-90)*Math.PI/180;
+  const cx=cv.width/2,cy=cv.height/2,L=Math.max(cv.width,cv.height);
+  const gr=x.createLinearGradient(cx-Math.cos(ang)*L/2,cy-Math.sin(ang)*L/2,cx+Math.cos(ang)*L/2,cy+Math.sin(ang)*L/2);
+  gr.addColorStop(0,$("g1").value);gr.addColorStop(1,$("g2").value);
+  x.fillStyle=gr;x.fillRect(0,0,cv.width,cv.height);
+  dlURI("gradient-4k.png",cv.toDataURL("image/png"));toast("نزّلت خلفية 4K");
+};
+
+/* ================= تباين ================= */
+function lum(hex){
+  const[r,g,b]=hex2rgb(hex).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});
+  return .2126*r+.7152*g+.0722*b;
+}
+function kUpd(){
+  const fg=$("kFg").value,bg=$("kBg").value;
+  $("kPrev").style.background=bg;$("kPrev").style.color=fg;
+  const l1=lum(fg),l2=lum(bg);
+  const ratio=(Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05);
+  $("kRatio").textContent=ratio.toFixed(2)+":1";
+  const tests=[["AA نص كبير",3],["AA نص عادي",4.5],["AAA نص عادي",7]];
+  $("kBadges").innerHTML=tests.map(([nm,t])=>`<span class="k-b ${ratio>=t?"ok":"no"}">${ratio>=t?"✓":"✗"} ${nm}</span>`).join("");
+}
+$("kFg").oninput=kUpd;$("kBg").oninput=kUpd;
+$("kSwap").onclick=()=>{const a=$("kFg").value;$("kFg").value=$("kBg").value;$("kBg").value=a;kUpd()};
+kUpd();
+
+/* ================= نمط ================= */
+let patS="star";
+document.querySelectorAll("#patStyle button").forEach(b=>{
+  b.onclick=()=>{patS=b.dataset.s;document.querySelectorAll("#patStyle button").forEach(x=>x.classList.toggle("on",x===b));patUpd()};
+});
+function patTile(t,sw,ink){
+  if(patS==="star"){
+    const m=t*.16,c=t/2;
+    return `<rect x="${m}" y="${m}" width="${t-2*m}" height="${t-2*m}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <rect x="${m}" y="${m}" width="${t-2*m}" height="${t-2*m}" fill="none" stroke="${ink}" stroke-width="${sw}" transform="rotate(45 ${c} ${c})"/>`;
+  }
+  if(patS==="lattice"){
+    return `<path d="M0 0 L${t} ${t} M${t} 0 L0 ${t} M${t/2} 0 L0 ${t/2} M${t} ${t/2} L${t/2} ${t}" fill="none" stroke="${ink}" stroke-width="${sw}"/>`;
+  }
+  if(patS==="zellij"){
+    const c=t/2;
+    return `<rect x="${c-sw}" y="0" width="${sw*2}" height="${t}" fill="${ink}"/>
+      <rect x="0" y="${c-sw}" width="${t}" height="${sw*2}" fill="${ink}"/>
+      <path d="M${c} ${t*.12} L${t*.88} ${c} L${c} ${t*.88} L${t*.12} ${c} Z" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <circle cx="${c}" cy="${c}" r="${t*.13}" fill="${ink}"/>`;
+  }
+  if(patS==="chevron"){
+    const h=t/2;
+    return `<path d="M0 ${h} L${h} 0 L${t} ${h}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <path d="M0 ${t} L${h} ${h} L${t} ${t}" fill="none" stroke="${ink}" stroke-width="${sw}"/>`;
+  }
+  if(patS==="khatam"){
+    const c=t/2,r=t*.4;
+    let pts1="",pts2="";
+    for(let i=0;i<8;i++){
+      const a1=i*Math.PI/4,a2=a1+Math.PI/8;
+      pts1+=(c+r*Math.cos(a1)).toFixed(1)+","+(c+r*Math.sin(a1)).toFixed(1)+" ";
+      pts2+=(c+r*Math.cos(a2)).toFixed(1)+","+(c+r*Math.sin(a2)).toFixed(1)+" ";
+    }
+    return `<polygon points="${pts1}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <polygon points="${pts2}" fill="none" stroke="${ink}" stroke-width="${sw}"/>`;
+  }
+  if(patS==="mawj"){
+    // موج — أمواج منحنية متتابعة
+    const h=t/2,q=t/4;
+    return `<path d="M0 ${h} Q ${q} 0 ${h} ${h} T ${t} ${h}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <path d="M0 ${t} Q ${q} ${h} ${h} ${t} T ${t} ${t}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <path d="M0 0 Q ${q} ${-h} ${h} 0 T ${t} 0" fill="none" stroke="${ink}" stroke-width="${sw}"/>`;
+  }
+  if(patS==="dafira"){
+    // ضفيرة — تشابك قطري متبادل
+    const h=t/2;
+    return `<path d="M0 0 Q ${h} ${h} ${t} 0 M0 ${t} Q ${h} ${h} ${t} ${t}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <path d="M0 0 Q ${h} ${h} 0 ${t} M${t} 0 Q ${h} ${h} ${t} ${t}" fill="none" stroke="${ink}" stroke-width="${sw*0.6}"/>`;
+  }
+  if(patS==="aqd"){
+    // عقود — أقواس مدبّبة (طراز إسلامي)
+    const h=t/2;
+    return `<path d="M0 ${t} L0 ${h} Q ${h} ${-h*0.3} ${t} ${h} L${t} ${t}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <path d="M${h} ${t} L${h} ${h*1.2} Q ${h} ${h} ${h} ${h}" fill="none" stroke="${ink}" stroke-width="${sw*0.5}"/>`;
+  }
+  if(patS==="hirfish"){
+    // حِراشف — قشور السمك المتداخلة
+    const h=t/2;
+    return `<path d="M${-h} ${h} A ${h} ${h} 0 0 1 ${h} ${h} A ${h} ${h} 0 0 1 ${t+h} ${h}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <path d="M0 ${t+h} A ${h} ${h} 0 0 1 ${t} ${t+h}" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+      <path d="M0 ${-h} A ${h} ${h} 0 0 1 ${t} ${-h}" fill="none" stroke="${ink}" stroke-width="${sw}"/>`;
+  }
+  // سدو (الافتراضي) — مثلثات متقابلة بنقطة وسطى
+  const h=t/2;
+  return `<path d="M0 ${h} L${t/2} 0 L${t} ${h} Z" fill="${ink}"/>
+    <path d="M0 ${h} L${t/2} ${t} L${t} ${h} Z" fill="none" stroke="${ink}" stroke-width="${sw}"/>
+    <rect x="${t/2-sw}" y="${h-sw}" width="${sw*2}" height="${sw*2}" fill="${ink}"/>`;
+}
+function patSVG(big){
+  const t=+$("patSize").value,sw=+$("patStroke").value;
+  const ink=$("patInk").value,bg=$("patBg").value;
+  const S=big?1200:600;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}">
+<defs><pattern id="p" width="${t}" height="${t}" patternUnits="userSpaceOnUse">
+<rect width="${t}" height="${t}" fill="${bg}"/>${patTile(t,sw,ink)}
+</pattern></defs>
+<rect width="${S}" height="${S}" fill="url(#p)"/></svg>`;
+}
+function patUpd(){$("patImg").src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(patSVG(false))}
+["patSize","patStroke","patInk","patBg"].forEach(id=>$(id).oninput=patUpd);
+patUpd();
+$("patSvg").onclick=()=>{dlURI("pattern.svg","data:image/svg+xml;charset=utf-8,"+encodeURIComponent(patSVG(false)));toast("نزّلت SVG")};
+$("patPng").onclick=()=>{
+  const img=new Image();
+  img.onload=()=>{
+    const cv=document.createElement("canvas");cv.width=1200;cv.height=1200;
+    cv.getContext("2d").drawImage(img,0,0);
+    dlURI("pattern.png",cv.toDataURL("image/png"));toast("نزّلت PNG");
+  };
+  img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(patSVG(true));
+};
+
+/* ================= بنّاء ================= */
+const G={
+"ا":{f:["#","#","#","#","#","#","#",".","."]},
+"أ":{f:["..#","..#","..#","#.#","..#","..#","..#","...","..."]},
+"إ":{f:["..#","..#","..#","..#","..#","..#","..#","...","#.."]},
+"آ":{f:["##.","...","..#","..#","..#","..#","..#","...","..."]},
+"ء":{f:["..","..","..","..","##","#.","##","..",".."]},
+"ب":{c:["...","...","...","...","..#","..#","###","...",".#."],f:["....","....","....","#...","#..#","#..#","####","....","..#."]},
+"ت":{c:["...","...","#.#","...","..#","..#","###","...","..."],f:["....","....",".#.#","#...","#..#","#..#","####","....","...."]},
+"ث":{c:[".#.","...","#.#","...","..#","..#","###","...","..."],f:["..#.","....",".#.#","#...","#..#","#..#","####","....","...."]},
+"ج":{c:["...","...","...","...","###","#.#","#.#","#..","#.#"],f:["....","....","....","....","####","#..#","#..#","#...","#.#."]},
+"ح":{c:["...","...","...","...","###","#.#","#.#","#..","#.."],f:["....","....","....","....","####","#..#","#..#","#...","#..."]},
+"خ":{c:["...","...",".#.","...","###","#.#","#.#","#..","#.."],f:["....","....",".#..","....","####","#..#","#..#","#...","#..."]},
+"د":{f:["...","...","...",".##","..#","..#","###","...","..."]},
+"ذ":{f:["...",".#.","...",".##","..#","..#","###","...","..."]},
+"ر":{f:["...","...","...","...","..#","..#","..#","..#","###"]},
+"ز":{f:["...","..#","...","...","..#","..#","..#","..#","###"]},
+"س":{c:[".....",".....",".....",".....","#.#.#","#.#.#","#####",".....","....."],f:["......","......","......","......",".#.#.#",".#.#.#","######","#.....","##...."]},
+"ش":{c:["..#..",".....",".#.#.",".....","#.#.#","#.#.#","#####",".....","....."],f:["...#..","......","..#.#.","......",".#.#.#",".#.#.#","######","#.....","##...."]},
+"ص":{c:["....","....","....","....","####","#..#","####","....","...."],f:[".....",".....",".....",".....",".####",".#..#","#####","#....","#...."]},
+"ض":{c:["....","....",".#..","....","####","#..#","####","....","...."],f:[".....",".....","..#..",".....",".####",".#..#","#####","#....","#...."]},
+"ط":{c:["#...","#...","#...","#...","####","#..#","####","....","...."],f:["#...","#...","#...","#...","####","#..#","####","....","...."]},
+"ظ":{c:["#...","#...","#.#.","#...","####","#..#","####","....","...."],f:["#...","#...","#.#.","#...","####","#..#","####","....","...."]},
+"ع":{c:["...","...","...","###","#..","###","#.#","#..","#.."],f:["....","....","....","####","#...","####","#..#","#...","##.."]},
+"غ":{c:["...",".#.","...","###","#..","###","#.#","#..","#.."],f:["....",".#..","....","####","#...","####","#..#","#...","##.."]},
+"ف":{c:["....","....","...#","....","..##","..##","####","....","...."],f:[".....",".....","....#",".....","#..##","#..##","#####",".....","....."]},
+"ق":{c:["....","....",".#.#","....","..##","..##","####","....","...."],f:[".....",".....","..#.#",".....","...##","...##","#####","#....","##..."]},
+"ك":{c:["..##","...#","...#","...#",".#.#","...#","####","....","...."],f:["..##","...#","...#","...#","#..#","#..#","####","....","...."]},
+"ل":{c:[".#",".#",".#",".#",".#",".#","##","..",".."],f:["..#","..#","..#","..#","#.#","#.#","###","...","..."]},
+"لا":{f:["#.#","#.#","#.#","#.#","#.#","#.#","###","...","..."]},
+"م":{c:["...","...","...","...",".##",".##","###","...","..."],f:["...","...","...","...",".##",".##","###",".#.",".#."]},
+"ن":{c:["...","...","..#","...","..#","..#","###","...","..."],f:["...",".#.","...","#.#","#.#","#.#","###","...","..."]},
+"ه":{c:["...","...","...","...","###","#.#","###","...","..."],f:["...","...","...","...","###","#.#","###","...","..."]},
+"ة":{f:["...","...","#.#","...","###","#.#","###","...","..."]},
+"و":{f:["...","...","...","...",".##",".##","###","#..","#.."]},
+"ؤ":{f:["...",".#.","...","...",".##",".##","###","#..","#.."]},
+"ي":{c:["...","...","...","...","..#","..#","###","...","#.#"],f:["....","....","....","....","#..#","#..#","####","....","#.#."]},
+"ى":{f:["....","....","....","....","#..#","#..#","####","....","...."]},
+"ئ":{c:["..#","...","...","...","..#","..#","###","...","..."],f:["...",".#.","...","#.#","#.#","#.#","###","...","..."]},
+"ـ":{c:["..","..","..","..","..","..","##","..",".."],f:["..","..","..","..","..","..","##","..",".."]}
+};
+const NONCONN=new Set(["ا","أ","إ","آ","د","ذ","ر","ز","و","ؤ","ء","ة","ى","لا"]);
+const BROWS=9;
+function bBand(text){
+  const t=text.replace(/[\u064B-\u065F\u0670\u0640]/g,"").replace(/ٱ/g,"ا"),items=[];
+  for(let i=0;i<t.length;i++){
+    const ch=t[i];
+    if(ch===" "){items.push({space:true});continue}
+    let key=ch,skip=0;
+    if(ch==="ل"&&"اأإآ".includes(t[i+1]||"")){key="لا";skip=1}
+    const g=G[key];if(!g)continue;
+    const next=t[i+skip+1];
+    const nl=next&&next!==" "&&(G[next]||next==="ل");
+    const conn=!NONCONN.has(key)&&g.c&&nl;
+    items.push({g:conn?g.c:g.f,gap:conn?0:1});
+    i+=skip;
+  }
+  if(!items.length)return null;
+  let W=0;
+  items.forEach((it,x)=>{if(it.space){W+=3;return}W+=it.g[0].length;if(x<items.length-1)W+=it.gap});
+  const M=Array.from({length:BROWS},()=>new Array(W).fill(0));
+  let x=W;
+  items.forEach((it,k)=>{
+    if(it.space){x-=3;return}
+    const w=it.g[0].length;x-=w;
+    for(let r=0;r<BROWS;r++)for(let c=0;c<w;c++)if(it.g[r][c]==="#")M[r][x+c]=1;
+    if(k<items.length-1)x-=it.gap;
+  });
+  let l=0,r=W-1;
+  const empty=c=>M.every(row=>!row[c]);
+  while(l<W&&empty(l))l++;while(r>l&&empty(r))r--;
+  return M.map(row=>row.slice(l,r+1));
+}
+function bRot(M){const h=M.length,w=M[0].length;const R=Array.from({length:w},()=>new Array(h).fill(0));for(let r=0;r<h;r++)for(let c=0;c<w;c++)R[c][h-1-r]=M[r][c];return R}
+function bStamp(d,s,X,Y){for(let r=0;r<s.length;r++)for(let c=0;c<s[0].length;c++)if(s[r][c])d[Y+r][X+c]=1}
+function bSquare(b){const h=b.length,w=b[0].length,S=w+h;const M=Array.from({length:S},()=>new Array(S).fill(0));const r1=bRot(b),r2=bRot(r1),r3=bRot(r2);bStamp(M,b,0,0);bStamp(M,r1,w,0);bStamp(M,r2,h,w);bStamp(M,r3,0,h);return M}
+function bFr(M){const h=M.length,w=M[0].length,H=h+6,W=w+6;const F=Array.from({length:H},()=>new Array(W).fill(0));for(let c=0;c<W;c++){F[0][c]=1;F[H-1][c]=1}for(let r=0;r<H;r++){F[r][0]=1;F[r][W-1]=1}bStamp(F,M,3,3);return F}
+const bcv=$("bcv"),bctx=bcv.getContext("2d");
+let bM="band",bFrameV=false,bCellV=13,bInkC="#2FA8A0",bBgC="#EDE4D2",bEditing=false,bOv={},bMat=null;
+function bCompose(){
+  const band=bBand($("bTxt").value);
+  if(!band){bMat=null;return}
+  let M=bM==="square"?bSquare(band):band;
+  if(bFrameV)M=bFr(M);
+  M=M.map(r=>r.slice());
+  for(const k in bOv){const[x,y]=k.split(",").map(Number);if(M[y]&&M[y][x]!==undefined)M[y][x]=bOv[k]}
+  bMat=M;
+}
+function bDraw(){
+  if(!bMat){bcv.width=280;bcv.height=110;bctx.fillStyle=bBgC;bctx.fillRect(0,0,280,110);return}
+  const h=bMat.length,w=bMat[0].length;
+  bcv.width=w*bCellV;bcv.height=h*bCellV;
+  bctx.fillStyle=bBgC;bctx.fillRect(0,0,bcv.width,bcv.height);
+  bctx.fillStyle=bInkC;
+  for(let r=0;r<h;r++)for(let c=0;c<w;c++)if(bMat[r][c])bctx.fillRect(c*bCellV,r*bCellV,bCellV,bCellV);
+  if(bCellV>=8){
+    bctx.strokeStyle="rgba(0,0,0,.1)";bctx.lineWidth=1;
+    for(let c=0;c<=w;c++){bctx.beginPath();bctx.moveTo(c*bCellV+.5,0);bctx.lineTo(c*bCellV+.5,bcv.height);bctx.stroke()}
+    for(let r=0;r<=h;r++){bctx.beginPath();bctx.moveTo(0,r*bCellV+.5);bctx.lineTo(bcv.width,r*bCellV+.5);bctx.stroke()}
+  }
+}
+function bRf(){bCompose();bDraw()}
+bRf();
+$("bTxt").addEventListener("input",()=>{bOv={};bRf()});
+document.querySelectorAll("#bMode button").forEach(b=>{b.onclick=()=>{bM=b.dataset.m;bOv={};document.querySelectorAll("#bMode button").forEach(x=>x.classList.toggle("on",x===b));bRf()}});
+$("bFrame").onchange=e=>{bFrameV=e.target.checked;bOv={};bRf()};
+$("bCell").oninput=e=>{bCellV=+e.target.value;bDraw()};
+$("bInk").oninput=e=>{bInkC=e.target.value;bDraw()};
+$("bBg").oninput=e=>{bBgC=e.target.value;bDraw()};
+$("bInv").onclick=()=>{[bInkC,bBgC]=[bBgC,bInkC];$("bInk").value=bInkC;$("bBg").value=bBgC;bDraw()};
+[["فيروز/آجر","#1F7A72","#C79D6F"],["نيلة/جصّ","#1B3358","#E9E1CE"],["جصّ/حرّة","#EDE3CF","#2A2622"],["ذهب/ليل","#C8A24B","#161D2E"],["قرمز/لؤلؤ","#861E33","#EFE9DC"]].forEach(([n,i,b])=>{
+  const d=document.createElement("button");
+  d.className="b-pre";d.title=n;d.style.background=b;d.style.color=i;d.textContent="ب";
+  d.onclick=()=>{bInkC=i;bBgC=b;$("bInk").value=i;$("bBg").value=b;bDraw();toast(n)};
+  $("bPre").appendChild(d);
+});
+$("bEdit").onclick=()=>{
+  bEditing=!bEditing;
+  bcv.classList.toggle("edit",bEditing);
+  $("bEdit").textContent=bEditing?"إيقاف التحرير":"تحرير يدوي";
+  $("bEdit").classList.toggle("gold",bEditing);
+};
+bcv.onclick=e=>{
+  if(!bEditing||!bMat)return;
+  const r=bcv.getBoundingClientRect();
+  const x=Math.floor((e.clientX-r.left)*(bcv.width/r.width)/bCellV);
+  const y=Math.floor((e.clientY-r.top)*(bcv.height/r.height)/bCellV);
+  if(y<0||y>=bMat.length||x<0||x>=bMat[0].length)return;
+  bOv[x+","+y]=bMat[y][x]?0:1;bRf();
+};
+function bSVG(){
+  const h=bMat.length,w=bMat[0].length,u=20;let cells="";
+  for(let r=0;r<h;r++)for(let c=0;c<w;c++)if(bMat[r][c])cells+=`<rect x="${c*u}" y="${r*u}" width="${u}" height="${u}"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w*u} ${h*u}" shape-rendering="crispEdges"><rect width="${w*u}" height="${h*u}" fill="${bBgC}"/><g fill="${bInkC}">${cells}</g></svg>`;
+}
+$("bSvg").onclick=()=>{if(!bMat)return;dlURI("bannaa.svg","data:image/svg+xml;charset=utf-8,"+encodeURIComponent(bSVG()));toast("نزّلت SVG")};
+$("bPng").onclick=()=>{
+  if(!bMat)return;
+  const h=bMat.length,w=bMat[0].length,u=40;
+  const c2=document.createElement("canvas");c2.width=w*u;c2.height=h*u;
+  const x=c2.getContext("2d");x.fillStyle=bBgC;x.fillRect(0,0,c2.width,c2.height);x.fillStyle=bInkC;
+  for(let r=0;r<h;r++)for(let cc=0;cc<w;cc++)if(bMat[r][cc])x.fillRect(cc*u,r*u,u,u);
+  dlURI("bannaa.png",c2.toDataURL("image/png"));toast("نزّلت PNG");
+};
+
+/* ====== هيرو: عُدّة تُبنى طوبة طوبة ====== */
+(function(){
+  const cv=$("heroCv"),x=cv.getContext("2d");
+  const band=bBand("عدة");if(!band)return;
+  const M=bSquare(band);
+  const S=M.length,cell=Math.floor(300/S),pad=Math.floor((300-cell*S)/2);
+  const cells=[];
+  for(let r=0;r<S;r++)for(let c=0;c<S;c++)if(M[r][c])cells.push([c,r]);
+  const cx=S/2,cy=S/2;
+  cells.sort((a,b)=>(Math.abs(a[0]-cx)+Math.abs(a[1]-cy))-(Math.abs(b[0]-cx)+Math.abs(b[1]-cy)));
+  const css=getComputedStyle(document.documentElement);
+  function paint(n){
+    const gold=css.getPropertyValue("--gold").trim()||"#D9A441";
+    const line=css.getPropertyValue("--line").trim()||"#2B261D";
+    x.clearRect(0,0,300,300);
+    x.strokeStyle=line;x.lineWidth=1;
+    for(let i=0;i<=S;i++){
+      x.beginPath();x.moveTo(pad+i*cell+.5,pad);x.lineTo(pad+i*cell+.5,pad+S*cell);x.stroke();
+      x.beginPath();x.moveTo(pad,pad+i*cell+.5);x.lineTo(pad+S*cell,pad+i*cell+.5);x.stroke();
+    }
+    x.fillStyle=gold;
+    for(let i=0;i<n;i++)x.fillRect(pad+cells[i][0]*cell,pad+cells[i][1]*cell,cell,cell);
+  }
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches){paint(cells.length);return}
+  const BUILD=2400,HOLD=1700;
+  let t0=performance.now();
+  function loop(t){
+    const el=(t-t0)%(BUILD+HOLD);
+    const p=Math.min(1,el/BUILD);
+    paint(Math.round(cells.length*(1-Math.pow(1-p,2.2))));
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+
+/* ================= حروف ================= */
+const FONTS=["Amiri","IBM Plex Sans Arabic","Cairo","Tajawal","Almarai","Reem Kufi","Noto Naskh Arabic","El Messiri","Changa","Aref Ruqaa","Markazi Text","Lalezar","Rakkas","Jomhuria","Harmattan","Mada","Scheherazade New","Lateef","Vibes","Gulzar","Qahiri","Noto Kufi Arabic"];
+function fRender(){
+  const txt=$("fTxt").value||"اكتب شيئًا…";
+  const sz=$("fSize").value,bold=$("fBold").checked;
+  $("fGrid").innerHTML="";
+  FONTS.forEach(f=>{
+    const card=document.createElement("div");
+    card.className="f-card";
+    card.innerHTML=`<div class="fn">${f}</div>
+      <div class="fs" style="font-family:'${f}',sans-serif;font-size:${sz}px;font-weight:${bold?700:400}">${txt.replace(/</g,"&lt;")}</div>
+      <button class="fc">نسخ رابط الاستيراد</button>`;
+    card.querySelector(".fc").onclick=()=>copy(`@import url('https://fonts.googleapis.com/css2?family=${f.replace(/ /g,"+")}:wght@400;700&display=swap');`,"انتسخ رابط "+f);
+    $("fGrid").appendChild(card);
+  });
+}
+["fTxt","fSize","fBold"].forEach(id=>$(id).oninput=fRender);
+fRender();
+
+/* ================= نص شكلي ================= */
+const LO_S=[
+"هذا نصٌّ شكليٌّ يقوم مقام الكلام الحقيقي ريثما يكتمل المحتوى.",
+"وضعنا هذه الجمل لتُظهر شكل الفقرة وإيقاعها دون أن تشغل القارئ بالمعنى.",
+"تتوزع الكلمات هنا بأطوال متفاوتة كي تحاكي النص الطبيعي في الصحف والكتب.",
+"حين يصل المحتوى النهائي تُستبدل هذه السطور كلها بضغطة واحدة.",
+"الغاية أن ترى العين توازن الكتلة والفراغ قبل أن يرى العقل المعنى.",
+"بعض الجمل قصيرة.",
+"وبعضها يمتد قليلًا ليختبر سلوك السطر عند الالتفاف في نهاية العمود أو البطاقة.",
+"العربية تُقرأ من اليمين، ولذلك يهم اختبار المحاذاة والمسافات في كل قالب.",
+"تذكَّر أن النص الشكلي صديق المصمم وعدوّ النسيان، فلا تتركه في النسخة النهائية.",
+"وفي الختام، هذه فقرة تجريبية صُنعت كي تملأ المكان بهدوء ولا تَعِد بشيء."
+];
+const LO_T=["عنوان تجريبي للقسم","فقرة عن أمر مهم","هنا يبدأ الحديث","تفاصيل إضافية","نقطة جديرة بالقراءة","وأخيرًا"];
+function loGen(){
+  const n=+$("loN").value;
+  let html="",txt="";
+  for(let i=0;i<n;i++){
+    const cnt=4+Math.floor(Math.random()*4);
+    let para=[];
+    for(let j=0;j<cnt;j++)para.push(LO_S[Math.floor(Math.random()*LO_S.length)]);
+    para=[...new Set(para)];
+    if($("loTitle").checked){
+      const t=LO_T[i%LO_T.length];
+      html+=`<h3 style="font-family:Amiri,serif;font-size:22px;font-weight:700;margin:${i?22:0}px 0 8px">${t}</h3>`;
+      txt+=t+"\n";
+    }
+    html+=`<p style="color:var(--dim)">${para.join(" ")}</p>`;
+    txt+=para.join(" ")+"\n\n";
+  }
+  $("loOut").innerHTML=html;
+  $("loOut").dataset.txt=txt.trim();
+}
+$("loN").oninput=()=>{$("loNv").textContent=$("loN").value};
+$("loGen").onclick=loGen;
+$("loCopy").onclick=()=>{if($("loOut").dataset.txt)copy($("loOut").dataset.txt,"انتسخ النص الشكلي")};
+loGen();
+
+/* ================= منظّف ================= */
+$("clGo").onclick=()=>{
+  let t=$("clIn").value;
+  if(!t.trim())return toast("الصق نص أول");
+  if($("clTat").checked)t=t.replace(/\u0640/g,"");
+  if($("clTash").checked)t=t.replace(/[\u064B-\u065F\u0670]/g,"");
+  if($("clNum").checked)t=t.replace(/[0-9]/g,d=>"٠١٢٣٤٥٦٧٨٩"[+d]);
+  if($("clPunc").checked){
+    t=t.replace(/\?/g,"؟").replace(/;/g,"؛").replace(/,/g,"،");
+    t=t.replace(/\s+([،؛؟!.:])/g,"$1");
+    t=t.replace(/([،؛؟!.:])(?=[^\s\d])/g,"$1 ");
+    t=t.replace(/([!؟.])\1+/g,"$1");
+  }
+  if($("clSp").checked)t=t.replace(/[ \t]+/g," ").replace(/ ?\n ?/g,"\n").replace(/\n{3,}/g,"\n\n").trim();
+  $("clOut").value=t;
+  toast("نظّفته ✨");
+};
+$("clCopy").onclick=()=>{if($("clOut").value)copy($("clOut").value,"انتسخ النص النظيف")};
+
+/* ================= عدّاد ================= */
+const PLATS=[["منشور X",280],["بايو X",160],["بايو انستغرام",150],["كابشن انستغرام",2200],["تيك توك",2200],["بايو تيك توك",80],["سناب شات",80],["لينكدإن",3000],["بايو لينكدإن",220],["منشور فيسبوك",63206],["وصف يوتيوب",5000],["عنوان يوتيوب",100],["وصف ميتا SEO",160],["عنوان SEO",60],["بنترست وصف",500],["رسالة واتساب حالة",139]];
+function wUpd(){
+  const t=$("wTxt").value;
+  const ch=[...t].length;
+  $("wCh").textContent=ch.toLocaleString("ar-EG");
+  $("wChNs").textContent=[...t.replace(/\s/g,"")].length.toLocaleString("ar-EG");
+  $("wWd").textContent=(t.trim()?t.trim().split(/\s+/).length:0).toLocaleString("ar-EG");
+  $("wPlat").innerHTML=PLATS.map(([nm,lim])=>{
+    const p=Math.min(100,ch/lim*100);
+    return `<div class="w-row"><span class="wn">${nm}</span>
+      <span class="w-bar"><i class="${ch>lim?"over":""}" style="width:${p}%"></i></span>
+      <span class="wv">${ch} / ${lim}</span></div>`;
+  }).join("");
+}
+$("wTxt").oninput=wUpd;wUpd();
+
+/* ================= مقاسات ================= */
+const SIZES=[["انستغرام بوست",1080,1350],["انستغرام مربع",1080,1080],["انستغرام لاندسكيب",1080,566],["ستوري - ريلز",1080,1920],["يوتيوب ثمبنيل",1280,720],["يوتيوب بانر",2560,1440],["يوتيوب شورتس",1080,1920],["منشور X",1600,900],["هيدر X",1500,500],["تيك توك",1080,1920],["سناب شات",1080,1920],["بنترست بِن",1000,1500],["لينكدإن بوست",1200,627],["بنر لينكدإن",1584,396],["غلاف فيسبوك",1640,856],["منشور فيسبوك",1200,630],["واتساب ستيكر",512,512],["صورة بروفايل",800,800],["إعلان جوجل مربع",1200,1200],["بنر إعلان عريض",1200,628]];
+let mImg=null,mOn=SIZES.map(()=>true);
+bindDrop($("mDrop"),$("mFile"),f=>{if(f[0])mLoad(f[0])});
+$("mFile").onchange=e=>{if(e.target.files[0])mLoad(e.target.files[0])};
+function mLoad(f){
+  const img=new Image();
+  img.onload=()=>{mImg=img;$("mWork").style.display="block";mBuild();mRenderAll();toast("حمّلت — "+img.width+"×"+img.height)};
+  img.src=URL.createObjectURL(f);
+}
+function mBuild(){
+  $("mSizes").innerHTML="";
+  SIZES.forEach(([nm,w,h],i)=>{
+    const card=document.createElement("div");
+    card.className="m-card"+(mOn[i]?"":" off");
+    card.innerHTML=`<div class="m-top"><input type="checkbox" ${mOn[i]?"checked":""}><b>${nm}</b><span>${w}×${h}</span></div>
+      <canvas width="${w}" height="${h}"></canvas>
+      <button class="m-dl">تنزيل PNG</button>`;
+    card.querySelector("input").onchange=e=>{mOn[i]=e.target.checked;card.classList.toggle("off",!mOn[i])};
+    card.querySelector(".m-dl").onclick=()=>{
+      card.querySelector("canvas").toBlob(b=>dlBlob(nm.replace(/\s/g,"-")+"-"+w+"x"+h+".png",b),"image/png");
+    };
+    $("mSizes").appendChild(card);
+  });
+}
+function mCrop(ctx,tw,th){
+  const iw=mImg.width,ih=mImg.height;
+  const sc=Math.max(tw/iw,th/ih);
+  const sw=tw/sc,sh=th/sc;
+  const fx=+$("mFx").value/100,fy=+$("mFy").value/100;
+  const sx=Math.min(Math.max((iw-sw)*fx,0),iw-sw);
+  const sy=Math.min(Math.max((ih-sh)*fy,0),ih-sh);
+  ctx.drawImage(mImg,sx,sy,sw,sh,0,0,tw,th);
+}
+function mRenderAll(){
+  if(!mImg)return;
+  document.querySelectorAll("#mSizes canvas").forEach(cv=>mCrop(cv.getContext("2d"),cv.width,cv.height));
+}
+$("mFx").oninput=mRenderAll;$("mFy").oninput=mRenderAll;
+$("mZip").onclick=async()=>{
+  if(!mImg)return;
+  if(typeof JSZip==="undefined")return toast("الـ ZIP غير متاح — نزّل كل مقاس لحاله");
+  const zip=new JSZip();
+  const cards=document.querySelectorAll("#mSizes .m-card");
+  for(let i=0;i<SIZES.length;i++){
+    if(!mOn[i])continue;
+    const blob=await new Promise(r=>cards[i].querySelector("canvas").toBlob(r,"image/png"));
+    zip.file(SIZES[i][0].replace(/\s/g,"-")+"-"+SIZES[i][1]+"x"+SIZES[i][2]+".png",blob);
+  }
+  dlBlob("maqasat.zip",await zip.generateAsync({type:"blob"}));toast("نزّلت الـ ZIP");
+};
+
+/* ================= ضاغط ================= */
+let cFiles=[],cFmt="webp";
+bindDrop($("cDrop"),$("cFile"),f=>cAdd(f));
+$("cFile").onchange=e=>cAdd([...e.target.files]);
+$("cQ").oninput=e=>{$("cQv").textContent=e.target.value;cProcessAll()};
+document.querySelectorAll("#cCtrl .seg button").forEach(b=>{
+  b.onclick=()=>{cFmt=b.dataset.f;document.querySelectorAll("#cCtrl .seg button").forEach(x=>x.classList.toggle("on",x===b));cProcessAll()};
+});
+function cAdd(files){
+  files.filter(f=>f.type&&f.type.startsWith("image/")).forEach(f=>cFiles.push({f}));
+  if(!cFiles.length)return;
+  $("cCtrl").style.display="flex";$("cTable").style.display="table";
+  cProcessAll();
+}
+async function cProcessAll(){
+  $("cBody").innerHTML="";
+  const q=+$("cQ").value/100;
+  for(const item of cFiles){
+    const img=new Image();
+    await new Promise(r=>{img.onload=r;img.src=URL.createObjectURL(item.f)});
+    const cv=document.createElement("canvas");cv.width=img.width;cv.height=img.height;
+    cv.getContext("2d").drawImage(img,0,0);
+    const blob=await new Promise(r=>cv.toBlob(r,"image/"+cFmt,q));
+    item.blob=blob;
+    item.outName=item.f.name.replace(/\.[^.]+$/,"")+"."+(cFmt==="webp"?"webp":"jpg");
+    const save=Math.max(0,Math.round((1-blob.size/item.f.size)*100));
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${item.f.name}</td><td>${(item.f.size/1024).toFixed(0)} KB</td><td>${(blob.size/1024).toFixed(0)} KB</td><td class="c-save">−${save}٪</td><td><button class="btn sm">تنزيل</button></td>`;
+    tr.querySelector("button").onclick=()=>dlBlob(item.outName,blob);
+    $("cBody").appendChild(tr);
+  }
+}
+$("cZip").onclick=async()=>{
+  if(!cFiles.length)return;
+  if(typeof JSZip==="undefined")return toast("الـ ZIP غير متاح — نزّل كل ملف لحاله");
+  const zip=new JSZip();
+  cFiles.forEach(it=>{if(it.blob)zip.file(it.outName,it.blob)});
+  dlBlob("compressed.zip",await zip.generateAsync({type:"blob"}));toast("نزّلت الـ ZIP");
+};
+
+/* ================= QR ================= */
+let qLogoImg=null, qBody="square", qEyeFrame="square", qEyePip="square";
+function qSeg(wrap,setter){
+  document.querySelectorAll("#"+wrap+" button").forEach(b=>{
+    b.onclick=()=>{setter(b);document.querySelectorAll("#"+wrap+" button").forEach(x=>x.classList.toggle("on",x===b));qUpd()};
+  });
+}
+qSeg("qBody",b=>qBody=b.dataset.sh);
+qSeg("qEyeFrame",b=>qEyeFrame=b.dataset.ef);
+qSeg("qEyePip",b=>qEyePip=b.dataset.ep);
+$("qEyeOn").onchange=e=>{$("qEyeColor").disabled=!e.target.checked;qUpd()};
+$("qEyeColor").oninput=qUpd;
+
+$("qLogoBtn").onclick=()=>$("qLogo").click();
+$("qLogo").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{const im=new Image();im.onload=()=>{qLogoImg=im;$("qLogoClr").style.display="";$("qLogoSizeRow").style.display="";qUpd()};im.src=ev.target.result};
+  r.readAsDataURL(f);
+};
+$("qLogoClr").onclick=()=>{qLogoImg=null;$("qLogo").value="";$("qLogoClr").style.display="none";$("qLogoSizeRow").style.display="none";qUpd()};
+
+/* هل الوحدة (row,col) جزء من إحدى عيون الزوايا الثلاث؟ */
+function eyeZone(row,col,count){
+  const inTL = row<7 && col<7;
+  const inTR = row<7 && col>=count-7;
+  const inBL = row>=count-7 && col<7;
+  if(!(inTL||inTR||inBL))return null;
+  // إحداثيات أعلى-يسار كل عين
+  let r0=0,c0=0;
+  if(inTR)c0=count-7;
+  if(inBL)r0=count-7;
+  return {r0,c0,lr:row-r0,lc:col-c0}; // lr,lc = موقع محلي داخل 0..6
+}
+
+/* رسم شكل وحدة على الكانفس */
+function drawCell(x,shape,cx,cy,s){
+  const r=s/2, mx=cx+r, my=cy+r;
+  switch(shape){
+    case "dots": x.beginPath();x.arc(mx,my,r*0.92,0,7);x.fill();break;
+    case "rounded": roundRect(x,cx,cy,s,s,s*0.32);x.fill();break;
+    case "diamond": x.beginPath();x.moveTo(mx,cy);x.lineTo(cx+s,my);x.lineTo(mx,cy+s);x.lineTo(cx,my);x.closePath();x.fill();break;
+    case "plus": {const t=s*0.34;x.fillRect(mx-t/2,cy,t,s);x.fillRect(cx,my-t/2,s,t);break;}
+    case "hex": {x.beginPath();for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);const px=mx+r*0.96*Math.cos(a),py=my+r*0.96*Math.sin(a);i?x.lineTo(px,py):x.moveTo(px,py);}x.closePath();x.fill();break;}
+    case "star": {x.beginPath();for(let i=0;i<10;i++){const rad=i%2?r*0.42:r*0.98;const a=Math.PI/180*(36*i-90);const px=mx+rad*Math.cos(a),py=my+rad*Math.sin(a);i?x.lineTo(px,py):x.moveTo(px,py);}x.closePath();x.fill();break;}
+    case "heart": {const w=s*0.96,h=s*0.96,ox=mx,oy=cy+s*0.04;x.beginPath();x.moveTo(ox,oy+h*0.28);x.bezierCurveTo(ox+w*0.18,oy-h*0.12,ox+w*0.55,oy+h*0.06,ox,oy+h*0.62);x.bezierCurveTo(ox-w*0.55,oy+h*0.06,ox-w*0.18,oy-h*0.12,ox,oy+h*0.28);x.closePath();x.fill();break;}
+    default: x.fillRect(cx,cy,s+0.6,s+0.6);
+  }
+}
+/* رسم عين كاملة: إطار + قلب، بشكل ولون مخصص */
+function drawEye(x,r0,c0,pad,cell,frameShape,pipShape,color){
+  x.save();x.fillStyle=color;
+  const fx=pad+c0*cell, fy=pad+r0*cell, fs=cell*7;
+  // الإطار: 7×7 خارجي مفرّغ من 5×5 — نرسمه كحلقة
+  const drawRing=(shape)=>{
+    if(shape==="circle"){
+      x.beginPath();x.arc(fx+fs/2,fy+fs/2,fs/2,0,7);
+      x.arc(fx+fs/2,fy+fs/2,fs/2-cell,0,7,true);x.fill("evenodd");
+    }else if(shape==="rounded"){
+      roundRect(x,fx,fy,fs,fs,fs*0.28);
+      roundRect(x,fx+cell,fy+cell,fs-2*cell,fs-2*cell,(fs-2*cell)*0.22);x.fill("evenodd");
+    }else if(shape==="leaf"){
+      // ورقة: زاويتان مدوّرتان متقابلتان
+      const rr=fs*0.5;
+      x.beginPath();
+      x.moveTo(fx,fy+rr);x.arcTo(fx,fy,fx+rr,fy,rr);x.lineTo(fx+fs,fy);x.lineTo(fx+fs,fy+fs-rr);x.arcTo(fx+fs,fy+fs,fx+fs-rr,fy+fs,rr);x.lineTo(fx,fy+fs);x.closePath();
+      const ix=fx+cell,iy=fy+cell,is=fs-2*cell,ir=is*0.5;
+      x.moveTo(ix,iy+ir);x.arcTo(ix,iy,ix+ir,iy,ir);x.lineTo(ix+is,iy);x.lineTo(ix+is,iy+is-ir);x.arcTo(ix+is,iy+is,ix+is-ir,iy+is,ir);x.lineTo(ix,iy+is);x.closePath();
+      x.fill("evenodd");
+    }else{
+      x.fillRect(fx,fy,fs,fs);
+      x.clearRect(fx+cell,fy+cell,fs-2*cell,fs-2*cell);
+      // إعادة طلاء الفراغ بلون الأرضية بدل clear (للشفافية الصحيحة)
+    }
+  };
+  if(frameShape==="square"){
+    // حلقة مربّعة عبر مسارين
+    x.beginPath();x.rect(fx,fy,fs,fs);x.rect(fx+cell,fy+cell,fs-2*cell,fs-2*cell);x.fill("evenodd");
+  }else drawRing(frameShape);
+  // القلب: 3×3 بالمنتصف (محليًا من 2..4)
+  const px=pad+(c0+2)*cell, py=pad+(r0+2)*cell, ps=cell*3;
+  if(pipShape==="circle"){x.beginPath();x.arc(px+ps/2,py+ps/2,ps/2,0,7);x.fill();}
+  else if(pipShape==="rounded"){roundRect(x,px,py,ps,ps,ps*0.3);x.fill();}
+  else if(pipShape==="diamond"){x.beginPath();x.moveTo(px+ps/2,py);x.lineTo(px+ps,py+ps/2);x.lineTo(px+ps/2,py+ps);x.lineTo(px,py+ps/2);x.closePath();x.fill();}
+  else x.fillRect(px,py,ps,ps);
+  x.restore();
+}
+
+function qUpd(){
+  if(typeof QRCode==="undefined"){$("qrBox").textContent="مكتبة QR تحتاج إنترنت أول مرة";return}
+  const text=$("qTxt").value||"https://ahmads.art";
+  const dark=$("qDark").value, light=$("qLight").value;
+  const size=+$("qSize").value, pad=+$("qPad").value;
+  const eyeColor=$("qEyeOn").checked?$("qEyeColor").value:dark;
+  // مع لوغو أو أشكال فنية نرفع التصحيح لـH ليبقى قابلًا للمسح
+  const fancy = qBody!=="square"||qEyeFrame!=="square"||qEyePip!=="square";
+  const level=(qLogoImg||fancy)?QRCode.CorrectLevel.H:QRCode.CorrectLevel.M;
+
+  const tmp=document.createElement("div");
+  const qr=new QRCode(tmp,{text,width:size,height:size,colorDark:dark,colorLight:light,correctLevel:level});
+  const model=qr._oQRCode;
+  if(!model){$("qrBox").textContent="تعذّر توليد الرمز — جرّب نصًّا أقصر";return}
+  const count=model.getModuleCount();
+  const cell=size/count;
+
+  const cv=$("qrCv");
+  const full=size+pad*2;
+  cv.width=full;cv.height=full;
+  const x=cv.getContext("2d");
+  x.fillStyle=light;x.fillRect(0,0,full,full);
+
+  // 1) الجسم — كل الوحدات ما عدا العيون
+  x.fillStyle=dark;
+  for(let row=0;row<count;row++){
+    for(let col=0;col<count;col++){
+      if(eyeZone(row,col,count))continue;       // العيون تُرسم لاحقًا
+      if(!model.isDark(row,col))continue;
+      drawCell(x,qBody,pad+col*cell,pad+row*cell,cell);
+    }
+  }
+  // 2) العيون الثلاث بشكلها ولونها
+  drawEye(x,0,0,pad,cell,qEyeFrame,qEyePip,eyeColor);
+  drawEye(x,0,count-7,pad,cell,qEyeFrame,qEyePip,eyeColor);
+  drawEye(x,count-7,0,pad,cell,qEyeFrame,qEyePip,eyeColor);
+
+  // 3) اللوغو
+  if(qLogoImg){
+    const lp=(+$("qLogoSize").value)/100;
+    const lw=full*lp, lh=full*lp;
+    const lx=(full-lw)/2, ly=(full-lh)/2;
+    const padL=lw*0.14;
+    x.fillStyle=light;
+    roundRect(x,lx-padL,ly-padL,lw+padL*2,lh+padL*2,(lw+padL*2)*0.18);x.fill();
+    x.drawImage(qLogoImg,lx,ly,lw,lh);
+  }
+
+  $("qrBox").innerHTML="";
+  $("qrBox").style.background=light;
+  const out=new Image();out.src=cv.toDataURL("image/png");out.style.width=size+"px";out.style.borderRadius="6px";
+  $("qrBox").appendChild(out);
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+["qTxt","qDark","qLight","qSize","qPad","qLogoSize"].forEach(id=>$(id).oninput=qUpd);
+qUpd();
+$("qDl").onclick=()=>{dlURI("qr.png",$("qrCv").toDataURL("image/png"));toast("نزّلت الرمز PNG")};
+$("qDlSvg").onclick=()=>{
+  const text=$("qTxt").value||"https://ahmads.art";
+  const dark=$("qDark").value, light=$("qLight").value, pad=+$("qPad").value;
+  const eyeColor=$("qEyeOn").checked?$("qEyeColor").value:dark;
+  const fancy = qBody!=="square"||qEyeFrame!=="square"||qEyePip!=="square";
+  const level=(qLogoImg||fancy)?QRCode.CorrectLevel.H:QRCode.CorrectLevel.M;
+  const tmp=document.createElement("div");
+  const qr=new QRCode(tmp,{text,width:256,height:256,colorDark:dark,colorLight:light,correctLevel:level});
+  const model=qr._oQRCode,count=model.getModuleCount(),cell=10,p=pad/26*10,full=count*cell+p*2;
+  const cellSVG=(shape,cx,cy,s,col)=>{
+    const r=s/2,mx=cx+r,my=cy+r;
+    if(shape==="dots")return `<circle cx="${mx}" cy="${my}" r="${r*0.92}" fill="${col}"/>`;
+    if(shape==="rounded")return `<rect x="${cx}" y="${cy}" width="${s}" height="${s}" rx="${s*0.32}" fill="${col}"/>`;
+    if(shape==="diamond")return `<polygon points="${mx},${cy} ${cx+s},${my} ${mx},${cy+s} ${cx},${my}" fill="${col}"/>`;
+    if(shape==="plus"){const t=s*0.34;return `<rect x="${mx-t/2}" y="${cy}" width="${t}" height="${s}" fill="${col}"/><rect x="${cx}" y="${my-t/2}" width="${s}" height="${t}" fill="${col}"/>`;}
+    if(shape==="hex"){let pts="";for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);pts+=(mx+r*0.96*Math.cos(a)).toFixed(1)+","+(my+r*0.96*Math.sin(a)).toFixed(1)+" ";}return `<polygon points="${pts}" fill="${col}"/>`;}
+    if(shape==="star"){let pts="";for(let i=0;i<10;i++){const rad=i%2?r*0.42:r*0.98;const a=Math.PI/180*(36*i-90);pts+=(mx+rad*Math.cos(a)).toFixed(1)+","+(my+rad*Math.sin(a)).toFixed(1)+" ";}return `<polygon points="${pts}" fill="${col}"/>`;}
+    if(shape==="heart"){const w=s*0.96,h=s*0.96,ox=mx,oy=cy+s*0.04;return `<path d="M${ox} ${oy+h*0.28} C ${ox+w*0.18} ${oy-h*0.12} ${ox+w*0.55} ${oy+h*0.06} ${ox} ${oy+h*0.62} C ${ox-w*0.55} ${oy+h*0.06} ${ox-w*0.18} ${oy-h*0.12} ${ox} ${oy+h*0.28} Z" fill="${col}"/>`;}
+    return `<rect x="${cx}" y="${cy}" width="${s}" height="${s}" fill="${col}"/>`;
+  };
+  let shapes="";
+  for(let row=0;row<count;row++)for(let col=0;col<count;col++){
+    if(eyeZone(row,col,count))continue;
+    if(!model.isDark(row,col))continue;
+    shapes+=cellSVG(qBody,p+col*cell,p+row*cell,cell);
+  }
+  // العيون كمربعات حلقية بسيطة بالـSVG (مع لونها)
+  const eyeSVG=(r0,c0)=>{
+    const fx=p+c0*cell,fy=p+r0*cell,fs=cell*7,ix=fx+cell,iy=fy+cell,is=fs-2*cell;
+    const px=p+(c0+2)*cell,py=p+(r0+2)*cell,ps=cell*3;
+    let frame,pip;
+    if(qEyeFrame==="circle"){frame=`<circle cx="${fx+fs/2}" cy="${fy+fs/2}" r="${fs/2}" fill="${eyeColor}"/><circle cx="${fx+fs/2}" cy="${fy+fs/2}" r="${fs/2-cell}" fill="${light}"/>`;}
+    else if(qEyeFrame==="rounded"){frame=`<rect x="${fx}" y="${fy}" width="${fs}" height="${fs}" rx="${fs*0.28}" fill="${eyeColor}"/><rect x="${ix}" y="${iy}" width="${is}" height="${is}" rx="${is*0.22}" fill="${light}"/>`;}
+    else if(qEyeFrame==="leaf"){const rr=fs*0.5,ir=is*0.5;frame=`<path d="M${fx} ${fy+rr} Q ${fx} ${fy} ${fx+rr} ${fy} L ${fx+fs} ${fy} L ${fx+fs} ${fy+fs-rr} Q ${fx+fs} ${fy+fs} ${fx+fs-rr} ${fy+fs} L ${fx} ${fy+fs} Z" fill="${eyeColor}"/><path d="M${ix} ${iy+ir} Q ${ix} ${iy} ${ix+ir} ${iy} L ${ix+is} ${iy} L ${ix+is} ${iy+is-ir} Q ${ix+is} ${iy+is} ${ix+is-ir} ${iy+is} L ${ix} ${iy+is} Z" fill="${light}"/>`;}
+    else{frame=`<rect x="${fx}" y="${fy}" width="${fs}" height="${fs}" fill="${eyeColor}"/><rect x="${ix}" y="${iy}" width="${is}" height="${is}" fill="${light}"/>`;}
+    if(qEyePip==="circle")pip=`<circle cx="${px+ps/2}" cy="${py+ps/2}" r="${ps/2}" fill="${eyeColor}"/>`;
+    else if(qEyePip==="rounded")pip=`<rect x="${px}" y="${py}" width="${ps}" height="${ps}" rx="${ps*0.3}" fill="${eyeColor}"/>`;
+    else if(qEyePip==="diamond")pip=`<polygon points="${px+ps/2},${py} ${px+ps},${py+ps/2} ${px+ps/2},${py+ps} ${px},${py+ps/2}" fill="${eyeColor}"/>`;
+    else pip=`<rect x="${px}" y="${py}" width="${ps}" height="${ps}" fill="${eyeColor}"/>`;
+    return frame+pip;
+  };
+  shapes+=eyeSVG(0,0)+eyeSVG(0,count-7)+eyeSVG(count-7,0);
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${full}" height="${full}" viewBox="0 0 ${full} ${full}"><rect width="${full}" height="${full}" fill="${light}"/>${shapes}</svg>`;
+  dlURI("qr.svg","data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg));
+  toast(qLogoImg?"نزّلت SVG (أضِف اللوغو بالإليستريتور)":"نزّلت الرمز SVG");
+};
+
+/* ================= تسعيرة ================= */
+function pCalc(){
+  const h=+$("pH").value||0,r=+$("pR").value||0,e=+$("pE").value||0,
+        rev=+$("pRev").value||0,pain=+$("pPain").value||1;
+  const cost=h*r+e;
+  const fair=Math.round((h*r*pain)*(1+Math.max(0,rev-2)*0.15)+e);
+  const fmt=n=>n.toLocaleString("ar-EG")+" ر.س";
+  $("pMin").textContent=fmt(Math.round(cost));
+  $("pFair").textContent=fmt(fair);
+  $("pComfy").textContent=fmt(Math.round(fair*1.3));
+}
+["pH","pR","pE","pRev","pPain"].forEach(id=>$(id).oninput=pCalc);
+pCalc();
+
+/* ================= سكربتات ================= */
+const JSX_AI=`// ===== مُصدّر الهوية — Illustrator =====
+// من عُدّة ahmads.art — v1
+// يصدّر كل Artboard إلى PNG بدقتين (x1 و x2)
+// التشغيل: File > Scripts > Other Script — جرّبه على نسخة أولًا
+#target illustrator
+(function(){
+  if(app.documents.length===0){alert("افتح ملفًا أولًا");return}
+  var doc=app.activeDocument;
+  var folder=Folder.selectDialog("اختر مجلد التصدير");
+  if(!folder)return;
+  var scales=[100,200];
+  for(var i=0;i<doc.artboards.length;i++){
+    doc.artboards.setActiveArtboardIndex(i);
+    var abName=doc.artboards[i].name.replace(/[\\\\\\/:*?"<>|]/g,"-");
+    for(var s=0;s<scales.length;s++){
+      var opts=new ExportOptionsPNG24();
+      opts.artBoardClipping=true;
+      opts.transparency=true;
+      opts.horizontalScale=scales[s];
+      opts.verticalScale=scales[s];
+      var suffix=(scales[s]===100)?"":"@"+(scales[s]/100)+"x";
+      doc.exportFile(new File(folder.fsName+"/"+abName+suffix+".png"),ExportType.PNG24,opts);
+    }
+  }
+  alert("تم! صدّرت "+doc.artboards.length+" آرتبورد بدقتين");
+})();`;
+const JSX_PS=`// ===== مقاسات السوشال — Photoshop =====
+// من عُدّة ahmads.art — v1
+// يولّد من الملف المفتوح 7 مقاسات سوشال PNG
+// التشغيل: File > Scripts > Browse — جرّبه على نسخة أولًا
+#target photoshop
+(function(){
+  if(app.documents.length===0){alert("افتح ملفًا أولًا");return}
+  var src=app.activeDocument;
+  var folder=Folder.selectDialog("اختر مجلد الحفظ");
+  if(!folder)return;
+  var sizes=[["Instagram-Post",1080,1350],["Instagram-Square",1080,1080],["Story-Reels",1080,1920],["YouTube-Thumb",1280,720],["X-Post",1600,900],["LinkedIn-Post",1200,627],["Facebook-Cover",1640,856]];
+  app.preferences.rulerUnits=Units.PIXELS;
+  for(var i=0;i<sizes.length;i++){
+    var nm=sizes[i][0],tw=sizes[i][1],th=sizes[i][2];
+    var dup=src.duplicate(nm,true);
+    var sc=Math.max(tw/dup.width.as("px"),th/dup.height.as("px"))*100;
+    dup.resizeImage(UnitValue(dup.width.as("px")*sc/100,"px"),null,null,ResampleMethod.BICUBIC);
+    dup.resizeCanvas(UnitValue(tw,"px"),UnitValue(th,"px"),AnchorPosition.MIDDLECENTER);
+    dup.saveAs(new File(folder.fsName+"/"+nm+"-"+tw+"x"+th+".png"),new PNGSaveOptions(),true,Extension.LOWERCASE);
+    dup.close(SaveOptions.DONOTSAVECHANGES);
+  }
+  alert("تم! 7 مقاسات جاهزة بالمجلد");
+})();`;
+const JSX_PS_RENAME=`// ===== ترقيم الطبقات تلقائيًا — Photoshop =====
+// من عُدّة ahmads.art — v1
+// يعيد تسمية كل الطبقات بترتيب نظيف: 01، 02، 03…
+// التشغيل: File > Scripts > Browse — جرّبه على نسخة أولًا
+#target photoshop
+(function(){
+  if(app.documents.length===0){alert("افتح ملفًا أولًا");return}
+  var doc=app.activeDocument;
+  var prefix=prompt("بادئة الاسم (اختياري):","Layer");
+  if(prefix===null)return;
+  var n=doc.layers.length,pad=String(n).length;
+  for(var i=0;i<n;i++){
+    var num=String(i+1);while(num.length<pad)num="0"+num;
+    doc.layers[i].name=prefix?(prefix+"-"+num):num;
+  }
+  alert("تم! رقّمت "+n+" طبقة");
+})();`;
+const JSX_AI_COLORWAY=`// ===== مولّد البدائل اللونية — Illustrator =====
+// من عُدّة ahmads.art — v1
+// ينسخ التصميم 4 مرات ويغيّر تدرّج الألوان لكل نسخة
+// مفيد لعرض الهوية بألوان مختلفة على العميل
+// التشغيل: File > Scripts > Other Script — جرّبه على نسخة أولًا
+#target illustrator
+(function(){
+  if(app.documents.length===0){alert("افتح ملفًا أولًا");return}
+  var doc=app.activeDocument;
+  var shifts=[0,60,150,240];
+  var sel=doc.selection;
+  if(!sel||sel.length===0){alert("اختر عناصر التصميم أولًا");return}
+  alert("ملاحظة: حرّك النسخ يدويًا بعد التوليد. سيغيّر الصبغة (Hue) لكل نسخة.");
+  for(var s=1;s<shifts.length;s++){
+    for(var i=0;i<sel.length;i++){
+      var dup=sel[i].duplicate();
+      try{
+        if(dup.fillColor&&dup.fillColor.red!==undefined){
+          var c=dup.fillColor;
+          dup.fillColor.red=(c.red+shifts[s])%256;
+          dup.fillColor.green=(c.green+shifts[s]/2)%256;
+        }
+      }catch(e){}
+      dup.translate(s*420,0);
+    }
+  }
+  alert("تم! ولّدت 3 بدائل لونية بجانب الأصل");
+})();`;
+function dlJsx(w){
+  var map={
+    ai:["ahmads-art-identity-exporter.jsx",JSX_AI],
+    ps:["ahmads-art-social-sizes.jsx",JSX_PS],
+    psRename:["ahmads-art-layer-rename.jsx",JSX_PS_RENAME],
+    aiColor:["ahmads-art-colorways.jsx",JSX_AI_COLORWAY]
+  };
+  var f=map[w]||map.ai;
+  dlBlob(f[0],new Blob([f[1]],{type:"text/plain"}));
+  toast("نزّل السكربت — شغّله من File ‹ Scripts");
+}
+
+/* ================= تشغيل أولي ================= */
+applyTheme();
+renderWS();
+renderRails();
+if(location.hash)pushRecent(location.hash.replace("#",""));
+</script>
+
+<!-- ===== Schema.org — أداة ويب مجانية ===== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "عُدّة — أدوات المصمم العربي",
+  "url": "https://ahmads.art/odda/",
+  "image": "https://ahmads.art/odda/share-cover.jpg",
+  "description": "صندوق ١٥ أداة للمصمم العربي: ألوان تراثية، كوفي مربّع، مقاسات سوشال، ضغط صور، أنماط هندسية، نص شكلي عربي وأكثر — كله محلياً بالمتصفح.",
+  "applicationCategory": "DesignApplication",
+  "operatingSystem": "Web Browser",
+  "inLanguage": "ar",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "SAR" },
+  "author": {
+    "@type": "Person",
+    "name": "Ahmad Sattof",
+    "alternateName": "أحمد صطوف",
+    "url": "https://ahmads.art/"
+  }
+}
+</script>
+</body>
+</html>
