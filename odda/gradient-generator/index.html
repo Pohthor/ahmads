@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>عُدّة المصمم — ١٥ أداة أساسية لكل مصمم | أحمد صطوف</title>
-<meta name="description" content="مجموعة أدوات أساسية يحتاجها كل مصمم جرافيك ومصمم هوية بصرية، مختارة من تجربة عملية — ألوان تراثية، كوفي مربّع، مقاسات سوشال، ضغط صور وأكثر، كله محليًا بمتصفحك.">
-<meta name="keywords" content="أدوات المصمم العربي, ألوان تراثية, كوفي مربع, مقاسات سوشال ميديا, ضغط صور, نص شكلي عربي, أدوات تصميم مجانية, ahmads.art">
+<title>تَدرّج — مولّد تدرّجات لونية CSS وخلفيات 4K | عُدّة</title>
+<meta name="description" content="ابنِ تدرّجات لونية من ألوانك أو من التراث العربي، وانسخها CSS أو نزّلها خلفية 4K جاهزة.">
+<meta name="keywords" content="مولد تدرجات لونية, gradient css, خلفيات, عُدّة">
 <meta name="author" content="Ahmad Sattof — أحمد صطوف">
 <meta name="robots" content="index, follow, max-image-preview:large">
-<link rel="canonical" href="https://ahmads.art/odda/">
+<link rel="canonical" href="https://ahmads.art/odda/gradient-generator/">
 
 <!-- ===== Open Graph (واتساب / فيسبوك / لينكدإن) ===== -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ahmad Sattof — أحمد صطوف">
-<meta property="og:title" content="عُدّة — ١٥ أداة مجانية للمصمم العربي">
-<meta property="og:description" content="ألوان تراثية، كوفي مربّع، مقاسات سوشال، ضغط صور، نص شكلي عربي وأكثر — كله بمتصفحك ومجاناً.">
-<meta property="og:url" content="https://ahmads.art/odda/">
+<meta property="og:title" content="تَدرّج — مولّد تدرّجات لونية CSS وخلفيات 4K | عُدّة">
+<meta property="og:description" content="ابنِ تدرّجات لونية من ألوانك أو من التراث العربي، وانسخها CSS أو نزّلها خلفية 4K جاهزة.">
+<meta property="og:url" content="https://ahmads.art/odda/gradient-generator/">
 <meta property="og:locale" content="ar_SA">
 <!-- ارفع صورة مشاركة 1200×630 باسم share-cover.jpg داخل مجلد odda -->
 <meta property="og:image" content="https://ahmads.art/odda/share-cover.jpg">
@@ -25,7 +25,7 @@
 
 <!-- ===== Twitter / X Card ===== -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="عُدّة — ١٥ أداة مجانية للمصمم العربي">
+<meta name="twitter:title" content="تَدرّج — مولّد تدرّجات لونية CSS وخلفيات 4K | عُدّة">
 <meta name="twitter:description" content="ألوان تراثية، كوفي مربّع، مقاسات سوشال، ضغط صور وأكثر — كله بمتصفحك.">
 <meta name="twitter:image" content="https://ahmads.art/odda/share-cover.jpg">
 
@@ -386,12 +386,13 @@ footer a{color:var(--gold);text-decoration:none}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<style>.thead h1{font-family:"Amiri",serif;font-size:32px;font-weight:700;line-height:1.2;margin:0}.thead h1 i{font-style:normal;color:var(--gold)}</style>
 </head>
 <body>
 
 <header>
   <div>
-    <h1 class="brand" onclick="goTool('home')">عُدّة<span>.</span></h1>
+    <div class="brand" onclick="goTool('home')">عُدّة<span>.</span></div>
     <p class="hdr-tag">صندوق عدّة المصمم العربي — ahmads.art</p>
   </div>
 </header>
@@ -400,7 +401,7 @@ footer a{color:var(--gold);text-decoration:none}
   <div class="nav-in">
     <div class="nav-scroll" id="nav"></div>
     <div class="nav-acts">
-      <a class="iconbtn udda-home" href="../index.html" title="الموقع الرئيسي — ahmads.art" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;width:auto;padding:0 12px;font-size:13px;white-space:nowrap">← ahmads.art</a>
+      <a class="iconbtn udda-home" href="../../index.html" title="الموقع الرئيسي — ahmads.art" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;width:auto;padding:0 12px;font-size:13px;white-space:nowrap">← ahmads.art</a>
       <button class="iconbtn" id="cmdBtn" title="بحث سريع (Ctrl+K)">⌕</button>
       <button class="iconbtn" id="themeBtn" title="فاتح / داكن">☾</button>
     </div>
@@ -459,7 +460,7 @@ footer a{color:var(--gold);text-decoration:none}
 
 <!-- ============ تدرّج ============ -->
 <section class="tool" id="t-grad">
-  <div class="thead"><div class="tic">🌅</div><div><h2>تَدرّج<i>.</i></h2><p>ابنِ تدرّجات من الألوان التراثية أو ألوانك، وانسخها CSS أو نزّلها خلفية 4K.</p></div></div>
+  <div class="thead"><div class="tic">🌅</div><div><h1>تَدرّج — مولّد التدرّجات اللونية</h1><p>ابنِ تدرّجات من الألوان التراثية أو ألوانك، وانسخها CSS أو نزّلها خلفية 4K.</p></div></div>
   <div class="g-prev" id="gPrev"></div>
   <div class="ws-strip" data-tool="grad"></div>
   <div class="panel">
@@ -761,22 +762,22 @@ footer a{color:var(--gold);text-decoration:none}
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>أرقام الصفحات Pro</h3>
       <p>ترقيم احترافي للـArtboards: شبكة ٩ مواضع، بادئة/لاحقة، خط ولون، ودعم الصفحات المتقابلة (spreads) مع معاينة.</p>
-      <a class="btn gold" href="scripts/page-numbers-pro.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/page-numbers-pro.jsx" download>تنزيل ‎.jsx</a>
     </div>
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>اسم وتاريخ الصفحات</h3>
       <p>يضيف اسم الملف وتاريخ الإنشاء ورقم الصفحة على كل Artboard — مثالي لبروفات العميل.</p>
-      <a class="btn gold" href="scripts/pages-date-name.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/pages-date-name.jsx" download>تنزيل ‎.jsx</a>
     </div>
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>تسمية الـArtboards بالمقاس</h3>
       <p>يعيد تسمية كل لوح رسم باسم أبعاده تلقائيًا (مثلاً 1080×1080) — تنظيم فوري لملفات السوشال.</p>
-      <a class="btn gold" href="scripts/rename-artboard-as-size.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/rename-artboard-as-size.jsx" download>تنزيل ‎.jsx</a>
     </div>
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>تسمية الـArtboards بالعنصر</h3>
       <p>يسمّي كل لوح رسم باسم أول عنصر مرئي عليه — يربط أسماء الألواح بمحتواها بضغطة.</p>
-      <a class="btn gold" href="scripts/rename-artboard-as-object.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/rename-artboard-as-object.jsx" download>تنزيل ‎.jsx</a>
     </div>
   </div>
 
@@ -785,12 +786,12 @@ footer a{color:var(--gold);text-decoration:none}
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>متوسّط الألوان</h3>
       <p>يحسب متوسّط ألوان العناصر المختارة (أو داخل التدرّجات) ويوحّدها بلون واحد — أداة Sergey Osokin الشهيرة.</p>
-      <a class="btn gold" href="scripts/average-colors.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/average-colors.jsx" download>تنزيل ‎.jsx</a>
     </div>
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>تفعيل قص قناع الشفافية</h3>
       <p>يفعّل خانة Clip لأقنعة الشفافية المختارة دفعة واحدة من لوحة Transparency.</p>
-      <a class="btn gold" href="scripts/opacity-mask-clip.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/opacity-mask-clip.jsx" download>تنزيل ‎.jsx</a>
     </div>
   </div>
 
@@ -799,17 +800,17 @@ footer a{color:var(--gold);text-decoration:none}
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>حفظ الكل PDF</h3>
       <p>يحفظ كل الملفات المفتوحة كـPDF في مجلد تختاره — تسليم دفعة بضغطة.</p>
-      <a class="btn gold" href="scripts/save-all-as-pdf.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/save-all-as-pdf.jsx" download>تنزيل ‎.jsx</a>
     </div>
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>حفظ الكل SVG</h3>
       <p>يصدّر كل الملفات المفتوحة كـSVG في مجلد واحد — للويب والأيقونات.</p>
-      <a class="btn gold" href="scripts/save-all-as-svg.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/save-all-as-svg.jsx" download>تنزيل ‎.jsx</a>
     </div>
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>تتبّع صور دفعة</h3>
       <p>يحوّل مجلد صور كامل (PNG/JPG…) إلى ملفات AI متجهة عبر Image Trace تلقائيًا.</p>
-      <a class="btn gold" href="scripts/batch-image-trace.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/batch-image-trace.jsx" download>تنزيل ‎.jsx</a>
     </div>
   </div>
 
@@ -818,37 +819,37 @@ footer a{color:var(--gold);text-decoration:none}
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>كتلة نصّية</h3>
       <p>يحوّل عدّة مربّعات نص نقطية إلى كتلة نصية مرتّبة بعرض وتباعد تحدّدهما — مع إبقاء النص قابلًا للتحرير.</p>
-      <a class="btn gold" href="scripts/text-block.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/text-block.jsx" download>تنزيل ‎.jsx</a>
     </div>
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>تكرار عند النقاط</h3>
       <p>يكرّر العنصر الأمامي عند كل نقطة إرساء مختارة — لتوزيع عنصر على مسار بدقة.</p>
-      <a class="btn gold" href="scripts/dup-at-anchors.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/dup-at-anchors.jsx" download>تنزيل ‎.jsx</a>
     </div>
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>جاذب نقطي</h3>
       <p>يدوّر ويُحجّم العناصر المختارة باتجاه نقطة هدف حسب بُعدها — تأثيرات بصرية بارامترية.</p>
-      <a class="btn gold" href="scripts/point-attractor.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/point-attractor.jsx" download>تنزيل ‎.jsx</a>
     </div>
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>اختيار النقاط بالنوع</h3>
       <p>يختار نقاط الإرساء حسب نوعها (حادّة، ناعمة، نهايات…) — تحكّم جراحي بالمسارات المعقّدة.</p>
-      <a class="btn gold" href="scripts/select-points-by-type.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/select-points-by-type.jsx" download>تنزيل ‎.jsx</a>
     </div>
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>وضع الرموز</h3>
       <p>يوزّع رموز (Symbols) على نقاط أو مسارات مختارة — لبناء أنماط ومشاهد بسرعة.</p>
-      <a class="btn gold" href="scripts/place-symbols.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/place-symbols.jsx" download>تنزيل ‎.jsx</a>
     </div>
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>تبديل رموز عشوائي</h3>
       <p>يستبدل العناصر المختارة برموز عشوائية من لوحة الرموز بنفس الحجم والموضع.</p>
-      <a class="btn gold" href="scripts/random-swap-symbols.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/random-swap-symbols.jsx" download>تنزيل ‎.jsx</a>
     </div>
     <div class="j-card">
       <div class="app">ILLUSTRATOR</div><h3>عيون عشوائية</h3>
       <p>يولّد أعينًا كرتونية عشوائية بألوان من لوحتك — أداة طريفة لشخصيات سريعة.</p>
-      <a class="btn gold" href="scripts/random-eyes.jsx" download>تنزيل ‎.jsx</a>
+      <a class="btn gold" href="../scripts/random-eyes.jsx" download>تنزيل ‎.jsx</a>
     </div>
   </div>
 
@@ -2112,76 +2113,11 @@ if(location.hash)pushRecent(location.hash.replace("#",""));
 </script>
 
 <!-- ===== Schema.org — أداة ويب مجانية ===== -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "عُدّة — أدوات المصمم العربي",
-  "url": "https://ahmads.art/odda/",
-  "image": "https://ahmads.art/odda/share-cover.jpg",
-  "description": "صندوق ١٥ أداة للمصمم العربي: ألوان تراثية، كوفي مربّع، مقاسات سوشال، ضغط صور، أنماط هندسية، نص شكلي عربي وأكثر — كله محلياً بالمتصفح.",
-  "applicationCategory": "DesignApplication",
-  "operatingSystem": "Web Browser",
-  "inLanguage": "ar",
-  "isAccessibleForFree": true,
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "SAR" },
-  "author": {
-    "@type": "Person",
-    "name": "Ahmad Sattof",
-    "alternateName": "أحمد صطوف",
-    "url": "https://ahmads.art/"
-  }
-}
-</script>
+
 
 <!-- ===== Schema.org — قائمة الأدوات الـ15 ===== -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  "name": "عُدّة — أدوات المصمم العربي",
-  "url": "https://ahmads.art/odda/",
-  "numberOfItems": 15,
-  "itemListElement": [
-    { "@type": "ListItem", "position": 1,  "name": "صِبغة — ألوان من التراث العربي" },
-    { "@type": "ListItem", "position": 2,  "name": "لَقّاط — استخراج ألوان من صورة" },
-    { "@type": "ListItem", "position": 3,  "name": "تَدرّج — مولّد التدرّجات اللونية" },
-    { "@type": "ListItem", "position": 4,  "name": "تَباين — فاحص تباين الألوان (WCAG)" },
-    { "@type": "ListItem", "position": 5,  "name": "نَمَط — مولّد الأنماط الهندسية العربية" },
-    { "@type": "ListItem", "position": 6,  "name": "بَنّاء — مولّد الكوفي المربّع" },
-    { "@type": "ListItem", "position": 7,  "name": "حُروف — معاينة الخطوط العربية" },
-    { "@type": "ListItem", "position": 8,  "name": "نَصّ شكلي — نص عربي وهمي لتعبئة التصاميم" },
-    { "@type": "ListItem", "position": 9,  "name": "مُنظِّف — تنظيف نصوص العملاء" },
-    { "@type": "ListItem", "position": 10, "name": "عَدّاد — حدود حروف المنصّات" },
-    { "@type": "ListItem", "position": 11, "name": "مَقاسات — مقاسات السوشال ميديا" },
-    { "@type": "ListItem", "position": 12, "name": "ضاغِط — ضغط الصور للويب" },
-    { "@type": "ListItem", "position": 13, "name": "رَمز QR — مولّد رموز QR مخصّصة" },
-    { "@type": "ListItem", "position": 14, "name": "تَسعيرة — حاسبة تسعير الفريلانسر" },
-    { "@type": "ListItem", "position": 15, "name": "سكربتات أدوبي — أتمتة داخل البرامج" }
-  ]
-}
-</script>
 
-<!-- روابط قابلة للزحف لصفحات الأدوات المستقلة (SEO + اكتشاف) -->
-<footer style="max-width:980px;margin:64px auto 28px;padding:26px 18px 8px;border-top:1px solid rgba(255,255,255,.08);text-align:center">
-  <h2 style="font-family:'Amiri',serif;font-size:22px;font-weight:700;margin:0 0 16px">كل أدوات عُدّة — كل أداة بصفحتها</h2>
-  <nav style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px 16px;font-size:14px;line-height:2">
-    <a href="arabic-color-palette/" style="color:var(--gold,#d9a441)">صِبغة — ألوان تراثية</a>
-    <a href="extract-colors-from-image/" style="color:var(--gold,#d9a441)">لَقّاط — استخراج ألوان من صورة</a>
-    <a href="gradient-generator/" style="color:var(--gold,#d9a441)">تَدرّج — تدرّجات لونية</a>
-    <a href="contrast-checker/" style="color:var(--gold,#d9a441)">تَباين — فاحص تباين WCAG</a>
-    <a href="islamic-pattern-generator/" style="color:var(--gold,#d9a441)">نَمَط — أنماط هندسية عربية</a>
-    <a href="square-kufic-generator/" style="color:var(--gold,#d9a441)">بَنّاء — كوفي مربّع</a>
-    <a href="arabic-fonts-preview/" style="color:var(--gold,#d9a441)">حُروف — معاينة خطوط عربية</a>
-    <a href="arabic-lorem-ipsum/" style="color:var(--gold,#d9a441)">نَصّ شكلي — Lorem Ipsum عربي</a>
-    <a href="arabic-text-cleaner/" style="color:var(--gold,#d9a441)">مُنظِّف — تنظيف النص العربي</a>
-    <a href="character-counter/" style="color:var(--gold,#d9a441)">عَدّاد — عدّاد حروف السوشال</a>
-    <a href="social-media-resizer/" style="color:var(--gold,#d9a441)">مَقاسات — مقاسات السوشال</a>
-    <a href="image-compressor/" style="color:var(--gold,#d9a441)">ضاغِط — ضغط الصور WebP</a>
-    <a href="qr-code-generator/" style="color:var(--gold,#d9a441)">رَمز QR — مولّد QR مخصّص</a>
-    <a href="freelance-pricing-calculator/" style="color:var(--gold,#d9a441)">تَسعيرة — حاسبة تسعير</a>
-    <a href="adobe-scripts/" style="color:var(--gold,#d9a441)">سكربتات أدوبي</a>
-  </nav>
-</footer>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"تَدرّج — مولّد التدرّجات اللونية","url":"https://ahmads.art/odda/gradient-generator/","applicationCategory":"DesignApplication","operatingSystem":"Web Browser","inLanguage":"ar","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"SAR"},"author":{"@type":"Person","name":"Ahmad Sattof","url":"https://ahmads.art/"}}</script>
+<script>document.addEventListener("DOMContentLoaded",function(){if(location.hash===""){try{goTool("grad");}catch(e){}try{history.replaceState(null,"",location.pathname);}catch(e){}document.title="تَدرّج — مولّد تدرّجات لونية CSS وخلفيات 4K | عُدّة";}});</script>
 </body>
 </html>
