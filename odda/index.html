@@ -953,7 +953,7 @@ function renderRails(){
     rail.innerHTML="";
     ids.forEach(id=>{const m=toolMeta(id);if(!m)return;const c=document.createElement("div");c.className="qchip";
       c.innerHTML=`<span class="qi">${m[1]}</span><span class="qn">${m[2]}</span>`;
-      c.onclick=()=>goTool(id);rail.appendChild(c)});
+      c.onclick=()=> m[6]?(location.href=m[6]):goTool(id);rail.appendChild(c)});
   };
   fill("recRail","recWrap",REC.filter(id=>toolMeta(id)).slice(0,6));
   fill("favRail","favWrap",FAV.filter(id=>toolMeta(id)));
@@ -991,21 +991,23 @@ const TOOLS=[
 ["comp","🗜","ضاغِط","ضغط وتحويل الصور WebP محليًا","","compress webp ضغط"],
 ["qr","🔳","رَمز QR","تحكّم كامل: أشكال نقاط وعيون ولوغو وألوان","جديد","qr باركود رابط لوغو شكل قلب نجمة عيون"],
 ["price","💰","تَسعيرة","حاسبة تسعير الفريلانسر الصادقة","","price سعر فريلانس"],
-["jsx","⚙️","سكربتات أدوبي","٢٠ سكربت أتمتة لإليستريتور وفوتوشوب","جديد","photoshop illustrator script اتمتة سكربت"]
+["jsx","⚙️","سكربتات أدوبي","٢٠ سكربت أتمتة لإليستريتور وفوتوشوب","جديد","photoshop illustrator script اتمتة سكربت"],
+["biocard","🪪","بِطاقة","صفحة بايو بكل روابطك مع QR ورابط واحد","جديد","bio card بطاقة رابط vcard لينك","bio-card-maker/"],
+["upscale","🔍","رافِع","تكبير الصور وتحسين دقتها بالذكاء الاصطناعي","جديد","upscale تكبير دقة تحسين صورة ai","image-upscaler/"]
 ];
 
 /* الناف */
-TOOLS.forEach(([id,ic,nm],i)=>{
+TOOLS.forEach(([id,ic,nm,ds,bd,kw,url],i)=>{
   const b=document.createElement("button");
   b.className="npill"+(i===0?" on":"");b.textContent=nm;b.dataset.t=id;
-  b.onclick=()=>goTool(id);
+  b.onclick=()=> url?(location.href=url):goTool(id);
   $("nav").appendChild(b);
 });
 /* كروت الرئيسية */
 function buildHome(filter=""){
   $("homeGrid").innerHTML="";
   let n=0;
-  TOOLS.slice(1).forEach(([id,ic,nm,ds,badge,kw],i)=>{
+  TOOLS.slice(1).forEach(([id,ic,nm,ds,badge,kw,url],i)=>{
     if(filter&&!(nm+ds+kw).includes(filter))return;
     n++;
     const c=document.createElement("div");
@@ -1013,7 +1015,7 @@ function buildHome(filter=""){
     c.innerHTML=(badge?`<span class="new">${badge}</span>`:"")+
       `<button class="fav${FAV.includes(id)?" on":""}" title="تثبيت">${FAV.includes(id)?"★":"☆"}</button>`+
       `<div class="top"><span class="ic">${ic}</span><span class="arr">←</span></div><h3>${nm}</h3><p>${ds}</p>`;
-    c.onclick=()=>goTool(id);
+    c.onclick=()=> url?(location.href=url):goTool(id);
     c.querySelector(".fav").onclick=ev=>toggleFav(id,ev);
     $("homeGrid").appendChild(c);
   });
