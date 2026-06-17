@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>بِطاقة — مولّد بطاقة بايو ورابط واحد للمصمم | عُدّة</title>
+<meta name="description" content="اصنع بطاقة تواصل رقمية (Link in Bio) بكل روابطك في صفحة واحدة أنيقة — حمّلها HTML أو شاركها برابط فوري أو QR، بدون تسجيل وبدون سيرفر. من عُدّة.">
+<meta name="keywords" content="مولد بطاقة بايو, link in bio عربي, بطاقة تواصل رقمية, مولد رابط واحد, vCard QR, عُدّة, أدوات المصمم العربي">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://ahmads.art/odda/bio-card-maker/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="عُدّة — أدوات المصمم العربي">
+<meta property="og:title" content="بِطاقة — مولّد بطاقة بايو للمصمم">
+<meta property="og:description" content="صفحة واحدة بكل روابطك — حمّلها أو شاركها برابط أو QR، بدون سيرفر.">
+<meta property="og:url" content="https://ahmads.art/odda/bio-card-maker/">
+<meta property="og:image" content="https://ahmads.art/odda/share-cover.jpg">
+<meta property="og:locale" content="ar_SA">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" href="../../favicon-32x32.png" sizes="32x32">
+<meta name="theme-color" content="#0e0e0d">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+:root{
+  --bg:#11100d; --panel:#17160f; --line:rgba(255,255,255,.09); --ink:#f3ede2;
+  --dim:#9a917f; --gold:#d9a441; --field:#0e0d09;
+  --sans:'IBM Plex Sans Arabic','Inter',sans-serif; --serif:'Cormorant Garamond',Georgia,serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+
+/* ===== شريط علوي ===== */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(17,16,13,.86);backdrop-filter:blur(10px);z-index:20}
+.bar .b-title{font-family:var(--serif);font-size:26px;font-weight:600}
+.bar .b-title i{font-style:normal;color:var(--gold)}
+.bar a.back{font-size:13px;color:var(--dim)}
+
+/* ===== مُحرّر ===== */
+.wrap{max-width:1080px;margin:0 auto;padding:24px 18px 70px}
+.intro{text-align:center;margin:6px auto 26px;max-width:620px}
+.intro h1{font-family:var(--serif);font-size:34px;font-weight:600;line-height:1.15}
+.intro p{color:var(--dim);font-size:14px;margin-top:8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}
+.panel h2{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:14px;letter-spacing:.02em}
+.fld{margin-bottom:14px}
+.fld label{display:block;font-size:12.5px;color:var(--dim);margin-bottom:6px}
+.inp,.sel{width:100%;background:var(--field);border:1px solid var(--line);border-radius:10px;color:var(--ink);
+  font-family:var(--sans);font-size:14px;padding:11px 12px;outline:none;transition:border-color .2s}
+.inp:focus,.sel:focus{border-color:var(--gold)}
+.row2{display:flex;gap:10px}.row2>*{flex:1}
+
+/* الوان وثيم */
+.swatches{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sw{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s}
+.sw:hover{transform:scale(1.12)}.sw.on{border-color:#fff}
+.seg{display:flex;background:var(--field);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{flex:1;background:none;border:none;color:var(--dim);font-family:var(--sans);font-size:13px;padding:9px;cursor:pointer}
+.seg button.on{background:var(--gold);color:#1a1305;font-weight:600}
+
+/* روابط */
+.lkrow{display:grid;grid-template-columns:96px 1fr 30px;gap:8px;margin-bottom:9px;align-items:center}
+.lkrow .inp{padding:9px 10px;font-size:13px}
+.lkrow .del{background:none;border:1px solid var(--line);color:var(--dim);border-radius:8px;height:34px;cursor:pointer;font-size:15px}
+.lkrow .del:hover{color:#ff6b6b;border-color:#ff6b6b}
+.lkrow .url{grid-column:1 / -1}
+.addlk{width:100%;margin-top:6px;background:none;border:1px dashed var(--line);color:var(--dim);border-radius:10px;padding:10px;cursor:pointer;font-family:var(--sans);font-size:13px}
+.addlk:hover{border-color:var(--gold);color:var(--gold)}
+
+/* أزرار التصدير */
+.exports{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:12px;border:1px solid var(--line);
+  background:var(--field);color:var(--ink);font-family:var(--sans);font-size:13.5px;font-weight:600;cursor:pointer;transition:transform .12s,border-color .2s,background .2s}
+.btn:hover{border-color:var(--gold);transform:translateY(-1px)}
+.btn.primary{background:var(--gold);color:#1a1305;border-color:var(--gold)}
+.btn svg{width:17px;height:17px}
+.hint{font-size:11.5px;color:var(--dim);margin-top:10px;text-align:center}
+
+/* QR */
+.qrpop{margin-top:14px;text-align:center;display:none}
+.qrpop.on{display:block}
+.qrpop .qbox{background:#fff;display:inline-block;padding:14px;border-radius:14px}
+.vtoggle{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--dim);margin-top:10px;cursor:pointer}
+
+/* ===== معاينة البطاقة ===== */
+.preview-col{position:sticky;top:84px}
+.phone{background:var(--cardbg,#fafaf8);border-radius:26px;padding:30px 22px;border:1px solid var(--line);overflow:hidden;transition:background .4s}
+/* ضمن البطاقة */
+.card{--accent:#b5a48a;--cardink:#111110;--cardmid:#7c7c76;--cardfaint:#e8e7e2;--cardwhite:#fff;text-align:center;color:var(--cardink)}
+.card.dark{--cardink:#f0efe8;--cardmid:#8a8a82;--cardfaint:#1d1d1b;--cardwhite:#161614}
+.card .av{width:92px;height:92px;border-radius:50%;margin:0 auto 14px;overflow:hidden;border:2px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;background:#0e0e0d;color:var(--accent);
+  font-family:var(--serif);font-size:40px;font-weight:600;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.card .av img{width:100%;height:100%;object-fit:cover}
+.card .nm{font-family:var(--serif);font-size:38px;font-weight:600;line-height:1.05;color:var(--cardink)}
+.card .rl{font-size:13.5px;color:var(--cardmid);margin:8px auto 0;max-width:300px}
+.card .dv{width:38px;height:2px;background:var(--accent);border-radius:2px;margin:16px auto;opacity:.7}
+.card .lks{display:flex;flex-direction:column;gap:10px}
+.card .l{display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:13px;background:var(--cardwhite);border:1px solid var(--cardfaint);font-size:14px;font-weight:500;color:var(--cardink);text-align:right;transition:transform .12s}
+.card .l:hover{transform:translateY(-2px)}
+.card .l .i{width:34px;height:34px;flex:none;border-radius:10px;background:var(--cardfaint);display:flex;align-items:center;justify-content:center}
+.card .l .i svg{width:17px;height:17px}
+.card .l .t{flex:1}.card .l .t small{display:block;font-size:11px;color:var(--cardmid);font-weight:400}
+.card .l .a{color:var(--cardmid)}
+.card .ft{margin-top:20px;font-size:11px;color:var(--cardmid)}
+
+/* ===== وضع العارض (رابط فوري) ===== */
+body.viewer{display:flex;align-items:center;justify-content:center;min-height:100dvh;padding:34px 18px;
+  background-image:radial-gradient(120% 50% at 50% 0%, rgba(181,164,138,.14), transparent 60%)}
+body.viewer .bar,body.viewer .editor{display:none}
+.viewer-card{width:100%;max-width:430px}
+</style>
+</head>
+
+<body>
+
+<!-- ============ المُحرّر ============ -->
+<header class="bar editor">
+  <div class="b-title">بِطاقة<i>.</i></div>
+  <a class="back" href="../">→ كل أدوات عُدّة</a>
+</header>
+
+<div class="wrap editor">
+  <div class="intro">
+    <h1>مولّد بطاقة البايو</h1>
+    <p>كل روابطك في صفحة واحدة أنيقة. عبّي، عاين، وصدّرها كملف أو رابط أو QR — بدون تسجيل وبدون سيرفر.</p>
+  </div>
+
+  <div class="grid">
+    <!-- التحكّم -->
+    <section class="panel">
+      <h2>المحتوى</h2>
+      <div class="fld"><label>الاسم</label><input class="inp" id="f-name" value="أحمد صطوف"></div>
+      <div class="fld"><label>المهنة / الوصف</label><input class="inp" id="f-role" value="مصمم هوية بصرية وإعلانات بالذكاء الاصطناعي"></div>
+      <div class="row2">
+        <div class="fld"><label>الأحرف الأولى (إذا ما في صورة)</label><input class="inp" id="f-initials" value="A" maxlength="3"></div>
+        <div class="fld"><label>رابط صورة (اختياري)</label><input class="inp" id="f-avatar" placeholder="https://..."></div>
+      </div>
+
+      <h2 style="margin-top:8px">المظهر</h2>
+      <div class="fld">
+        <label>اللون الأساسي</label>
+        <div class="swatches" id="swatches">
+          <input type="color" id="f-accent" value="#b5a48a" class="inp" style="width:46px;height:30px;padding:2px">
+        </div>
+      </div>
+      <div class="fld"><label>الخلفية</label>
+        <div class="seg" id="theme">
+          <button data-th="light" class="on">فاتح</button>
+          <button data-th="dark">غامق</button>
+        </div>
+      </div>
+
+      <h2 style="margin-top:8px">للـ vCard (اختياري — للحفظ بجهات الاتصال)</h2>
+      <div class="row2">
+        <div class="fld"><label>الجوال</label><input class="inp" id="f-phone" value="+966579683408"></div>
+        <div class="fld"><label>الإيميل</label><input class="inp" id="f-email" placeholder="name@mail.com"></div>
+      </div>
+    </section>
+
+    <!-- روابط + معاينة -->
+    <section class="preview-col">
+      <div class="panel" style="margin-bottom:18px">
+        <h2>الروابط</h2>
+        <div id="links"></div>
+        <button class="addlk" id="addLink">+ أضف رابط</button>
+      </div>
+
+      <div class="panel">
+        <h2>المعاينة</h2>
+        <div class="phone" id="phone"><main class="card" id="card"></main></div>
+
+        <div class="exports">
+          <button class="btn primary" id="dlHtml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>حمّل صفحة HTML</button>
+          <button class="btn" id="cpLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>انسخ رابط فوري</button>
+          <button class="btn" id="dlPng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>صدّر صورة PNG</button>
+          <button class="btn" id="showQr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h7v7h-7z"/></svg>كود QR</button>
+        </div>
+        <div class="qrpop" id="qrpop">
+          <div class="qbox"><div id="qr"></div></div>
+          <label class="vtoggle"><input type="checkbox" id="vmode"> QR كجهة اتصال (vCard)</label>
+        </div>
+        <div class="hint">💡 «حمّل HTML» = ارفعه على دومينك = رابط ثابت تعدّله وقت ما بدك. «رابط فوري» = جاهز فوراً بدون استضافة.</div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+/* ============ الأيقونات ============ */
+var ICONS={
+  website:'<path d="M3 12h18M12 3a15 15 0 0 1 0 18A15 15 0 0 1 12 3z"/><circle cx="12" cy="12" r="9"/>',
+  whatsapp:'<path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2z"/>',
+  instagram:'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/>',
+  behance:'<path d="M3 7h6a3 3 0 0 1 0 6H3zM3 13h7a3 3 0 0 1 0 6H3zM15 9h6M15 14c0-2 1.5-4 4-4s3.5 1.6 3.5 4H15c0 2 1.4 3 3 3"/>',
+  email:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
+  phone:'<path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.2 11 11 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.4a1 1 0 0 1 1 1 11 11 0 0 0 .6 3.6 1 1 0 0 1-.3 1z"/>',
+  tiktok:'<path d="M16.5 3c.3 2 1.5 3.6 3.5 3.9V10c-1.4 0-2.7-.4-3.8-1.1v6.2A5.9 5.9 0 1 1 10.4 9v3.2a2.8 2.8 0 1 0 2 2.7V3z"/>',
+  link:'<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>'
+};
+var ICON_LABELS={website:'موقع',whatsapp:'واتساب',instagram:'انستقرام',behance:'بيهانس',email:'إيميل',phone:'اتصال',tiktok:'تيك توك',link:'رابط'};
+
+/* ============ الحالة ============ */
+var S={
+  name:'أحمد صطوف', role:'مصمم هوية بصرية وإعلانات بالذكاء الاصطناعي',
+  initials:'A', avatar:'', accent:'#b5a48a', theme:'light',
+  phone:'+966579683408', email:'',
+  links:[
+    {type:'website', label:'موقعي وأعمالي', sub:'ahmads.art', url:'https://ahmads.art/'},
+    {type:'whatsapp', label:'تواصل واتساب', sub:'للمشاريع', url:'https://wa.me/966579683408'},
+    {type:'behance', label:'Behance', sub:'معرض أعمالي', url:'https://www.behance.net/ahmetsattof'}
+  ]
+};
+var PRESETS=['#b5a48a','#d9a441','#2d49ff','#1faa59','#e0526d','#7c5cff','#111110'];
+
+/* ============ بناء البطاقة ============ */
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function cardInner(s){
+  var av = s.avatar ? '<img src="'+esc(s.avatar)+'" alt="'+esc(s.name)+'">' : esc(s.initials||'');
+  var lks = s.links.filter(function(l){return l.url||l.label}).map(function(l){
+    var ic = ICONS[l.type]||ICONS.link;
+    return '<a class="l" href="'+esc(l.url)+'" target="_blank" rel="noopener">'+
+      '<span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">'+ic+'</svg></span>'+
+      '<span class="t">'+esc(l.label)+(l.sub?'<small>'+esc(l.sub)+'</small>':'')+'</span><span class="a">←</span></a>';
+  }).join('');
+  return '<div class="av">'+av+'</div>'+
+    '<div class="nm">'+esc(s.name)+'</div>'+
+    (s.role?'<div class="rl">'+esc(s.role)+'</div>':'')+
+    '<div class="dv"></div><div class="lks">'+lks+'</div>'+
+    '<div class="ft">© '+new Date().getFullYear()+' '+esc(s.name)+'</div>';
+}
+function applyCard(el,s){
+  el.className='card'+(s.theme==='dark'?' dark':'');
+  el.style.setProperty('--accent', s.accent);
+  el.innerHTML=cardInner(s);
+}
+function render(){
+  var c=document.getElementById('card');
+  applyCard(c,S);
+  document.getElementById('phone').style.setProperty('--cardbg', S.theme==='dark'?'#0e0e0d':'#fafaf8');
+}
+
+/* ============ واجهة الروابط ============ */
+function linksUI(){
+  var box=document.getElementById('links'); box.innerHTML='';
+  S.links.forEach(function(l,i){
+    var opts=Object.keys(ICON_LABELS).map(function(k){return '<option value="'+k+'"'+(k===l.type?' selected':'')+'>'+ICON_LABELS[k]+'</option>'}).join('');
+    var row=document.createElement('div'); row.className='lkrow';
+    row.innerHTML='<select class="sel" data-i="'+i+'" data-k="type">'+opts+'</select>'+
+      '<input class="inp" data-i="'+i+'" data-k="label" placeholder="العنوان" value="'+esc(l.label)+'">'+
+      '<button class="del" data-del="'+i+'">×</button>'+
+      '<input class="inp url" data-i="'+i+'" data-k="url" placeholder="https://..." value="'+esc(l.url)+'">';
+    box.appendChild(row);
+  });
+}
+
+/* ============ ربط الأحداث ============ */
+function bind(id,key){document.getElementById(id).addEventListener('input',function(){S[key]=this.value;render();})}
+bind('f-name','name');bind('f-role','role');bind('f-initials','initials');bind('f-avatar','avatar');
+bind('f-accent','accent');bind('f-phone','phone');bind('f-email','email');
+
+document.getElementById('theme').addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b)return;
+  S.theme=b.dataset.th;
+  this.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b)});
+  render();
+});
+// لوحة ألوان جاهزة
+var sw=document.getElementById('swatches');
+PRESETS.forEach(function(c){var b=document.createElement('span');b.className='sw';b.style.background=c;b.onclick=function(){S.accent=c;document.getElementById('f-accent').value=c;render();};sw.appendChild(b);});
+
+document.getElementById('links').addEventListener('input',function(e){
+  var t=e.target,i=t.dataset.i,k=t.dataset.k; if(i==null)return; S.links[i][k]=t.value; render();
+});
+document.getElementById('links').addEventListener('change',function(e){
+  var t=e.target; if(t.dataset.k==='type'){S.links[t.dataset.i].type=t.value;render();}
+});
+document.getElementById('links').addEventListener('click',function(e){
+  var d=e.target.dataset.del; if(d!=null){S.links.splice(d,1);linksUI();render();}
+});
+document.getElementById('addLink').onclick=function(){S.links.push({type:'link',label:'رابط جديد',sub:'',url:''});linksUI();render();};
+
+/* ============ التصدير ============ */
+var CARD_CSS = document.querySelector('style').textContent.match(/\/\* ضمن البطاقة \*\/[\s\S]*?(?=\/\* ===== وضع العارض)/)[0];
+function fullHTML(s){
+  return '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">'+
+  '<meta name="viewport" content="width=device-width,initial-scale=1">'+
+  '<title>'+esc(s.name)+' — بطاقة التواصل</title>'+
+  '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'+
+  '<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap" rel="stylesheet">'+
+  '<style>:root{--serif:\'Cormorant Garamond\',Georgia,serif;--sans:\'IBM Plex Sans Arabic\',sans-serif}'+
+  '*{box-sizing:border-box;margin:0;padding:0}body{font-family:var(--sans);background:'+(s.theme==='dark'?'#0e0e0d':'#fafaf8')+';'+
+  'min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:36px 18px;'+
+  'background-image:radial-gradient(120% 50% at 50% 0%, rgba(181,164,138,.14), transparent 60%)}'+
+  'a{text-decoration:none}main{width:100%;max-width:430px}'+CARD_CSS+'</style></head><body>'+
+  '<main class="card'+(s.theme==='dark'?' dark':'')+'" style="--accent:'+s.accent+'">'+cardInner(s)+'</main></body></html>';
+}
+function download(name,content,type){
+  var b=new Blob([content],{type:type||'text/html;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();
+}
+document.getElementById('dlHtml').onclick=function(){download((S.name||'card').replace(/\s+/g,'-')+'.html', fullHTML(S));};
+
+function encodeState(){return btoa(unescape(encodeURIComponent(JSON.stringify(S))))}
+function instantLink(){return location.origin+location.pathname+'?c='+encodeState()}
+document.getElementById('cpLink').onclick=function(){
+  var u=instantLink();
+  navigator.clipboard.writeText(u).then(function(){this.textContent='✓ انتسخ الرابط';var b=document.getElementById('cpLink');setTimeout(function(){b.innerHTML=b.dataset.o;},1500);}.bind(this));
+};
+document.getElementById('cpLink').dataset.o=document.getElementById('cpLink').innerHTML;
+
+document.getElementById('dlPng').onclick=function(){
+  html2canvas(document.getElementById('phone'),{scale:2,backgroundColor:null}).then(function(cv){
+    cv.toBlob(function(bl){var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=(S.name||'card').replace(/\s+/g,'-')+'.png';a.click();});
+  });
+};
+
+/* QR + vCard */
+var qrObj=null;
+function vcard(){return 'BEGIN:VCARD\nVERSION:3.0\nFN:'+S.name+'\nTITLE:'+S.role+(S.phone?'\nTEL;TYPE=CELL:'+S.phone:'')+(S.email?'\nEMAIL:'+S.email:'')+'\nURL:'+(S.links[0]?S.links[0].url:'')+'\nEND:VCARD';}
+function drawQR(){
+  var box=document.getElementById('qr'); box.innerHTML=''; qrObj=null;
+  var txt=document.getElementById('vmode').checked?vcard():instantLink();
+  qrObj=new QRCode(box,{text:txt,width:188,height:188,colorDark:'#111110',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+}
+document.getElementById('showQr').onclick=function(){var p=document.getElementById('qrpop');p.classList.toggle('on');if(p.classList.contains('on'))drawQR();};
+document.getElementById('vmode').onchange=drawQR;
+
+/* ============ وضع العارض (?c=) ============ */
+(function(){
+  var m=location.search.match(/[?&]c=([^&]+)/);
+  if(!m)return;
+  try{
+    var data=JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(m[1])))));
+    document.body.classList.add('viewer');
+    document.documentElement.style.background = data.theme==='dark'?'#0e0e0d':'#fafaf8';
+    var main=document.createElement('main'); main.className='viewer-card';
+    var c=document.createElement('div'); applyCard(c,data); main.appendChild(c);
+    document.body.appendChild(main);
+  }catch(e){ /* رابط تالف — اعرض المحرّر */ }
+})();
+
+/* تشغيل أولي */
+PRESETS && linksUI(); render();
+</script>
+</body>
+</html>
