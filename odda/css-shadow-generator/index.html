@@ -21,6 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root{--bg:#11100d;--panel:#17160f;--line:rgba(255,255,255,.09);--ink:#f3ede2;--dim:#9a917f;--gold:#d9a441;--field:#0e0d09;
   --sans:'IBM Plex Sans Arabic',sans-serif;--serif:'Cormorant Garamond',serif;--mono:'IBM Plex Mono',monospace}
@@ -108,7 +109,11 @@ input[type=color]{width:46px;height:32px;border:1px solid var(--line);border-rad
     <div>
       <div class="stage" id="stage"><div id="card">✦</div></div>
       <div class="cssbox" id="cssOut"></div>
-      <button class="copy" id="copyBtn">📋 انسخ كود CSS</button>
+      <div class="cssbox" id="valsBox" style="color:#e9c98a;margin-top:10px;direction:rtl;text-align:right"></div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="copy" id="copyBtn" style="margin-top:0">📋 انسخ CSS</button>
+        <button class="copy" id="pngBtn" style="margin-top:0;background:var(--field);color:var(--gold);border:1px solid var(--gold)">🖼️ تصدير PNG</button>
+      </div>
     </div>
   </div>
 </div>
@@ -182,7 +187,49 @@ function apply(){
     css=(bgcss?'background: '+bgcss+';\n':'background: '+base+';\n')+'box-shadow: '+sh+';';
   }
   out.textContent=css;
+
+  // قيم فوتوشوب / إليستريتر
+  var vb=$('valsBox');
+  if(MODE==='shadow' && !$('si').checked){
+    var x=+$('sx').value,y=+$('sy').value,bl=+$('sb').value,op=+$('so').value,colHex=$('sc').value;
+    var dist=Math.round(Math.sqrt(x*x+y*y));
+    var ang=Math.round(Math.atan2(y,-x)*180/Math.PI);
+    vb.textContent='🟦 فوتوشوب (Drop Shadow):\n  Color '+colHex+' · Opacity '+op+'% · Angle '+ang+'° · Distance '+dist+'px · Size '+bl+'px · Spread 0%\n\n🟧 إليستريتر (Effect › Stylize › Drop Shadow):\n  Mode Multiply · Opacity '+op+'% · X '+x+'px · Y '+y+'px · Blur '+bl+'px · Color '+colHex;
+  } else if(MODE==='shadow'){
+    vb.textContent='ℹ️ ظل داخلي — استخدم Inner Shadow في فوتوشوب بنفس القيم (Distance/Size/Opacity).';
+  } else {
+    vb.textContent='ℹ️ هذا تأثير CSS فقط — استخدم زر «تصدير PNG» لاستعماله كصورة في فوتوشوب/إليستريتر.';
+  }
 }
+
+/* ===== تصدير PNG ===== */
+function roundRect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+function dlCanvas(cv){cv.toBlob(function(b){var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='zill-'+MODE+'.png';a.click();})}
+function exportPNG(){
+  if(MODE==='glass'){
+    if(typeof html2canvas==='undefined')return alert('تعذّر تحميل أداة التصدير — تأكد من الإنترنت.');
+    html2canvas($('stage'),{backgroundColor:null,scale:2}).then(dlCanvas);
+    return;
+  }
+  var W=190,H=190,R=24,pad=160,S=2;
+  var cv=document.createElement('canvas');cv.width=(W+pad*2)*S;cv.height=(H+pad*2)*S;
+  var ctx=cv.getContext('2d');ctx.scale(S,S);ctx.translate(pad,pad);
+  if(MODE==='neu'){
+    var base=$('nc').value,d=+$('nd').value,blur=+$('nb').value,inten=Math.round(255*(+$('ni').value)/100/3);
+    var lite=shade(base,inten),dark=shade(base,-inten);
+    ctx.save();ctx.translate(-pad,-pad);ctx.fillStyle=base;ctx.fillRect(0,0,W+pad*2,H+pad*2);ctx.restore();
+    ctx.save();ctx.shadowOffsetX=d;ctx.shadowOffsetY=d;ctx.shadowBlur=blur;ctx.shadowColor=dark;roundRect(ctx,0,0,W,H,R);ctx.fillStyle=base;ctx.fill();ctx.restore();
+    ctx.save();ctx.shadowOffsetX=-d;ctx.shadowOffsetY=-d;ctx.shadowBlur=blur;ctx.shadowColor=lite;roundRect(ctx,0,0,W,H,R);ctx.fillStyle=base;ctx.fill();ctx.restore();
+    roundRect(ctx,0,0,W,H,R);ctx.fillStyle=base;ctx.fill();
+  } else {
+    var sx=+$('sx').value,sy=+$('sy').value,sb=+$('sb').value,so=+$('so').value,sc=$('sc').value;
+    ctx.save();ctx.shadowOffsetX=sx;ctx.shadowOffsetY=sy;ctx.shadowBlur=sb;ctx.shadowColor=hexA(sc,so);
+    roundRect(ctx,0,0,W,H,R);ctx.fillStyle='#ffffff';ctx.fill();ctx.restore();
+    roundRect(ctx,0,0,W,H,R);ctx.fillStyle='#ffffff';ctx.fill();
+  }
+  dlCanvas(cv);
+}
+$('pngBtn').onclick=exportPNG;
 $('copyBtn').onclick=function(){var t=$('cssOut').textContent;navigator.clipboard.writeText(t).then(function(){var b=$('copyBtn');b.textContent='✓ تم النسخ';setTimeout(function(){b.textContent='📋 انسخ كود CSS'},1400)})};
 apply();
 </script>
