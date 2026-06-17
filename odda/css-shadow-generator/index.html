@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ظِلّ — مولّد ظلال CSS وتأثير زجاجي (Glassmorphism) | عُدّة</title>
+<meta name="description" content="صمّم ظلال CSS، تأثير زجاجي (Glassmorphism)، ونيومورفيزم بمعاينة حيّة وانسخ الكود جاهز — أداة مجانية بدون تسجيل من عُدّة، أدوات المصمم العربي.">
+<meta name="keywords" content="مولد ظل css, box shadow generator, glassmorphism, تأثير زجاجي, نيومورفيزم, neumorphism, عُدّة">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://ahmads.art/odda/css-shadow-generator/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="عُدّة — أدوات المصمم العربي">
+<meta property="og:title" content="ظِلّ — مولّد ظلال CSS وتأثير زجاجي">
+<meta property="og:description" content="صمّم الظلال والزجاج والنيومورفيزم وانسخ الكود جاهز — معاينة حيّة، بدون تسجيل.">
+<meta property="og:url" content="https://ahmads.art/odda/css-shadow-generator/">
+<meta property="og:image" content="https://ahmads.art/odda/share-cover.jpg">
+<meta property="og:locale" content="ar_SA">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../../favicon-32x32.png" sizes="32x32">
+<meta name="theme-color" content="#0e0e0d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#11100d;--panel:#17160f;--line:rgba(255,255,255,.09);--ink:#f3ede2;--dim:#9a917f;--gold:#d9a441;--field:#0e0d09;
+  --sans:'IBM Plex Sans Arabic',sans-serif;--serif:'Cormorant Garamond',serif;--mono:'IBM Plex Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7}
+a{color:inherit;text-decoration:none}
+.bar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line)}
+.bar .t{font-family:var(--serif);font-size:26px;font-weight:600}.bar .t i{font-style:normal;color:var(--gold)}
+.bar a{font-size:13px;color:var(--dim)}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 18px 70px}
+.intro{text-align:center;margin-bottom:22px}
+.intro h1{font-family:var(--serif);font-size:32px;font-weight:600}
+.intro p{color:var(--dim);font-size:14px;margin-top:6px}
+.tabs{display:flex;gap:8px;justify-content:center;margin-bottom:22px;flex-wrap:wrap}
+.tab{background:var(--field);border:1px solid var(--line);color:var(--dim);font-family:var(--sans);font-size:14px;padding:10px 20px;border-radius:30px;cursor:pointer;transition:all .2s}
+.tab.on{background:var(--gold);color:#1a1305;border-color:var(--gold);font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+@media(max-width:840px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}
+.pane{display:none}.pane.on{display:block}
+.fld{margin-bottom:15px}
+.fld label{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:7px}
+.fld label b{color:var(--gold);font-family:var(--mono);font-weight:500}
+input[type=range]{width:100%;accent-color:var(--gold)}
+.rowc{display:flex;align-items:center;gap:12px}
+input[type=color]{width:46px;height:32px;border:1px solid var(--line);border-radius:8px;background:var(--field);padding:2px;cursor:pointer}
+.chk{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;cursor:pointer;color:var(--ink)}
+.segm{display:flex;background:var(--field);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.segm button{flex:1;background:none;border:none;color:var(--dim);font-family:var(--sans);font-size:13px;padding:9px;cursor:pointer}
+.segm button.on{background:var(--gold);color:#1a1305;font-weight:600}
+.presets{display:flex;gap:7px;flex-wrap:wrap;margin-top:4px}
+.preset{background:var(--field);border:1px solid var(--line);color:var(--dim);font-size:12px;padding:7px 12px;border-radius:8px;cursor:pointer}
+.preset:hover{border-color:var(--gold);color:var(--gold)}
+
+.stage{border-radius:18px;min-height:340px;display:flex;align-items:center;justify-content:center;padding:30px;overflow:hidden;border:1px solid var(--line);transition:background .3s}
+#card{width:190px;height:190px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:34px;transition:all .12s}
+.cssbox{margin-top:16px;background:#0a0a07;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-family:var(--mono);font-size:12.5px;color:#cdd6a0;direction:ltr;text-align:left;white-space:pre-wrap;word-break:break-word;line-height:1.7;min-height:54px}
+.copy{margin-top:12px;width:100%;padding:13px;border:none;border-radius:12px;background:var(--gold);color:#1a1305;font-family:var(--sans);font-weight:700;font-size:14.5px;cursor:pointer}
+.copy:hover{filter:brightness(1.07)}
+</style>
+</head>
+<body>
+<header class="bar"><div class="t">ظِلّ<i>.</i></div><a href="../">→ كل أدوات عُدّة</a></header>
+<div class="wrap">
+  <div class="intro"><h1>مولّد الظلال والتأثير الزجاجي</h1><p>صمّم ظلّك بصريًّا وانسخ كود CSS جاهز — ظلال، زجاجي (Glassmorphism)، ونيومورفيزم.</p></div>
+
+  <div class="tabs">
+    <button class="tab on" data-m="shadow">ظل (Box Shadow)</button>
+    <button class="tab" data-m="glass">زجاجي (Glass)</button>
+    <button class="tab" data-m="neu">نيومورفيزم</button>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <!-- ظل -->
+      <div class="pane on" id="pane-shadow">
+        <div class="fld"><label>أفقي X <b id="v-sx">0px</b></label><input type="range" id="sx" min="-60" max="60" value="0"></div>
+        <div class="fld"><label>رأسي Y <b id="v-sy">14px</b></label><input type="range" id="sy" min="-60" max="60" value="14"></div>
+        <div class="fld"><label>تمويه Blur <b id="v-sb">30px</b></label><input type="range" id="sb" min="0" max="120" value="30"></div>
+        <div class="fld"><label>انتشار Spread <b id="v-ss">-6px</b></label><input type="range" id="ss" min="-40" max="40" value="-6"></div>
+        <div class="fld"><label>الشفافية <b id="v-so">25%</b></label><input type="range" id="so" min="0" max="100" value="25"></div>
+        <div class="fld rowc"><input type="color" id="sc" value="#1a1305"><label class="chk"><input type="checkbox" id="si"> ظل داخلي (inset)</label></div>
+        <div class="fld"><label>جاهزات</label><div class="presets" id="sPresets"></div></div>
+      </div>
+      <!-- زجاجي -->
+      <div class="pane" id="pane-glass">
+        <div class="fld"><label>تمويه الخلفية Blur <b id="v-gb">12px</b></label><input type="range" id="gb" min="0" max="40" value="12"></div>
+        <div class="fld"><label>شفافية اللون <b id="v-go">18%</b></label><input type="range" id="go" min="0" max="80" value="18"></div>
+        <div class="fld"><label>التشبّع Saturate <b id="v-gs">160%</b></label><input type="range" id="gs" min="100" max="250" value="160"></div>
+        <div class="fld"><label>وضوح الحدّ <b id="v-gbd">30%</b></label><input type="range" id="gbd" min="0" max="100" value="30"></div>
+        <div class="fld"><label>الاستدارة <b id="v-gr">24px</b></label><input type="range" id="gr" min="0" max="60" value="24"></div>
+        <div class="fld rowc"><input type="color" id="gc" value="#ffffff"><span style="color:var(--dim);font-size:13px">لون الزجاج</span></div>
+        <div class="fld"><label>خلفية المعاينة</label><div class="presets" id="gBgPresets"></div></div>
+      </div>
+      <!-- نيومورفيزم -->
+      <div class="pane" id="pane-neu">
+        <div class="fld rowc"><input type="color" id="nc" value="#e0e0e0"><span style="color:var(--dim);font-size:13px">لون السطح (نفس الخلفية)</span></div>
+        <div class="fld"><label>المسافة <b id="v-nd">20px</b></label><input type="range" id="nd" min="4" max="50" value="20"></div>
+        <div class="fld"><label>الشدّة <b id="v-ni">15%</b></label><input type="range" id="ni" min="3" max="40" value="15"></div>
+        <div class="fld"><label>التمويه <b id="v-nb">40px</b></label><input type="range" id="nb" min="0" max="100" value="40"></div>
+        <div class="fld"><label>الشكل</label><div class="segm" id="nShape"><button data-s="flat" class="on">مسطّح</button><button data-s="convex">محدّب</button><button data-s="concave">مقعّر</button></div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="stage" id="stage"><div id="card">✦</div></div>
+      <div class="cssbox" id="cssOut"></div>
+      <button class="copy" id="copyBtn">📋 انسخ كود CSS</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function $(id){return document.getElementById(id)}
+var MODE='shadow';
+function hexA(hex,a){hex=hex.replace('#','');var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);return 'rgba('+r+','+g+','+b+','+(a/100).toFixed(2)+')'}
+function shade(hex,p){hex=hex.replace('#','');var n=parseInt(hex,16);var r=Math.min(255,Math.max(0,(n>>16)+p)),g=Math.min(255,Math.max(0,((n>>8)&255)+p)),b=Math.min(255,Math.max(0,(n&255)+p));return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1)}
+
+/* تبويب */
+document.querySelectorAll('.tab').forEach(function(t){t.onclick=function(){
+  MODE=t.dataset.m;
+  document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===t)});
+  ['shadow','glass','neu'].forEach(function(m){$('pane-'+m).classList.toggle('on',m===MODE)});
+  apply();
+}});
+
+/* ربط كل المدخلات */
+document.querySelectorAll('input').forEach(function(i){i.addEventListener('input',apply)});
+
+/* جاهزات الظل */
+var SP=[['ناعم',{sx:0,sy:8,sb:24,ss:-4,so:18}],['عائم',{sx:0,sy:30,sb:50,ss:-12,so:22}],['حادّ',{sx:6,sy:6,sb:0,ss:0,so:35}],['مادّي',{sx:0,sy:4,sb:8,ss:0,so:30}],['توهّج',{sx:0,sy:0,sb:40,ss:4,so:60}]];
+SP.forEach(function(p){var b=document.createElement('button');b.className='preset';b.textContent=p[0];b.onclick=function(){for(var k in p[1]){$(k).value=p[1][k]}apply()};$('sPresets').appendChild(b)});
+/* خلفيات الزجاج */
+var GB=[['#667eea','#764ba2'],['#f093fb','#f5576c'],['#0ba360','#3cba92'],['#fa709a','#fee140'],['#30cfd0','#330867']];
+var glassBg='linear-gradient(135deg,#667eea,#764ba2)';
+GB.forEach(function(g){var b=document.createElement('button');b.className='preset';b.style.background='linear-gradient(135deg,'+g[0]+','+g[1]+')';b.style.width='34px';b.style.height='26px';b.title='خلفية';b.onclick=function(){glassBg='linear-gradient(135deg,'+g[0]+','+g[1]+')';apply()};$('gBgPresets').appendChild(b)});
+/* شكل النيومورفيزم */
+var nShape='flat';
+$('nShape').onclick=function(e){var b=e.target.closest('button');if(!b)return;nShape=b.dataset.s;this.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b)});apply()};
+
+function setLabels(){
+  $('v-sx').textContent=$('sx').value+'px';$('v-sy').textContent=$('sy').value+'px';$('v-sb').textContent=$('sb').value+'px';$('v-ss').textContent=$('ss').value+'px';$('v-so').textContent=$('so').value+'%';
+  $('v-gb').textContent=$('gb').value+'px';$('v-go').textContent=$('go').value+'%';$('v-gs').textContent=$('gs').value+'%';$('v-gbd').textContent=$('gbd').value+'%';$('v-gr').textContent=$('gr').value+'px';
+  $('v-nd').textContent=$('nd').value+'px';$('v-ni').textContent=$('ni').value+'%';$('v-nb').textContent=$('nb').value+'px';
+}
+
+function apply(){
+  setLabels();
+  var card=$('card'),stage=$('stage'),out=$('cssOut');
+  card.style.cssText='width:190px;height:190px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:34px;transition:all .12s';
+  var css='';
+  if(MODE==='shadow'){
+    stage.style.background='linear-gradient(135deg,#fdfbfb,#e6e8ea)';
+    card.style.background='#ffffff';card.style.color='#cbb27a';
+    var col=hexA($('sc').value,+$('so').value);
+    var sh=($('si').checked?'inset ':'')+$('sx').value+'px '+$('sy').value+'px '+$('sb').value+'px '+$('ss').value+'px '+col;
+    card.style.boxShadow=sh;
+    css='box-shadow: '+sh+';';
+  } else if(MODE==='glass'){
+    stage.style.background=glassBg;
+    var bg=hexA($('gc').value,+$('go').value), bd=hexA('#ffffff',+$('gbd').value);
+    card.style.background=bg;card.style.color='#fff';
+    card.style.borderRadius=$('gr').value+'px';
+    card.style.border='1px solid '+bd;
+    card.style.backdropFilter='blur('+$('gb').value+'px) saturate('+$('gs').value+'%)';
+    card.style.webkitBackdropFilter=card.style.backdropFilter;
+    card.style.boxShadow='0 8px 32px rgba(0,0,0,.25)';
+    css='background: '+bg+';\nbackdrop-filter: blur('+$('gb').value+'px) saturate('+$('gs').value+'%);\n-webkit-backdrop-filter: blur('+$('gb').value+'px) saturate('+$('gs').value+'%);\nborder: 1px solid '+bd+';\nborder-radius: '+$('gr').value+'px;';
+  } else {
+    var base=$('nc').value, d=+$('nd').value, blur=+$('nb').value, inten=Math.round(255*(+$('ni').value)/100/3);
+    var lite=shade(base,inten), dark=shade(base,-inten);
+    stage.style.background=base; card.style.background=base; card.style.color=shade(base,-60);
+    var bgcss='';
+    if(nShape==='convex'){bgcss='linear-gradient(145deg, '+shade(base,12)+', '+shade(base,-12)+')';}
+    else if(nShape==='concave'){bgcss='linear-gradient(145deg, '+shade(base,-12)+', '+shade(base,12)+')';}
+    var sh=d+'px '+d+'px '+blur+'px '+dark+', -'+d+'px -'+d+'px '+blur+'px '+lite;
+    card.style.boxShadow=sh;
+    if(bgcss){card.style.background=bgcss}
+    css=(bgcss?'background: '+bgcss+';\n':'background: '+base+';\n')+'box-shadow: '+sh+';';
+  }
+  out.textContent=css;
+}
+$('copyBtn').onclick=function(){var t=$('cssOut').textContent;navigator.clipboard.writeText(t).then(function(){var b=$('copyBtn');b.textContent='✓ تم النسخ';setTimeout(function(){b.textContent='📋 انسخ كود CSS'},1400)})};
+apply();
+</script>
+</body>
+</html>
