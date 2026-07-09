@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>افهم أي شيء — Understand Anything</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0eff8;
+    --text2: #9896b0;
+    --text3: #5e5c78;
+    --accent: #7c6af7;
+    --accent2: #9d8fff;
+    --accent-glow: rgba(124,106,247,0.3);
+    --green: #4ade80;
+    --red: #f87171;
+    --yellow: #fbbf24;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font-ar: 'IBM Plex Sans Arabic', sans-serif;
+    --font-en: 'Inter', sans-serif;
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ar);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND EFFECT ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 20%, rgba(124,106,247,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(157,143,255,0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 28px 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-size: 18px;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--text), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .logo-sub {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: var(--font-en);
+    margin-top: 1px;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn-key {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text2);
+    font-size: 13px;
+    font-family: var(--font-ar);
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+  }
+
+  .btn-key:hover {
+    border-color: var(--accent);
+    color: var(--text);
+    background: rgba(124,106,247,0.1);
+  }
+
+  .key-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--text3);
+    transition: background 0.2s;
+  }
+
+  .key-dot.active { background: var(--green); }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--text) 40%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    font-size: 17px;
+    color: var(--text2);
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* ── INPUT AREA ── */
+  .input-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+    transition: border-color 0.3s var(--ease);
+  }
+
+  .input-card:focus-within {
+    border-color: rgba(124,106,247,0.4);
+    box-shadow: 0 0 0 4px rgba(124,106,247,0.05);
+  }
+
+  .input-label {
+    font-size: 13px;
+    color: var(--text3);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 15px;
+    font-family: var(--font-ar);
+    line-height: 1.8;
+    resize: none;
+    min-height: 160px;
+    direction: auto;
+  }
+
+  textarea::placeholder { color: var(--text3); }
+
+  .input-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .char-count {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: var(--font-en);
+  }
+
+  .input-hints {
+    display: flex;
+    gap: 8px;
+  }
+
+  .hint-chip {
+    padding: 4px 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--text3);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .hint-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent2);
+  }
+
+  /* ── ANALYZE BUTTON ── */
+  .btn-analyze {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: var(--font-ar);
+    cursor: pointer;
+    transition: all 0.3s var(--ease);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+
+  .btn-analyze::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .btn-analyze:hover::before { opacity: 1; }
+  .btn-analyze:hover { transform: translateY(-1px); box-shadow: 0 8px 30px var(--accent-glow); }
+  .btn-analyze:active { transform: translateY(0); }
+  .btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .btn-icon { font-size: 18px; }
+
+  /* ── LOADING ── */
+  .loading-state {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .loading-state.visible { display: block; }
+
+  .loading-orb {
+    width: 64px; height: 64px;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+
+  .loading-orb::before, .loading-orb::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  .loading-orb::before {
+    inset: 0;
+    background: conic-gradient(from 0deg, var(--accent), transparent);
+    animation: spin 1s linear infinite;
+  }
+
+  .loading-orb::after {
+    inset: 6px;
+    background: var(--bg);
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    color: var(--text2);
+    font-size: 15px;
+  }
+
+  .loading-steps {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .loading-step {
+    font-size: 13px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeInStep 0.5s var(--ease) forwards;
+  }
+
+  .loading-step:nth-child(1) { animation-delay: 0.3s; }
+  .loading-step:nth-child(2) { animation-delay: 0.9s; }
+  .loading-step:nth-child(3) { animation-delay: 1.5s; }
+  .loading-step:nth-child(4) { animation-delay: 2.1s; }
+
+  @keyframes fadeInStep {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESULTS ── */
+  .results {
+    display: none;
+    animation: fadeInUp 0.5s var(--ease);
+  }
+
+  .results.visible { display: block; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 5px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    flex: 1;
+    min-width: 90px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--font-ar);
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .tab-btn:hover { color: var(--text); background: var(--bg3); }
+
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    color: white;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── SUMMARY ── */
+  .summary-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    line-height: 1.9;
+    font-size: 15px;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+
+  /* ── FLASHCARDS ── */
+  .flashcards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .flashcard {
+    height: 180px;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+
+  .flashcard-inner {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s var(--ease);
+  }
+
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+  .flashcard-front, .flashcard-back {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    backface-visibility: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .flashcard-front {
+    background: var(--bg2);
+    align-items: center;
+    text-align: center;
+  }
+
+  .flashcard-back {
+    background: linear-gradient(135deg, rgba(124,106,247,0.15), rgba(167,139,250,0.08));
+    border-color: rgba(124,106,247,0.3);
+    transform: rotateY(180deg);
+  }
+
+  .flashcard-q-label {
+    font-size: 11px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-family: var(--font-en);
+  }
+
+  .flashcard-question {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .flashcard-answer {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  .flashcard-hint {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 12px;
+    text-align: center;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-wrapper { display: flex; flex-direction: column; gap: 20px; }
+
+  .quiz-question-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+
+  .quiz-q-num {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: var(--font-en);
+    margin-bottom: 10px;
+  }
+
+  .quiz-q-text {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    padding: 12px 16px;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+    font-size: 14px;
+    font-family: var(--font-ar);
+    background: var(--bg3);
+    color: var(--text);
+    text-align: right;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .quiz-option:hover:not(.answered) {
+    border-color: var(--accent);
+    background: rgba(124,106,247,0.08);
+  }
+
+  .quiz-option.correct { border-color: var(--green); background: rgba(74,222,128,0.1); color: var(--green); }
+  .quiz-option.wrong { border-color: var(--red); background: rgba(248,113,113,0.1); color: var(--red); }
+
+  .option-letter {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-family: var(--font-en);
+    font-weight: 600;
+    flex-shrink: 0;
+    color: var(--text2);
+  }
+
+  .quiz-score {
+    background: linear-gradient(135deg, rgba(124,106,247,0.15), rgba(74,222,128,0.1));
+    border: 1px solid rgba(124,106,247,0.3);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    display: none;
+  }
+
+  .quiz-score.show { display: block; }
+
+  .score-big {
+    font-size: 48px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent2), var(--green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .score-label { font-size: 14px; color: var(--text2); margin-top: 4px; }
+
+  /* ── MIND MAP ── */
+  .mindmap-container {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 24px;
+    overflow-x: auto;
+  }
+
+  .mindmap-root {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .mindmap-center {
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 40px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 32px;
+    max-width: 260px;
+    line-height: 1.5;
+  }
+
+  .mindmap-branches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+  }
+
+  .mindmap-branch {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 16px;
+    min-width: 180px;
+    max-width: 220px;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .mindmap-branch:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .branch-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent2);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .branch-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .branch-item {
+    font-size: 12px;
+    color: var(--text2);
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+
+  .branch-item:last-child { border-bottom: none; }
+
+  /* ── CHAT ── */
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 480px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scroll-behavior: smooth;
+  }
+
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-track { background: transparent; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .msg {
+    display: flex;
+    gap: 10px;
+    animation: fadeInUp 0.3s var(--ease);
+  }
+
+  .msg.user { flex-direction: row-reverse; }
+
+  .msg-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+
+  .msg.ai .msg-avatar { background: linear-gradient(135deg, var(--accent), #a78bfa); }
+  .msg.user .msg-avatar { background: var(--bg3); border: 1px solid var(--border2); }
+
+  .msg-bubble {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .msg.ai .msg-bubble {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px 16px 16px 16px;
+    color: var(--text);
+  }
+
+  .msg.user .msg-bubble {
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    color: white;
+    border-radius: 16px 4px 16px 16px;
+  }
+
+  .chat-input-area {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .chat-input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: var(--font-ar);
+    outline: none;
+    resize: none;
+    min-height: 44px;
+    max-height: 120px;
+    line-height: 1.5;
+    direction: auto;
+  }
+
+  .chat-input:focus { border-color: rgba(124,106,247,0.4); }
+  .chat-input::placeholder { color: var(--text3); }
+
+  .btn-send {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .btn-send:hover { transform: scale(1.05); }
+  .btn-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* ── API KEY MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s var(--ease);
+  }
+
+  .modal-overlay.open { opacity: 1; visibility: visible; }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 32px;
+    width: 100%;
+    max-width: 460px;
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.3s var(--ease);
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+  .modal-icon {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .modal h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .modal p {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  .modal p a {
+    color: var(--accent2);
+    text-decoration: none;
+  }
+
+  .modal-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 13px 16px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: var(--font-en);
+    outline: none;
+    margin-bottom: 16px;
+    direction: ltr;
+    text-align: left;
+    letter-spacing: 1px;
+  }
+
+  .modal-input:focus { border-color: rgba(124,106,247,0.4); }
+  .modal-input::placeholder { color: var(--text3); letter-spacing: 0; }
+
+  .modal-note {
+    display: flex;
+    gap: 8px;
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--yellow);
+    line-height: 1.6;
+  }
+
+  .btn-save {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: var(--font-ar);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-save:hover { opacity: 0.9; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 40px;
+    padding: 10px 20px;
+    font-size: 13px;
+    color: var(--text);
+    z-index: 200;
+    opacity: 0;
+    transition: all 0.3s var(--ease);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text3);
+  }
+
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-text { font-size: 14px; line-height: 1.6; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    header { flex-direction: column; gap: 16px; align-items: flex-start; }
+    .flashcards-grid { grid-template-columns: 1fr; }
+    .mindmap-branches { flex-direction: column; align-items: center; }
+    .tabs { gap: 2px; }
+    .tab-btn { font-size: 12px; padding: 8px 10px; min-width: 70px; }
+  }
+
+  /* ── TYPING INDICATOR ── */
+  .typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+  }
+
+  .typing-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text3);
+    animation: typingBounce 1.4s infinite;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-6px); }
+  }
+
+  /* ── COPY BUTTON ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-copy {
+    padding: 5px 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text3);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font-ar);
+  }
+
+  .btn-copy:hover { border-color: var(--accent); color: var(--accent2); }
+
+  .typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--accent2);
+    margin-right: 2px;
+    animation: blink 0.8s step-end infinite;
+    vertical-align: text-bottom;
+  }
+
+  @keyframes blink {
+    from, to { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="keyModal">
+  <div class="modal">
+    <div class="modal-icon">🔑</div>
+    <h2>مفتاح API الخاص بك</h2>
+    <p>
+      التطبيق يعمل مباشرة في متصفحك باستخدام Claude AI.
+      أدخل مفتاح Anthropic API الخاص بك — يُحفظ محلياً فقط ولا يُرسل لأي خادم.
+      <br><br>
+      احصل على مفتاح مجاني من <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
+    </p>
+    <input
+      type="password"
+      class="modal-input"
+      id="apiKeyInput"
+      placeholder="sk-ant-api03-..."
+    >
+    <div class="modal-note">
+      ⚠️ مفتاحك يبقى في متصفحك فقط. لا نرى ولا نخزن أي شيء.
+    </div>
+    <button class="btn-save" onclick="saveKey()">حفظ والبدء ✓</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- APP -->
+<div class="container">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">✦</div>
+      <div>
+        <div class="logo-text">افهم أي شيء</div>
+        <div class="logo-sub">Understand Anything</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-key" onclick="openModal()">
+        <span class="key-dot" id="keyDot"></span>
+        <span id="keyStatus">أضف مفتاح API</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="hero">
+    <h1>الصق أي محتوى<br>وافهمه فوراً</h1>
+    <p>مقال، كتاب، بحث، كود — أي شيء. في ثوانٍ تحصل على ملخص، بطاقات حفظ، اختبار، خريطة ذهنية، وتقدر تتحدث معه.</p>
+  </div>
+
+  <div class="input-card">
+    <div class="input-label">📋 الصق المحتوى هنا</div>
+    <textarea
+      id="contentInput"
+      placeholder="الصق أي نص... مقالة، فصل من كتاب، ملاحظات، شرح، مقابلة، أي شيء..."
+      oninput="updateCount()"
+    ></textarea>
+    <div class="input-footer">
+      <span class="char-count" id="charCount">0 حرف</span>
+      <div class="input-hints">
+        <span class="hint-chip" onclick="loadSample('ar')">مثال عربي</span>
+        <span class="hint-chip" onclick="loadSample('en')">English sample</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-analyze" id="analyzeBtn" onclick="analyze()">
+    <span class="btn-icon">✦</span>
+    <span id="btnText">تحليل المحتوى</span>
+  </button>
+
+  <!-- LOADING -->
+  <div class="loading-state" id="loadingState">
+    <div class="loading-orb"></div>
+    <div class="loading-text">جاري التحليل العميق...</div>
+    <div class="loading-steps">
+      <div class="loading-step">✦ قراءة وفهم المحتوى</div>
+      <div class="loading-step">✦ إنشاء الملخص الذكي</div>
+      <div class="loading-step">✦ توليد بطاقات الحفظ والاختبار</div>
+      <div class="loading-step">✦ بناء الخريطة الذهنية</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('summary', this)">📝 الملخص</button>
+      <button class="tab-btn" onclick="switchTab('flashcards', this)">🃏 بطاقات الحفظ</button>
+      <button class="tab-btn" onclick="switchTab('quiz', this)">🎯 اختبر نفسك</button>
+      <button class="tab-btn" onclick="switchTab('mindmap', this)">🗺️ خريطة ذهنية</button>
+      <button class="tab-btn" onclick="switchTab('chat', this)">💬 تحدث معه</button>
+    </div>
+
+    <!-- SUMMARY TAB -->
+    <div class="tab-panel active" id="tab-summary">
+      <div class="section-header">
+        <span class="section-title">✦ الملخص الذكي</span>
+        <button class="btn-copy" onclick="copyText('summaryContent')">نسخ</button>
+      </div>
+      <div class="summary-card" id="summaryContent"></div>
+    </div>
+
+    <!-- FLASHCARDS TAB -->
+    <div class="tab-panel" id="tab-flashcards">
+      <div class="section-header">
+        <span class="section-title">✦ اضغط على البطاقة لرؤية الإجابة</span>
+        <span class="section-title" id="flashcardCount"></span>
+      </div>
+      <div class="flashcards-grid" id="flashcardsGrid"></div>
+    </div>
+
+    <!-- QUIZ TAB -->
+    <div class="tab-panel" id="tab-quiz">
+      <div class="section-header">
+        <span class="section-title">✦ اختبر فهمك</span>
+        <span class="section-title" id="quizScore">النتيجة: 0/0</span>
+      </div>
+      <div class="quiz-wrapper" id="quizWrapper"></div>
+      <div class="quiz-score" id="quizFinalScore">
+        <div class="score-big" id="scoreBig">0%</div>
+        <div class="score-label" id="scoreLabel"></div>
+      </div>
+    </div>
+
+    <!-- MIND MAP TAB -->
+    <div class="tab-panel" id="tab-mindmap">
+      <div class="section-header">
+        <span class="section-title">✦ الخريطة الذهنية</span>
+      </div>
+      <div class="mindmap-container">
+        <div class="mindmap-root" id="mindmapRoot"></div>
+      </div>
+    </div>
+
+    <!-- CHAT TAB -->
+    <div class="tab-panel" id="tab-chat">
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+          <div class="msg ai">
+            <div class="msg-avatar">✦</div>
+            <div class="msg-bubble">مرحباً! قرأت المحتوى وأنا جاهز للإجابة على أسئلتك. اسألني عن أي شيء فيه.</div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <textarea
+            class="chat-input"
+            id="chatInput"
+            placeholder="اسأل عن أي شيء في المحتوى..."
+            rows="1"
+            onkeydown="handleChatKey(event)"
+            oninput="autoResize(this)"
+          ></textarea>
+          <button class="btn-send" id="sendBtn" onclick="sendMessage()">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height: 60px;"></div>
+</div>
+
+<script>
+// ── STATE ──
+let apiKey = localStorage.getItem('ua_api_key') || '';
+let currentContent = '';
+let analyzedData = null;
+let quizAnswered = 0;
+let quizCorrect = 0;
+let chatHistory = [];
+
+// ── INIT ──
+function init() {
+  updateKeyStatus();
+  if (!apiKey) {
+    setTimeout(() => openModal(), 500);
+  }
+}
+
+function updateKeyStatus() {
+  const dot = document.getElementById('keyDot');
+  const status = document.getElementById('keyStatus');
+  if (apiKey) {
+    dot.classList.add('active');
+    status.textContent = 'تغيير المفتاح';
+  } else {
+    dot.classList.remove('active');
+    status.textContent = 'أضف مفتاح API';
+  }
+}
+
+// ── MODAL ──
+function openModal() {
+  document.getElementById('keyModal').classList.add('open');
+  setTimeout(() => document.getElementById('apiKeyInput').focus(), 300);
+}
+
+function closeModal() {
+  document.getElementById('keyModal').classList.remove('open');
+}
+
+function saveKey() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (!val.startsWith('sk-ant')) {
+    showToast('⚠️ المفتاح يجب أن يبدأ بـ sk-ant');
+    return;
+  }
+  apiKey = val;
+  localStorage.setItem('ua_api_key', apiKey);
+  updateKeyStatus();
+  closeModal();
+  showToast('✓ تم حفظ المفتاح بنجاح');
+}
+
+document.getElementById('keyModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+document.getElementById('apiKeyInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') saveKey();
+});
+
+// ── UTILS ──
+function updateCount() {
+  const len = document.getElementById('contentInput').value.length;
+  document.getElementById('charCount').textContent = len.toLocaleString('ar') + ' حرف';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function copyText(id) {
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.textContent).then(() => showToast('✓ تم النسخ'));
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+function loadSample(lang) {
+  const samples = {
+    ar: `الذكاء الاصطناعي هو مجال في علوم الحاسوب يهدف إلى بناء أنظمة قادرة على أداء مهام تتطلب عادةً ذكاءً بشرياً. يشمل هذا المجال عدة فروع رئيسية: التعلم الآلي الذي يمكّن الحواسيب من التعلم من البيانات دون برمجة صريحة، والتعلم العميق الذي يستخدم شبكات عصبية متعددة الطبقات، ومعالجة اللغة الطبيعية التي تتيح للآلات فهم الكلام والنصوص البشرية. تطورت تطبيقات الذكاء الاصطناعي بشكل مذهل خلال العقد الأخير، وباتت حاضرة في حياتنا اليومية من خلال المساعدات الصوتية وتطبيقات الترجمة والسيارات ذاتية القيادة وأنظمة التشخيص الطبي. يرى المتفائلون أن الذكاء الاصطناعي سيحل مشاكل إنسانية كبرى، بينما يحذر آخرون من مخاطره على سوق العمل والخصوصية وصنع القرار.`,
+    en: `The human brain contains approximately 86 billion neurons, each connected to thousands of others through synapses, forming a network of roughly 100 trillion connections. This extraordinary complexity enables consciousness, memory, emotion, and reasoning. Neuroplasticity — the brain's ability to reorganize itself by forming new neural connections — allows us to learn new skills throughout our lifetime. Sleep plays a crucial role in memory consolidation, as the brain replays and strengthens newly formed connections during rest. Recent neuroscience research has revealed that the brain is not fully mature until around age 25, with the prefrontal cortex — responsible for decision-making and impulse control — being the last region to develop.`
+  };
+  document.getElementById('contentInput').value = samples[lang];
+  updateCount();
+  showToast('✓ تم تحميل المثال');
+}
+
+// ── CLAUDE API CALL ──
+async function callClaude(messages, system = '') {
+  const body = {
+    model: 'claude-opus-4-8',
+    max_tokens: 4096,
+    messages,
+  };
+  if (system) body.system = system;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || 'خطأ في API');
+  }
+
+  const data = await res.json();
+  return data.content[0].text;
+}
+
+async function callClaudeStream(messages, system, onChunk) {
+  const body = {
+    model: 'claude-opus-4-8',
+    max_tokens: 4096,
+    stream: true,
+    messages,
+  };
+  if (system) body.system = system;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || 'خطأ في API');
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        const data = line.slice(6);
+        if (data === '[DONE]') continue;
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+            onChunk(parsed.delta.text);
+          }
+        } catch {}
+      }
+    }
+  }
+}
+
+// ── MAIN ANALYZE ──
+async function analyze() {
+  if (!apiKey) { openModal(); return; }
+  const content = document.getElementById('contentInput').value.trim();
+  if (!content) { showToast('⚠️ الصق محتوى أولاً'); return; }
+  if (content.length < 50) { showToast('⚠️ المحتوى قصير جداً'); return; }
+
+  currentContent = content;
+  chatHistory = [];
+
+  // UI: loading
+  document.getElementById('results').classList.remove('visible');
+  document.getElementById('loadingState').classList.add('visible');
+  document.getElementById('analyzeBtn').disabled = true;
+  document.getElementById('btnText').textContent = 'جاري التحليل...';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  try {
+    const lang = detectLang(content);
+    const systemPrompt = `أنت أداة تحليل ذكية. أجب دائماً بنفس لغة المحتوى المُدخل. كن دقيقاً ومختصراً ومفيداً.`;
+
+    const prompt = `حلل المحتوى التالي وأعطني الناتج بالتنسيق التالي بالضبط (لا تضيف أي نص خارج هذا التنسيق):
+
+===SUMMARY===
+[ملخص واضح وشامل في 5-8 جمل، مع أهم النقاط]
+
+===FLASHCARDS===
+[Q]: [سؤال]
+[A]: [إجابة]
+[Q]: [سؤال]
+[A]: [إجابة]
+[أنشئ 6-8 بطاقات]
+
+===QUIZ===
+[Q]: [سؤال]
+[O]: أ) [خيار1] | ب) [خيار2] | ج) [خيار3] | د) [خيار4]
+[ANS]: [أ أو ب أو ج أو د]
+[Q]: [سؤال]
+[O]: أ) [خيار1] | ب) [خيار2] | ج) [خيار3] | د) [خيار4]
+[ANS]: [أ أو ب أو ج أو د]
+[أنشئ 4-6 أسئلة]
+
+===MINDMAP===
+[CENTER]: [العنوان الرئيسي]
+[BRANCH]: [عنوان الفرع 1]
+- [نقطة]
+- [نقطة]
+- [نقطة]
+[BRANCH]: [عنوان الفرع 2]
+- [نقطة]
+- [نقطة]
+[أنشئ 4-5 فروع]
+
+المحتوى:
+${content}`;
+
+    const response = await callClaude([{ role: 'user', content: prompt }], systemPrompt);
+    analyzedData = parseResponse(response);
+    renderAll(analyzedData);
+
+    document.getElementById('loadingState').classList.remove('visible');
+    document.getElementById('results').classList.add('visible');
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Reset chat
+    document.getElementById('chatMessages').innerHTML = `
+      <div class="msg ai">
+        <div class="msg-avatar">✦</div>
+        <div class="msg-bubble">قرأت المحتوى! اسألني عن أي شيء فيه وسأجيبك بالتفصيل.</div>
+      </div>`;
+    chatHistory = [];
+
+  } catch(e) {
+    document.getElementById('loadingState').classList.remove('visible');
+    showToast('⚠️ ' + (e.message || 'حدث خطأ'));
+    console.error(e);
+  }
+
+  document.getElementById('analyzeBtn').disabled = false;
+  document.getElementById('btnText').textContent = 'تحليل المحتوى';
+}
+
+// ── PARSE RESPONSE ──
+function parseResponse(text) {
+  const sections = {};
+
+  const summaryMatch = text.match(/===SUMMARY===([\s\S]*?)(?====\w)/);
+  if (summaryMatch) sections.summary = summaryMatch[1].trim();
+
+  // Flashcards
+  const fcMatch = text.match(/===FLASHCARDS===([\s\S]*?)(?====\w)/);
+  sections.flashcards = [];
+  if (fcMatch) {
+    const fcText = fcMatch[1];
+    const qMatches = [...fcText.matchAll(/\[Q\]:\s*(.+)/g)];
+    const aMatches = [...fcText.matchAll(/\[A\]:\s*(.+)/g)];
+    for (let i = 0; i < Math.min(qMatches.length, aMatches.length); i++) {
+      sections.flashcards.push({
+        q: qMatches[i][1].trim(),
+        a: aMatches[i][1].trim()
+      });
+    }
+  }
+
+  // Quiz
+  const quizMatch = text.match(/===QUIZ===([\s\S]*?)(?====\w)/);
+  sections.quiz = [];
+  if (quizMatch) {
+    const quizText = quizMatch[1];
+    const blocks = quizText.split(/(?=\[Q\]:)/);
+    for (const block of blocks) {
+      const q = block.match(/\[Q\]:\s*(.+)/)?.[1]?.trim();
+      const opts = block.match(/\[O\]:\s*(.+)/)?.[1]?.trim();
+      const ans = block.match(/\[ANS\]:\s*(.+)/)?.[1]?.trim();
+      if (q && opts && ans) {
+        const options = opts.split('|').map(o => o.trim());
+        sections.quiz.push({ q, options, ans: ans.charAt(0) });
+      }
+    }
+  }
+
+  // Mindmap
+  const mmMatch = text.match(/===MINDMAP===([\s\S]*?)$/);
+  sections.mindmap = { center: '', branches: [] };
+  if (mmMatch) {
+    const mmText = mmMatch[1];
+    const centerMatch = mmText.match(/\[CENTER\]:\s*(.+)/);
+    if (centerMatch) sections.mindmap.center = centerMatch[1].trim();
+    const branchBlocks = mmText.split(/(?=\[BRANCH\]:)/);
+    for (const block of branchBlocks) {
+      const title = block.match(/\[BRANCH\]:\s*(.+)/)?.[1]?.trim();
+      if (title) {
+        const items = [...block.matchAll(/^[-•]\s*(.+)/gm)].map(m => m[1].trim());
+        sections.mindmap.branches.push({ title, items });
+      }
+    }
+  }
+
+  return sections;
+}
+
+// ── RENDER ALL ──
+function renderAll(data) {
+  // Summary
+  if (data.summary) {
+    document.getElementById('summaryContent').textContent = data.summary;
+  }
+
+  // Flashcards
+  const grid = document.getElementById('flashcardsGrid');
+  grid.innerHTML = '';
+  document.getElementById('flashcardCount').textContent = data.flashcards.length + ' بطاقة';
+  if (data.flashcards.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🃏</div><div class="empty-text">لم يتم توليد بطاقات حفظ</div></div>';
+  } else {
+    data.flashcards.forEach((fc, i) => {
+      grid.innerHTML += `
+        <div class="flashcard" onclick="this.classList.toggle('flipped')">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="flashcard-q-label">سؤال ${i+1}</div>
+              <div class="flashcard-question">${escHtml(fc.q)}</div>
+              <div class="flashcard-hint">اضغط لرؤية الإجابة</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="flashcard-q-label">الإجابة</div>
+              <div class="flashcard-answer">${escHtml(fc.a)}</div>
+            </div>
+          </div>
+        </div>`;
+    });
+  }
+
+  // Quiz
+  const qWrapper = document.getElementById('quizWrapper');
+  qWrapper.innerHTML = '';
+  quizAnswered = 0; quizCorrect = 0;
+  updateQuizScore();
+  document.getElementById('quizFinalScore').classList.remove('show');
+
+  if (data.quiz.length === 0) {
+    qWrapper.innerHTML = '<div class="empty-state"><div class="empty-icon">🎯</div><div class="empty-text">لم يتم توليد أسئلة</div></div>';
+  } else {
+    data.quiz.forEach((q, qi) => {
+      const letterMap = { 'أ': 0, 'ب': 1, 'ج': 2, 'د': 3 };
+      const letterArr = ['أ', 'ب', 'ج', 'د'];
+      const correctIdx = letterMap[q.ans] ?? 0;
+      let optsHtml = '';
+      q.options.forEach((opt, i) => {
+        optsHtml += `<button class="quiz-option" onclick="answerQuiz(this, ${qi}, ${i}, ${correctIdx})" data-qi="${qi}">
+          <span class="option-letter">${letterArr[i]}</span>
+          ${escHtml(opt.replace(/^[أبجد]\)/, '').trim())}
+        </button>`;
+      });
+      qWrapper.innerHTML += `
+        <div class="quiz-question-card" id="q-${qi}">
+          <div class="quiz-q-num">السؤال ${qi+1} من ${data.quiz.length}</div>
+          <div class="quiz-q-text">${escHtml(q.q)}</div>
+          <div class="quiz-options">${optsHtml}</div>
+        </div>`;
+    });
+  }
+
+  // Mind Map
+  const mmRoot = document.getElementById('mindmapRoot');
+  mmRoot.innerHTML = '';
+  if (data.mindmap.center) {
+    const colors = ['#7c6af7','#a78bfa','#818cf8','#6366f1','#8b5cf6'];
+    let branchesHtml = data.mindmap.branches.map((b, i) => {
+      const itemsHtml = b.items.map(item => `<div class="branch-item">${escHtml(item)}</div>`).join('');
+      return `<div class="mindmap-branch">
+        <div class="branch-title" style="color:${colors[i % colors.length]}">
+          ◆ ${escHtml(b.title)}
+        </div>
+        <div class="branch-items">${itemsHtml}</div>
+      </div>`;
+    }).join('');
+    mmRoot.innerHTML = `
+      <div class="mindmap-center">${escHtml(data.mindmap.center)}</div>
+      <div class="mindmap-branches">${branchesHtml}</div>`;
+  }
+}
+
+// ── QUIZ ──
+function answerQuiz(btn, qi, selected, correct) {
+  const card = document.getElementById('q-' + qi);
+  const allBtns = card.querySelectorAll('.quiz-option');
+  const alreadyAnswered = [...allBtns].some(b => b.classList.contains('answered'));
+  if (alreadyAnswered) return;
+
+  allBtns.forEach(b => b.classList.add('answered'));
+  allBtns[correct].classList.add('correct');
+
+  if (selected === correct) {
+    quizCorrect++;
+    showToast('✓ إجابة صحيحة!');
+  } else {
+    btn.classList.add('wrong');
+    showToast('✗ إجابة خاطئة');
+  }
+  quizAnswered++;
+  updateQuizScore();
+
+  if (analyzedData && quizAnswered === analyzedData.quiz.length) {
+    setTimeout(showFinalScore, 600);
+  }
+}
+
+function updateQuizScore() {
+  const total = analyzedData?.quiz.length || 0;
+  document.getElementById('quizScore').textContent = `النتيجة: ${quizCorrect}/${quizAnswered}`;
+}
+
+function showFinalScore() {
+  const total = analyzedData.quiz.length;
+  const pct = Math.round((quizCorrect / total) * 100);
+  document.getElementById('scoreBig').textContent = pct + '%';
+  const msgs = [
+    [0, 40, '📚 راجع المحتوى مرة أخرى'],
+    [40, 70, '👍 جيد! تحتاج بعض المراجعة'],
+    [70, 90, '🌟 ممتاز! فهم قوي'],
+    [90, 101, '🏆 رائع! إتقان كامل'],
+  ];
+  const msg = msgs.find(([lo, hi]) => pct >= lo && pct < hi);
+  document.getElementById('scoreLabel').textContent = (msg?.[2] || '') + ` (${quizCorrect} من ${total})`;
+  document.getElementById('quizFinalScore').classList.add('show');
+}
+
+// ── CHAT ──
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg || !apiKey) return;
+  if (!currentContent) { showToast('⚠️ حلل محتوى أولاً'); return; }
+
+  input.value = '';
+  autoResize(input);
+
+  appendMsg('user', msg);
+  document.getElementById('sendBtn').disabled = true;
+
+  chatHistory.push({ role: 'user', content: msg });
+
+  // Typing indicator
+  const typingId = 'typing-' + Date.now();
+  const messagesDiv = document.getElementById('chatMessages');
+  messagesDiv.innerHTML += `
+    <div class="msg ai" id="${typingId}">
+      <div class="msg-avatar">✦</div>
+      <div class="msg-bubble">
+        <div class="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+    </div>`;
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+  try {
+    const systemPrompt = `أنت مساعد ذكي. لديك المحتوى التالي وعليك الإجابة على أسئلة المستخدم حوله بدقة وإيجاز.
+
+المحتوى:
+${currentContent}`;
+
+    let fullResponse = '';
+    const msgHistory = chatHistory.slice(-10);
+
+    // Remove typing, add streaming bubble
+    document.getElementById(typingId)?.remove();
+    const streamId = 'stream-' + Date.now();
+    messagesDiv.innerHTML += `
+      <div class="msg ai" id="${streamId}">
+        <div class="msg-avatar">✦</div>
+        <div class="msg-bubble" id="${streamId}-text"><span class="typing-cursor"></span></div>
+      </div>`;
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    await callClaudeStream(
+      msgHistory,
+      systemPrompt,
+      (chunk) => {
+        fullResponse += chunk;
+        const el = document.getElementById(streamId + '-text');
+        if (el) el.innerHTML = escHtml(fullResponse) + '<span class="typing-cursor"></span>';
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+    );
+
+    // Remove cursor
+    const finalEl = document.getElementById(streamId + '-text');
+    if (finalEl) finalEl.textContent = fullResponse;
+
+    chatHistory.push({ role: 'assistant', content: fullResponse });
+
+  } catch(e) {
+    document.getElementById(typingId)?.remove();
+    appendMsg('ai', '⚠️ حدث خطأ: ' + e.message);
+  }
+
+  document.getElementById('sendBtn').disabled = false;
+  input.focus();
+}
+
+function appendMsg(role, text) {
+  const messagesDiv = document.getElementById('chatMessages');
+  const isUser = role === 'user';
+  messagesDiv.innerHTML += `
+    <div class="msg ${isUser ? 'user' : 'ai'}">
+      <div class="msg-avatar">${isUser ? '👤' : '✦'}</div>
+      <div class="msg-bubble">${escHtml(text)}</div>
+    </div>`;
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function detectLang(text) {
+  const arabicChars = (text.match(/[؀-ۿ]/g) || []).length;
+  return arabicChars > text.length * 0.2 ? 'ar' : 'en';
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/\n/g, '<br>');
+}
+
+// ── START ──
+init();
+</script>
+</body>
+</html>
